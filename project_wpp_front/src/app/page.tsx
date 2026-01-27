@@ -1,6 +1,6 @@
 import { Suspense } from 'react';
-import Introduce from '@/index_components/Introduce';
-import Login from '@/index_components/Login';
+import Introduce from '@/components/loginJoin/Introduce';
+import Login from '@/components/loginJoin/Login';
 import LoginSkeleton from '@/components/skeletons/LoginSkeleton';
 import IntroduceSkeleton from '@/components/skeletons/IntroduceSkeleton';
 import PageFallback from '@/components/loading/PageFallback';

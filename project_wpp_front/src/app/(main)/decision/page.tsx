@@ -1,6 +1,6 @@
 'use client'
 
-import { StrategyType } from "@/types";
+import { StrategyType } from "@/data/types";
 import { Zap, ShieldCheck, Settings, BrainCircuit, Info, CheckCircle2, Save, ArrowRight } from "lucide-react";
 import { useMemo, useState } from "react";
 import { ResponsiveContainer, CartesianGrid, XAxis, YAxis, Tooltip, Legend, Bar, BarChart } from "recharts";

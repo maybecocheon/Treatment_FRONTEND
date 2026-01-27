@@ -3,10 +3,10 @@
 import { useEffect, useState } from "react";
 import { CustomOverlayMap, Map, Polygon, Polyline } from "react-kakao-maps-sdk";
 import sidoData from "@/data/sido.json"
-import { Droplets } from "lucide-react";
+import { AlertTriangle, Droplets, Factory } from "lucide-react";
 import { WaterSystemDatas } from "@/data/mockData";
 
-import { WaterSystemData } from "@/types";
+import { WaterSystemData } from "@/data/types";
 
 interface KakaoMapProps {
     setSelectedReservoir: (reservoir: WaterSystemData) => void;
@@ -54,7 +54,7 @@ export default function KakaoMap({ setSelectedReservoir }: KakaoMapProps) {
                 center={center}
                 level={8}
                 style={{ width: "100%", height: "100%" }}
-                zoomable={false} // 줌인, 줌아웃
+                zoomable={true} // 줌인, 줌아웃
                 draggable={true} // 드래그
             >
                 {/* 폴리곤 */}
@@ -62,102 +62,115 @@ export default function KakaoMap({ setSelectedReservoir }: KakaoMapProps) {
                     formattedPath.length > 0 && (
                         <Polygon
                             path={formattedPath}
-                            strokeWeight={5}
-                            strokeColor={'#39DE2A'}
-                            strokeOpacity={0.8}
-                            strokeStyle={'solid'}
-                            fillColor={'#A2FF99'}
-                            fillOpacity={0.5}
+                            strokeWeight={4}
+                            strokeColor={'#3b82f6'}
+                            strokeOpacity={0.4}
+                            fillColor={'#0f172a'}
+                            fillOpacity={0.15}
                         />
                     )
                 }
 
-                {/* 연결선 - West System */}
-                <Polyline path={[
-                    { lat: 35.2800, lng: 129.0800 }, // Central Plant
-                    { lat: 35.1900, lng: 129.0100 }, // Res A
-                    { lat: 35.1700, lng: 129.0000 }, // Res B
-                    { lat: 35.1500, lng: 129.0300 }, // Res D
-                    { lat: 35.1300, lng: 129.0100 }, // Res E
-                    { lat: 35.1000, lng: 128.9900 }, // Res F
-                    { lat: 35.0800, lng: 128.9700 }, // Res C
-                ]}
-                    strokeWeight={3}
-                    strokeColor={"#64748b"}
-                    strokeOpacity={0.8}
-                    strokeStyle={"dash"}
+                {/* 연결선 - West System (AA 가압장 라인) */}
+                <Polyline
+                    path={[
+                        { lat: 35.2800, lng: 129.0800 }, // 중앙 정수장
+                        { lat: 35.2200, lng: 129.0400 }, // AA 가압장 (거점)
+                        { lat: 35.1900, lng: 129.0100 }, // A 배수지
+                        { lat: 35.1700, lng: 129.0000 }, // B 배수지
+                        { lat: 35.1500, lng: 129.0300 }, // D 배수지
+                        { lat: 35.1300, lng: 129.0100 }, // E 배수지
+                        { lat: 35.1000, lng: 129.0000 }, // F 배수지
+                    ]}
+                    strokeWeight={4}
+                    strokeColor="#3b82f6"
+                    strokeOpacity={0.5}
+                    strokeStyle="solid"
                 />
 
-                {/* 연결선 - East System */}
-                <Polyline path={[
-                    { lat: 35.2800, lng: 129.0800 }, // Central Plant
-                    { lat: 35.2200, lng: 129.1300 }, // Res J
-                    { lat: 35.1900, lng: 129.1500 }, // Res H
-                    { lat: 35.1700, lng: 129.0900 }, // Res G
-                    { lat: 35.1500, lng: 129.1200 }, // Res I
-                    { lat: 35.1300, lng: 129.1400 }, // Res K
-                    { lat: 35.0900, lng: 129.1100 }, // Res L
-                ]}
-                    strokeWeight={3}
-                    strokeColor={"#64748b"}
-                    strokeOpacity={0.8}
-                    strokeStyle={"dash"}
+                {/* 연결선 - East System (AB 가압장 라인) */}
+                <Polyline
+                    path={[
+                        { lat: 35.2800, lng: 129.0800 }, // 중앙 정수장
+                        { lat: 35.2200, lng: 129.1300 }, // J 배수지 (상단 거점)
+                        { lat: 35.1900, lng: 129.1500 }, // H 배수지
+                        { lat: 35.1700, lng: 129.0900 }, // G 배수지
+                        { lat: 35.1500, lng: 129.1200 }, // I 배수지
+                        { lat: 35.1300, lng: 129.1000 }, // AB 가압장 (거점)
+                        { lat: 35.1300, lng: 129.1400 }, // K 배수지
+                        { lat: 35.0900, lng: 129.1100 }, // L 배수지
+                    ]}
+                    strokeWeight={4}
+                    strokeColor="#60a5fa"
+                    strokeOpacity={0.5}
+                    strokeStyle="solid"
                 />
 
-                {/* Central Plant (정수장) */}
+                {/* 정수장 */}
                 <CustomOverlayMap position={WaterSystemDatas[0]}>
-                    <div className="relative flex flex-col items-center pointer-events-none">
-                        <svg width="120" height="120" viewBox="0 0 120 120" className="drop-shadow-xl">
-                            <circle cx="60" cy="60" r="45" fill="white" stroke="#3b82f6" strokeWidth="4" />
-                            <text x="60" y="40" textAnchor="middle" className="text-xs font-bold fill-slate-500">중앙 정수장</text>
-                            <Droplets className="text-blue-500" x="44" y="44" size={32} />
-                        </svg>
+                    <div className="flex flex-col items-center">
+                        <div className="relative">
+                            <div className="absolute inset-0 bg-blue-500 blur-xl opacity-40 animate-pulse" />
+                            <div className="relative bg-white/50 border-2 border-blue-400 p-4 rounded-4xl shadow-2xl">
+                                <Factory className="w-8 h-8" />
+                            </div>
+                        </div>
+                        <div className="mt-2 bg-slate-700/70 text-white text-[10px] px-3 py-1 rounded-full font-semibold border border-blue-400/30">
+                            광역 정수장
+                        </div>
                     </div>
                 </CustomOverlayMap>
 
-                {/* Reservoirs (배수지) */}
+                {/* 배수지 */}
                 {WaterSystemDatas.map((res) => (
                     res.type === "reservoir" && (
                         <CustomOverlayMap key={res.id} position={{ lat: res.lat, lng: res.lng }}>
-                            <div onClick={() => setSelectedReservoir(res)} className="cursor-pointer hover:scale-110 transition-transform duration-300">
-                                <svg width="200" height="200" viewBox="-100 -100 200 200">
-                                    {/* 경고창 */}
-                                    {(res.currentLevel && res.minLevel && (res.currentLevel < res.minLevel)) && (
-                                        <g transform="translate(0, -65)" className="animate-pulse">
-                                            <circle r="14" fill="#ef4444" stroke="white" strokeWidth="2" />
-                                            <text textAnchor="middle" dy="5" fill="white" className="text-sm font-bold">!</text>
-                                        </g>
-                                    )}
+                            <div
+                                onClick={() => setSelectedReservoir(res)}
+                                className="group cursor-pointer"
+                            >
+                                <div className={`
+                                    relative w-36 overflow-hidden rounded-2xl border-2 transition-all duration-300 group-hover:-translate-y-2
+                                    ${res.currentLevel! < res.minLevel!
+                                        ? 'bg-red-950/80 border-red-500 shadow-[0_0_20px_rgba(239,68,68,0.4)]'
+                                        : 'bg-white/50 border-slate-700 shadow-xl backdrop-blur-md'}
+                                `}>
+                                    {/* 상단 프로그레스 바 (배경 채우기) */}
+                                    <div
+                                        className={`absolute bottom-0 left-0 w-full transition-all duration-1000 opacity-20
+                                            ${res.currentLevel! < res.minLevel! ? 'bg-red-500' : 'bg-blue-400'}`}
+                                        style={{ height: `${(res.currentLevel! / res.maxLevel!) * 100}%` }}
+                                    />
 
-                                    {/* Main Box */}
-                                    <rect x="-65" y="-45" width="130" height="90" rx="20" fill="white"
-                                        stroke={
-                                            (res.currentLevel && res.minLevel && res.currentLevel < res.minLevel) ? "#ef4444" : "#e2e8f0"
-                                        }
-                                        strokeWidth="3" className="drop-shadow-md" />
+                                    <div className="relative p-3">
+                                        <div className="flex justify-between items-start mb-2">
+                                            <span className={`text-[10px] font-black uppercase tracking-tighter line-clamp-1 ${res.currentLevel! < res.minLevel! ? 'text-red-400' : 'text-slate-700'}`}>
+                                                {res.name}
+                                            </span>
+                                            {res.currentLevel! < res.minLevel! && (
+                                                <AlertTriangle size={12} className="text-red-500 animate-bounce" />
+                                            )}
+                                        </div>
+                                        <div className="flex items-baseline gap-1">
+                                            <span className={`text-xl font-black ${res.currentLevel! < res.minLevel! ? 'text-red-400' : 'text-slate-700'}`}>
+                                                {res.currentLevel?.toFixed(1)}
+                                            </span>
+                                            <span className="text-[10px] text-slate-500 font-bold uppercase">meter</span>
+                                        </div>
 
-                                    {/* 수위량 BG */}
-                                    {res.currentLevel && res.maxLevel && (
-                                        <rect x="-65" y={45 - (res.currentLevel / res.maxLevel * 90)} width="130" height={res.currentLevel / res.maxLevel * 90} rx="20" fill={(res.currentLevel && res.minLevel && res.currentLevel < res.minLevel) ? "#fee2e2" : "#e0f2fe"} opacity="0.6" pointerEvents="none" />
-                                    )}
-
-                                    <text y="-18" textAnchor="middle" className="text-xs font-bold fill-slate-400 uppercase tracking-widest">{res.name}</text>
-
-                                    {/* Level Value or Spec */}
-                                    {res.currentLevel !== undefined && (
-                                        <text y="22" textAnchor="middle" className={`text-base font-black ${(res.minLevel && res.currentLevel < res.minLevel) ? 'fill-red-600' : 'fill-slate-900'}`}>
-                                            {res.currentLevel.toFixed(1)}m
-                                        </text>
-                                    )}
-
-                                    {/* 기준 수위선 */}
-                                    {res.minLevel && res.maxLevel && (
-                                        <line x1="-55" y1={45 - (res.minLevel / res.maxLevel * 90)} x2="55" y2={45 - (res.minLevel / res.maxLevel * 90)} stroke="#fca5a5" strokeWidth="2" strokeDasharray="3 2" />
-                                    )}
-                                </svg>
+                                        {/* 미니 게이지 바 */}
+                                        <div className="mt-2 w-full h-1 bg-white/10 rounded-full overflow-hidden">
+                                            <div
+                                                className={`h-full rounded-full ${res.currentLevel! < res.minLevel! ? 'bg-red-500' : 'bg-blue-500'}`}
+                                                style={{ width: `${(res.currentLevel! / res.maxLevel!) * 100}%` }}
+                                            />
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </CustomOverlayMap>
-                    )))}
+                    )
+                ))}
             </Map>
         </div>
     );

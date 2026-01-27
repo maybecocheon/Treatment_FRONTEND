@@ -1,5 +1,5 @@
 
-import { WaterSystemData, PlantStats, User, HistoryPoint, TeamMember } from '@/types';
+import { WaterSystemData, PlantStats, User, HistoryPoint, TeamMember } from '@/data/types';
 
 export const currentUser: User = {
   id: 'admin_flowwise',
@@ -28,28 +28,33 @@ const DEMAND_SAMPLE = {
   actualDemand: [44, 49, 50, 57, 65, 53, 47, 43, 41, 44, 51, 56],
 };
 
+const SAVINGS_SAMPLE = {
+  hourlyCostBaseline: [120, 130, 140, 150, 160, 155, 145, 135, 125, 130, 140, 150],
+  hourlyCostOptimized: [100, 110, 115, 120, 125, 123, 118, 112, 108, 110, 115, 120],
+  expectedSavingsPercent: 18.5,
+};
+
 export const WaterSystemDatas: WaterSystemData[] = [
   // 1. 중심부 (정수장)
   { id: 'plant_central', name: '중앙 정수장', lat: 35.2800, lng: 129.0800, type: 'plant' },
 
   // 2. 서측 계통 (AA가압장 라인)
   { id: 'pump_AA', name: 'AA 가압장', lat: 35.2200, lng: 129.0400, type: 'booster', spec: 'Q=14,400m³/day' },
-  { id: 'res_A', name: 'A 배수지', lat: 35.1900, lng: 129.0100, type: 'reservoir', v: '2,500m³', currentLevel: 2.1, maxLevel: 5.0, minLevel: 1.5, accuracy: 97.5, ...DEMAND_SAMPLE },
-  { id: 'res_B', name: 'B 배수지', lat: 35.1700, lng: 129.0000, type: 'reservoir', v: '1,000m³', currentLevel: 3.2, maxLevel: 5.0, minLevel: 1.5, accuracy: 97.5, ...DEMAND_SAMPLE },
-  { id: 'res_D', name: 'D 배수지', lat: 35.1500, lng: 129.0300, type: 'reservoir', v: '1,000m³', currentLevel: 2.5, maxLevel: 5.0, minLevel: 1.5, accuracy: 97.5, ...DEMAND_SAMPLE },
-  { id: 'res_E', name: 'E 배수지', lat: 35.1300, lng: 129.0100, type: 'reservoir', v: '2,000m³', currentLevel: 4.1, maxLevel: 5.0, minLevel: 1.5, accuracy: 97.5, ...DEMAND_SAMPLE },
-  { id: 'res_F', name: 'F 배수지', lat: 35.1000, lng: 129.0000, type: 'reservoir', v: '1,000m³', currentLevel: 2.8, maxLevel: 5.0, minLevel: 1.5, accuracy: 97.5, ...DEMAND_SAMPLE },
-  { id: 'res_C', name: 'C 배수지', lat: 35.0800, lng: 129.0000, type: 'reservoir', v: '1,500m³', currentLevel: 1.2, maxLevel: 5.0, minLevel: 1.5, accuracy: 97.5, ...DEMAND_SAMPLE },
+  { id: 'res_A', name: 'A 배수지', lat: 35.1900, lng: 129.0100, type: 'reservoir', v: '2,500m³', currentLevel: 2.1, maxLevel: 5.0, minLevel: 1.5, accuracy: 97.5, ...DEMAND_SAMPLE, ...SAVINGS_SAMPLE },
+  { id: 'res_B', name: 'B 배수지', lat: 35.1700, lng: 129.0000, type: 'reservoir', v: '1,000m³', currentLevel: 3.2, maxLevel: 5.0, minLevel: 1.5, accuracy: 97.5, ...DEMAND_SAMPLE, ...SAVINGS_SAMPLE },
+  { id: 'res_D', name: 'D 배수지', lat: 35.1500, lng: 129.0300, type: 'reservoir', v: '1,000m³', currentLevel: 2.5, maxLevel: 5.0, minLevel: 1.5, accuracy: 97.5, ...DEMAND_SAMPLE, ...SAVINGS_SAMPLE },
+  { id: 'res_E', name: 'E 배수지', lat: 35.1300, lng: 129.0100, type: 'reservoir', v: '2,000m³', currentLevel: 4.1, maxLevel: 5.0, minLevel: 1.5, accuracy: 97.5, ...DEMAND_SAMPLE, ...SAVINGS_SAMPLE },
+  { id: 'res_F', name: 'F 배수지', lat: 35.1000, lng: 129.0000, type: 'reservoir', v: '1,000m³', currentLevel: 2.8, maxLevel: 5.0, minLevel: 1.5, accuracy: 97.5, ...DEMAND_SAMPLE , ...SAVINGS_SAMPLE },
 
   // 3. 동측 및 기타 계통 (AB가압장 라인)
-  { id: 'res_J', name: 'J 배수지', lat: 35.2200, lng: 129.1300, type: 'reservoir', v: '2,000m³', currentLevel: 3.5, maxLevel: 5.0, minLevel: 1.5, accuracy: 97.5, ...DEMAND_SAMPLE },
-  { id: 'res_H', name: 'H 배수지', lat: 35.1900, lng: 129.1500, type: 'reservoir', v: '100m³', currentLevel: 0.5, maxLevel: 2.0, minLevel: 0.7, accuracy: 97.5, ...DEMAND_SAMPLE },
-  { id: 'res_G', name: 'G 배수지', lat: 35.1700, lng: 129.0900, type: 'reservoir', v: '300m³', currentLevel: 1.8, maxLevel: 3.0, minLevel: 0.8, accuracy: 97.5, ...DEMAND_SAMPLE },
-  { id: 'res_I', name: 'I 배수지', lat: 35.1500, lng: 129.1200, type: 'reservoir', v: '300m³', currentLevel: 1.5, maxLevel: 3.0, minLevel: 0.8, accuracy: 97.5, ...DEMAND_SAMPLE },
+  { id: 'res_J', name: 'J 배수지', lat: 35.2200, lng: 129.1300, type: 'reservoir', v: '2,000m³', currentLevel: 3.5, maxLevel: 5.0, minLevel: 1.5, accuracy: 97.5, ...DEMAND_SAMPLE, ...SAVINGS_SAMPLE },
+  { id: 'res_H', name: 'H 배수지', lat: 35.1900, lng: 129.1500, type: 'reservoir', v: '100m³', currentLevel: 0.5, maxLevel: 2.0, minLevel: 0.7, accuracy: 97.5, ...DEMAND_SAMPLE, ...SAVINGS_SAMPLE },
+  { id: 'res_G', name: 'G 배수지', lat: 35.1700, lng: 129.0900, type: 'reservoir', v: '300m³', currentLevel: 1.8, maxLevel: 3.0, minLevel: 0.8, accuracy: 97.5, ...DEMAND_SAMPLE, ...SAVINGS_SAMPLE },
+  { id: 'res_I', name: 'I 배수지', lat: 35.1500, lng: 129.1200, type: 'reservoir', v: '300m³', currentLevel: 1.5, maxLevel: 3.0, minLevel: 0.8, accuracy: 97.5, ...DEMAND_SAMPLE, ...SAVINGS_SAMPLE },
 
   { id: 'pump_AB', name: 'AB 가압장', lat: 35.1300, lng: 129.1000, type: 'booster', spec: 'Q=1,000m³/day' },
-  { id: 'res_K', name: 'K 배수지', lat: 35.1300, lng: 129.1400, type: 'reservoir', v: '3,456m³', currentLevel: 4.2, maxLevel: 6.0, minLevel: 2.0, accuracy: 97.5, ...DEMAND_SAMPLE },
-  { id: 'res_L', name: 'L 배수지', lat: 35.0900, lng: 129.1100, type: 'reservoir', v: '1,200m³', currentLevel: 2.9, maxLevel: 4.0, minLevel: 1.0, accuracy: 97.5, ...DEMAND_SAMPLE },
+  { id: 'res_K', name: 'K 배수지', lat: 35.1300, lng: 129.1400, type: 'reservoir', v: '3,456m³', currentLevel: 4.2, maxLevel: 6.0, minLevel: 2.0, accuracy: 97.5, ...DEMAND_SAMPLE, ...SAVINGS_SAMPLE },
+  { id: 'res_L', name: 'L 배수지', lat: 35.0900, lng: 129.1100, type: 'reservoir', v: '1,200m³', currentLevel: 2.9, maxLevel: 4.0, minLevel: 1.0, accuracy: 97.5, ...DEMAND_SAMPLE, ...SAVINGS_SAMPLE },
 ]
 
 // Mock History Data

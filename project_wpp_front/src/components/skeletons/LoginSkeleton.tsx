@@ -18,7 +18,7 @@ export default function LoginSkeleton() {
                 </div>
 
                 {/* 로그인 박스 */}
-                <div className="w-full bg-white/5 backdrop-blur-2xl border border-white/10 p-6 md:p-10 rounded-[2rem] md:rounded-[2.5rem] shadow-2xl space-y-6">
+                <div className="w-full bg-white/5 backdrop-blur-2xl border border-white/10 p-6 md:p-10 rounded-4xl md:rounded-[2.5rem] shadow-2xl space-y-6">
                     <div className="h-14 bg-slate-700/40 rounded-2xl" />
                     <div className="h-14 bg-slate-700/40 rounded-2xl" />
                     <div className="h-14 bg-blue-600/40 rounded-2xl" />

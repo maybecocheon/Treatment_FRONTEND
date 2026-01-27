@@ -12,7 +12,7 @@ export default function Introduce() {
 
     useEffect(() => {
         if (scrollSignal > 0) {
-            contentRef.current?.scrollIntoView({ behavior: 'smooth' });
+            contentRef.current?.scrollIntoView({ behavior: "smooth" });
         }
     }, [scrollSignal]);
 
@@ -68,7 +68,7 @@ export default function Introduce() {
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
                     {TEAM_MEMBERS.map((member, i) => (
                         <div key={i} className="bg-white p-8 md:p-10 rounded-[2.5rem] md:rounded-[3rem] shadow-sm border border-slate-100 hover:shadow-xl transition-all text-center">
-                            <div className="w-24 h-24 rounded-[2rem] bg-slate-100 mx-auto mb-6 overflow-hidden border-4 border-white shadow-lg">
+                            <div className="w-24 h-24 rounded-4xl bg-slate-100 mx-auto mb-6 overflow-hidden border-4 border-white shadow-lg">
                                 <img src={`https://picsum.photos/300/300?random=${i + 20}`} alt={member.name} className="w-full h-full object-cover" />
                             </div>
                             <h4 className="text-xl md:text-2xl font-black text-slate-900 mb-1">{member.name}</h4>

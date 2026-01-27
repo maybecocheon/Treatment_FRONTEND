@@ -1,20 +1,31 @@
 'use client'
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { ArrowRight, ChevronDown, Droplets, Lock, User, UserPlus } from "lucide-react";
 import { useSetAtom } from "jotai";
 import { scrollToContentAtom } from "@/atoms/scroll";
-import Logo from "@/components/Logo";
-import Background from "@/components/Background";
+import Logo from "@/components/loginJoin/Logo";
+import Background from "@/components/loginJoin/Background";
 
 export default function Login() {
-    // 스크롤
+    // 스크롤 트리거
     const triggerScroll = useSetAtom(scrollToContentAtom);
 
     const router = useRouter();
     const server_url = process.env.NEXT_PUBLIC_SERVER_URL;
     const [credentials, setCredentials] = useState({ username: "", password: "" });
+
+    // 스크롤 0
+    useEffect(() => {
+        // 1. 진입 시 초기화
+        triggerScroll(0);
+
+        // 2. 이탈 시(Clean-up) 초기화 
+        return () => {
+            triggerScroll(0);
+        };
+    }, []);
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
@@ -113,7 +124,7 @@ export default function Login() {
 
             <button
                 onClick={() => triggerScroll(v => v + 1)}
-                className="absolute bottom-10 left-1/2 -translate-x-1/2 text-slate-500 hover:text-white transition-colors animate-bounce flex flex-col items-center gap-2"
+                className="absolute bottom-0 left-1/2 -translate-x-1/2 text-slate-500 hover:text-white transition-colors animate-bounce flex flex-col items-center gap-2"
             >
                 <span className="text-[10px] font-black uppercase tracking-widest">About Project</span>
                 <ChevronDown className="w-6 h-6" />

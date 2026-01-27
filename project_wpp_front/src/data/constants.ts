@@ -1,5 +1,5 @@
 
-import { TeamMember } from '@/types'
+import { TeamMember } from '@/data/types'
 
 export const TEAM_MEMBERS: TeamMember[] = [
   {

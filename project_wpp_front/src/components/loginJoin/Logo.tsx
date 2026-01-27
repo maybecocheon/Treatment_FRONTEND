@@ -10,7 +10,7 @@ export default function Logo({ scale = 1 }: { scale?: number }) {
     <div
       onClick={() => router.push("/")}
       style={{ transform: `scale(${scale})` }}
-      className="origin-center text-center animate-in fade-in slide-in-from-top-4 duration-1000 hover:cursor-pointer"
+      className="origin-top text-center animate-in fade-in slide-in-from-top-4 duration-1000 hover:cursor-pointer"
     >
       <div className="inline-flex p-4 rounded-3xl bg-blue-600 shadow-2xl shadow-blue-500/50 mb-6">
         <Droplets className="w-12 h-12 text-white" />

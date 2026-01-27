@@ -42,7 +42,7 @@ export default function IntroduceSkeleton() {
                             key={i}
                             className="bg-white p-8 md:p-10 rounded-[2.5rem] shadow-sm border border-slate-100 text-center"
                         >
-                            <div className="w-24 h-24 bg-slate-200 rounded-[2rem] mx-auto mb-6" />
+                            <div className="w-24 h-24 bg-slate-200 rounded-4xl mx-auto mb-6" />
                             <div className="h-5 bg-slate-200 rounded w-24 mx-auto mb-2" />
                             <div className="h-4 bg-slate-200 rounded w-32 mx-auto mb-4" />
                             <div className="h-3 bg-slate-200 rounded w-full mb-2" />
