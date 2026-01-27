@@ -4,14 +4,15 @@ export interface WaterSystemData {
   lat: number;
   lng: number;
   type: string;
+
   spec?: string;
   v?: string;
   currentLevel?: number;
   minLevel?: number;
   maxLevel?: number;
   accuracy?: number;
-  demandActual?: number[];
-  demandPredicted?: number[];
+  predictedDemand?: number[];
+  actualDemand?: number[];
   warning?: string;
 }
 
@@ -32,6 +33,16 @@ export interface User {
   id: string;
   nickname: string;
   profileImage: string;
+  role: string;
 }
 
-export type ViewType = 'MAP' | 'HISTORY' | 'DECISION';
+export interface HistoryPoint {
+  time: string;
+  level?: number;
+  outflow?: number;
+  supply?: number;
+  pressure?: number;
+  demand?: number;
+}
+
+export type StrategyType = 'A' | 'B' | 'C';
