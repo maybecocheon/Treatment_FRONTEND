@@ -18,6 +18,10 @@ export interface WaterSystemData {
   hourlyCostBaseline?: number[]; // 기존 비용
   hourlyCostOptimized?: number[]; // AI 최적화 비용
   expectedSavingsPercent?: number;
+
+  basePattern?: number[];
+  dailyForecast?: number[];
+  recalculation?: number[];
 }
 
 export interface PlantStats {

@@ -4,8 +4,10 @@ import Login from '@/components/loginJoin/Login';
 import LoginSkeleton from '@/components/skeletons/LoginSkeleton';
 import IntroduceSkeleton from '@/components/skeletons/IntroduceSkeleton';
 import PageFallback from '@/components/loading/PageFallback';
+import Footer from '@/components/Footer';
+import FooterSkeleton from '@/components/skeletons/FooterSkeleton';
 
-export default function LandingPage() {
+export default function LoginPage() {
   return (
     <div className="flex flex-col min-h-screen bg-slate-950 text-slate-200">
 
@@ -15,14 +17,15 @@ export default function LandingPage() {
       </Suspense>
 
 
-      {/* 프로젝트 소개 */}
+      {/* 프로젝트 소개 섹션 */}
       <Suspense fallback={<PageFallback skeleton={<IntroduceSkeleton />} />}>
         <Introduce />
       </Suspense>
 
-      <footer className="py-12 md:py-20 bg-slate-950 text-slate-600 text-center text-sm border-t border-white/5">
-        <p>© 2026 FLOWISE System. Innovating Water Infrastructure through Intelligence.</p>
-      </footer>
+      {/* footer 섹션 */}
+      <Suspense fallback={<PageFallback skeleton={<FooterSkeleton />} />}>
+        <Footer />
+      </Suspense>
     </div>
   );
 };

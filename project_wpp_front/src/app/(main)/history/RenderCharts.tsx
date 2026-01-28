@@ -25,7 +25,7 @@ export default function RenderCharts({ selectedCategory }: { selectedCategory: s
                 {isPlant ? <Waves size={20} /> : <Droplets size={20} />}
               </div>
             </div>
-            <div className="h-[300px]">
+            <div className="h-75">
               <ResponsiveContainer width="100%" height="100%">
                 <AreaChart data={currentData}>
                   <defs>
@@ -62,7 +62,7 @@ export default function RenderCharts({ selectedCategory }: { selectedCategory: s
                 <Gauge size={20} />
               </div>
             </div>
-            <div className="h-[300px]">
+            <div className="h-75">
               <ResponsiveContainer width="100%" height="100%">
                 <LineChart data={currentData}>
                   <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
@@ -88,7 +88,7 @@ export default function RenderCharts({ selectedCategory }: { selectedCategory: s
               <p className="text-xs text-slate-400 font-bold uppercase tracking-widest mt-1">Aggregated Demand Comparison</p>
             </div>
           </div>
-          <div className="h-[300px]">
+          <div className="h-75">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={WaterSystemDatas.filter(d => d.id.startsWith("res")).map(r => ({ name: r.name, value: r.actualDemand?.reduce((a, b) => a + b, 0) }))}>
                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />

@@ -2,7 +2,7 @@
 
 export default function LoginSkeleton() {
     return (
-        <section className="relative h-screen flex flex-col items-center justify-center overflow-hidden bg-slate-950">
+        <section className="relative min-h-screen flex flex-col items-center justify-center overflow-y-auto py-12 md:py-20 bg-slate-950">
             {/* 배경 */}
             <div className="absolute inset-0 pointer-events-none overflow-hidden">
                 <div className="absolute -top-24 -left-24 w-96 h-96 bg-blue-600/20 blur-[120px] rounded-full animate-pulse" />
@@ -26,7 +26,7 @@ export default function LoginSkeleton() {
             </div>
 
             {/* 화살표 */}
-            <div className="absolute bottom-10 left-1/2 -translate-x-1/2 space-y-2 animate-pulse">
+            <div className="mt-10 space-y-2 animate-pulse">
                 <div className="h-3 w-24 bg-slate-600/40 rounded mx-auto" />
                 <div className="h-6 w-6 bg-slate-600/40 rounded-full mx-auto" />
             </div>

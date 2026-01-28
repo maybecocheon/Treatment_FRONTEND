@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { ArrowRight, ChevronDown, Droplets, Lock, User, UserPlus } from "lucide-react";
+import { ArrowRight, ChevronDown, Lock, User, UserPlus } from "lucide-react";
 import { useSetAtom } from "jotai";
 import { scrollToContentAtom } from "@/atoms/scroll";
 import Logo from "@/components/loginJoin/Logo";
@@ -60,7 +60,7 @@ export default function Login() {
     }
 
     return (
-        <section className="relative h-screen flex flex-col items-center justify-center overflow-hidden">
+        <section className="relative min-h-screen flex flex-col items-center justify-center overflow-y-auto py-12 md:py-20">
             {/* 배경 */}
             <Background />
 
@@ -124,7 +124,7 @@ export default function Login() {
 
             <button
                 onClick={() => triggerScroll(v => v + 1)}
-                className="absolute bottom-0 left-1/2 -translate-x-1/2 text-slate-500 hover:text-white transition-colors animate-bounce flex flex-col items-center gap-2"
+                className="mt-8 text-slate-500 hover:text-white transition-colors animate-bounce flex flex-col items-center gap-2"
             >
                 <span className="text-[10px] font-black uppercase tracking-widest">About Project</span>
                 <ChevronDown className="w-6 h-6" />

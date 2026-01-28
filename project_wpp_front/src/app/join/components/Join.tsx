@@ -71,7 +71,7 @@ export default function Join() {
     }, [formData.password])
 
     return (
-        <section className="relative h-full w-full flex items-center justify-center overflow-auto">
+        <section className="relative min-h-screen w-full flex items-center justify-center overflow-auto py-12 md:py-20">
             {/* 배경 */}
             <Background />
 
