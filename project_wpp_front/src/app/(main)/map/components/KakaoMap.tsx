@@ -1,4 +1,4 @@
-"use client"
+'use client'
 
 import { useEffect, useState } from "react";
 import { CustomOverlayMap, Map, Polygon, Polyline } from "react-kakao-maps-sdk";
@@ -7,24 +7,18 @@ import { WaterSystemDatas } from "@/data/mockData";
 import WaterSystemOverlay from "./WaterSystemOverlay";
 
 import { WaterSystemData } from "@/data/types";
+import MapSkeleton from "./skeletons/MapSkeleton";
+import { useRouter } from "next/navigation";
 
 interface KakaoMapProps {
     setSelectedReservoir: (reservoir: WaterSystemData) => void;
 }
 
 export default function KakaoMap({ setSelectedReservoir }: KakaoMapProps) {
+    const router = useRouter();
     const [isClient, setIsClient] = useState(false);
     const [formattedPath, setFormattedPath] = useState<{ lat: number, lng: number }[]>([])
-
-    // 특정 ID 리스트를 순서대로 좌표 객체 배열로 변환
-    const getPathByIds = (ids: string[]) => {
-        return ids
-            .map(id => {
-                const data = WaterSystemDatas.find(item => item.id === id);
-                return data ? { lat: data.lat, lng: data.lng } : null;
-            })
-            .filter((pos): pos is { lat: number; lng: number } => pos !== null);
-    };
+    const [mapLevel, setMapLevel] = useState(9);
 
     // 부산 시청 좌표를 중심으로 설정
     const center = { lat: 35.1996, lng: 129.0756 };
@@ -56,16 +50,18 @@ export default function KakaoMap({ setSelectedReservoir }: KakaoMapProps) {
     }, []);
 
     if (!isClient)
-        return <div style={{ width: "100%", height: "360px", background: "#f0f0f0" }} />;
+        return <MapSkeleton />;
 
     return (
-        <div style={{ width: "100%", height: "700px" }}>
+        <div style={{ width: "100%", height: "100%" }}>
             <Map
                 center={center}
-                level={8}
+                level={9}
                 style={{ width: "100%", height: "100%" }}
                 zoomable={true} // 줌인, 줌아웃
                 draggable={true} // 드래그
+                minLevel={9}
+                onZoomChanged={map => setMapLevel(map.getLevel())}
             >
                 {/* 폴리곤 */}
                 {
@@ -81,27 +77,10 @@ export default function KakaoMap({ setSelectedReservoir }: KakaoMapProps) {
                     )
                 }
 
-                {/* 연결선 - West System (AA 가압장 라인) */}
-                <Polyline
-                    path={getPathByIds(["plant_central", "res_A", "res_B", "res_D", "res_E", "res_F"])}
-                    strokeWeight={4}
-                    strokeColor="#3b82f6"
-                    strokeOpacity={0.5}
-                />
-
-                {/* 연결선 - East System (AB 가압장 라인) */}
-                <Polyline
-                    path={getPathByIds(["plant_central", "res_J", "res_H", "res_G", "res_I", "res_K", "res_L"])}
-                    strokeWeight={4}
-                    strokeColor="#60a5fa"
-                    strokeOpacity={0.5}
-                    strokeStyle="solid"
-                />
-
                 {/* 정수장 */}
-                {WaterSystemDatas.map((res) => (
-                    <CustomOverlayMap key={res.id} position={{ lat: res.lat, lng: res.lng }}>
-                        <WaterSystemOverlay waterSystem={res} onClick={res.type === "reservoir" ? () => setSelectedReservoir(res) : undefined} />
+                {WaterSystemDatas.map((waterSystem) => (
+                    <CustomOverlayMap key={waterSystem.id} position={{ lat: waterSystem.lat, lng: waterSystem.lng }}>
+                        <WaterSystemOverlay waterSystem={waterSystem} onClick={waterSystem.type === "reservoir" ? () => setSelectedReservoir(waterSystem) : () => router.push("/scheduling")} mapLevel={mapLevel} />
                     </CustomOverlayMap>
                 ))}
             </Map>

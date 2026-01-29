@@ -6,25 +6,18 @@ import { ArrowRight, ChevronDown, Lock, User, UserPlus } from "lucide-react";
 import { useSetAtom } from "jotai";
 import { scrollToContentAtom } from "@/atoms/scroll";
 import Logo from "@/components/loginJoin/Logo";
-import Background from "@/components/loginJoin/Background";
+import Background from "./Background";
+import Input from "./TailInput";
 
 export default function Login() {
-    // 스크롤 트리거
     const triggerScroll = useSetAtom(scrollToContentAtom);
-
     const router = useRouter();
     const server_url = process.env.NEXT_PUBLIC_SERVER_URL;
     const [credentials, setCredentials] = useState({ username: "", password: "" });
 
-    // 스크롤 0
     useEffect(() => {
-        // 1. 진입 시 초기화
         triggerScroll(0);
-
-        // 2. 이탈 시(Clean-up) 초기화 
-        return () => {
-            triggerScroll(0);
-        };
+        return () => triggerScroll(0);
     }, []);
 
     const handleSubmit = (e: React.FormEvent) => {
@@ -40,7 +33,7 @@ export default function Login() {
         try {
             const response = await fetch(`${server_url}/oauth/login`, {
                 method: "POST",
-                headers: { "Content-Type": "application/json", },
+                headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(credentials),
             });
             if (response.ok) {
@@ -57,50 +50,35 @@ export default function Login() {
             console.error("로그인 오류: ", error);
             alert("로그인 실패. 다시 시도해 주세요.");
         }
-    }
+    };
 
     return (
-        <section className="relative min-h-screen flex flex-col items-center justify-center overflow-y-auto py-12 md:py-20">
+        <section className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden bg-slate-50 py-12 md:py-20">
             {/* 배경 */}
             <Background />
 
-            {/* 로고 */}
             <div className="relative z-10 w-full max-w-md px-6 flex flex-col items-center justify-center gap-8">
+                {/* 로고 */}
                 <Logo />
 
-                {/* 로그인 박스 */}
-                <div className="w-full animate-in fade-in zoom-in-95 duration-700 delay-200 overflow-hidden rounded-xl shadow-2xl">
+                <div className="w-full animate-in fade-in zoom-in-95 duration-1000 slide-in-from-bottom-4 shadow-[0_20px_50px_rgba(0,0,0,0.05)] rounded-3xl overflow-hidden">
                     <form
                         onSubmit={handleSubmit}
-                        className="w-full bg-white/5 backdrop-blur-2xl border border-white/10 p-10 space-y-6"
+                        className="w-full bg-white/70 backdrop-blur-3xl border border-white/40 p-10 space-y-6"
                     >
                         <div className="space-y-4">
                             <div className="relative group">
-                                <User className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-500 group-focus-within:text-blue-500 transition-colors" />
-                                <input
-                                    type="text"
-                                    placeholder="아이디"
-                                    required
-                                    value={credentials.username}
-                                    onChange={handleChange}
-                                    className="w-full bg-slate-900/50 border border-slate-700 rounded-2xl py-4 pl-12 pr-4 text-white placeholder:text-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-all text-sm md:text-base"
-                                />
+                                <User className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400 group-focus-within:text-sky-500 transition-colors" />
+                                <Input icon={User} type="text" placeholder="아이디" name="username" value={credentials.username} onChange={handleChange} />
                             </div>
                             <div className="relative group">
-                                <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-500 group-focus-within:text-blue-500 transition-colors" />
-                                <input
-                                    type="password"
-                                    placeholder="비밀번호"
-                                    required
-                                    value={credentials.password}
-                                    onChange={handleChange}
-                                    className="w-full bg-slate-900/50 border border-slate-700 rounded-2xl py-4 pl-12 pr-4 text-white placeholder:text-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-all text-sm md:text-base"
-                                />
+                                <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400 group-focus-within:text-sky-500 transition-colors" />
+                                <Input icon={Lock} type="password" placeholder="비밀번호" name="password" value={credentials.password} onChange={handleChange} />
                             </div>
                         </div>
                         <button
                             type="submit"
-                            className="group relative w-full py-4 bg-blue-600 hover:bg-blue-500 text-white rounded-2xl font-black text-lg shadow-xl shadow-blue-600/30 transition-all overflow-hidden"
+                            className="group relative w-full py-4 bg-sky-500 hover:bg-sky-600 text-white rounded-2xl font-bold text-lg shadow-lg shadow-sky-500/20 transition-all active:scale-[0.98] overflow-hidden"
                         >
                             <span className="relative z-10 flex items-center justify-center gap-2">
                                 로그인 <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
@@ -108,12 +86,11 @@ export default function Login() {
                         </button>
                     </form>
 
-                    {/* 회원가입 페이지로 이동 */}
-                    <div className="w-full bg-white/10 backdrop-blur-xl border-x border-b border-white/10 p-5 flex items-center justify-center gap-2">
-                        <span className="text-slate-400 text-sm font-medium">계정이 없으신가요?</span>
+                    <div className="w-full bg-slate-50/50 backdrop-blur-md border-t border-slate-100 p-5 flex items-center justify-center gap-2">
+                        <span className="text-slate-500 text-sm font-medium">계정이 없으신가요?</span>
                         <button
                             onClick={() => router.push("/join")}
-                            className="text-blue-400 text-sm font-black hover:text-blue-300 hover:cursor-pointer transition-colors flex items-center gap-2 group"
+                            className="text-sky-600 text-sm font-bold hover:text-sky-700 transition-colors flex items-center gap-1 group"
                         >
                             <UserPlus className="w-4 h-4" />
                             회원가입 요청
@@ -124,10 +101,10 @@ export default function Login() {
 
             <button
                 onClick={() => triggerScroll(v => v + 1)}
-                className="mt-8 text-slate-500 hover:text-white transition-colors animate-bounce flex flex-col items-center gap-2"
+                className="mt-12 text-slate-400 hover:text-sky-600 transition-colors animate-bounce flex flex-col items-center gap-2"
             >
-                <span className="text-[10px] font-black uppercase tracking-widest">About Project</span>
-                <ChevronDown className="w-6 h-6" />
+                <span className="text-[10px] font-bold uppercase tracking-[0.2em]">About Project</span>
+                <ChevronDown className="w-6 h-6 text-sky-400" />
             </button>
         </section>
     );

@@ -1,16 +1,14 @@
-import Header from "@/components/Header";
+import Header from "@/components/main/Header";
 
-export default function RootLayout({ children, }: Readonly<{ children: React.ReactNode; }>) {
+export default function MainLayout({ children, }: Readonly<{ children: React.ReactNode; }>) {
 
   return (
-    <div className="min-h-screen overflow-hidden bg-[#f8fafc]">
-      <div className="flex min-h-screen">
-        <div className="flex-1 flex flex-col relative overflow-auto w-full">
-          <Header />
-          <main className="p-4 md:p-8 flex flex-col flex-1">
-            {children}
-          </main>
-        </div>
+    <div className="flex min-h-screen bg-sky-50">
+      <div className="flex flex-1 flex-col overflow-hidden">
+        <Header />
+        <main className="flex-1 overflow-y-auto p-4 md:p-8">
+          {children}
+        </main>
       </div>
     </div>
   );

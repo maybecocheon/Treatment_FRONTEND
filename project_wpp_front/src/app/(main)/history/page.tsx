@@ -1,6 +1,7 @@
 'use client'
 
 import RenderCharts from "@/app/(main)/history/RenderCharts";
+import Title from "@/components/main/Title";
 import { ArrowUpRight, Calendar, Database, Download, Droplets, Filter } from "lucide-react";
 import { useState } from "react";
 
@@ -27,12 +28,9 @@ export default function History() {
 
   return (
     <div>
-      {/* 헤더 영역 */}
       <div className="flex flex-col md:flex-row md:items-center justify-between mb-8 md:mb-10 gap-6">
-        <div>
-          <h2 className="text-2xl md:text-4xl font-black text-slate-900 tracking-tight mb-2">히스토리 뷰어</h2>
-          <p className="text-slate-500 font-medium text-sm md:text-lg">과거 운영 데이터 분석 및 리포트 조회</p>
-        </div>
+        {/* 헤더 영역 */}
+        <Title title="히스토리 뷰어" subtitle="과거 운영 데이터 분석 및 리포트 조회" />
 
         <div className="flex items-center gap-3 w-full md:w-auto">
           <button className="flex-1 md:flex-none flex items-center justify-center gap-2 px-6 py-3 bg-white border border-slate-200 rounded-2xl text-slate-600 font-bold text-sm shadow-sm hover:bg-slate-50 transition-colors">
@@ -70,7 +68,7 @@ export default function History() {
 
         {/* 날짜 */}
         <div className="flex items-center gap-4 flex-1">
-          <div className="relative flex-1 max-w-full xl:max-w-[240px]">
+          <div className="relative flex-1 max-w-full xl:max-w-60">
             <Calendar className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
             <input
               type="date"
@@ -97,7 +95,7 @@ export default function History() {
           { label: '에너지 효율 등급', value: 'A+', change: 'Stable' },
           { label: '이상 탐지 횟수', value: '0건', change: 'Normal' },
         ].map((stat, i) => (
-          <div key={i} className="bg-white p-5 md:p-6 rounded-[2rem] border border-slate-200 shadow-sm">
+          <div key={i} className="bg-white p-5 md:p-6 rounded-4xl border border-slate-200 shadow-sm">
             <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">{stat.label}</p>
             <p className="text-xl md:text-2xl font-black text-slate-900 mb-1">{stat.value}</p>
             <span className={`text-[10px] font-black px-2 py-0.5 rounded-full ${stat.change.startsWith('+') ? 'bg-emerald-50 text-emerald-600' : 'bg-slate-50 text-slate-400'}`}>

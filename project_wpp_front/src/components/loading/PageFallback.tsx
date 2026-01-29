@@ -1,5 +1,9 @@
 import { Loader2 } from "lucide-react";
-import { PageFallbackProps } from "./LoadingTypes";
+
+export interface PageFallbackProps {
+    skeleton?: React.ReactNode;
+    message?: string;
+}
 
 export default function PageFallback({ skeleton, message = "화면을 불러오는 중이에요…", }: PageFallbackProps) {
     return (

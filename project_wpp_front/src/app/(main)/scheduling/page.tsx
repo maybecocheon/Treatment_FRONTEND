@@ -1,6 +1,5 @@
 'use client'
 
-import React from 'react';
 import { 
   Zap, ArrowLeft, Download, Play, 
   Settings, Clock, Database, Activity, Info, 
@@ -11,9 +10,9 @@ import {
   LineChart, Line, ComposedChart, Bar, Area, Legend
 } from 'recharts';
 import { useRouter } from 'next/navigation';
+import Title from '@/components/main/Title';
 
 export default function WaterPlantControlPage() {
-  const router = useRouter();
 
   // Mock 데이터: 시간대별 송수량, 펌프 가동률, 수조 잔량 등
   const controlData = Array.from({ length: 24 }).map((_, i) => {
@@ -38,20 +37,11 @@ export default function WaterPlantControlPage() {
   });
 
   return (
-    <div className="min-h-screen bg-[#f8fafc] p-4 md:p-10">
-      <div className="max-w-7xl mx-auto">
+    <div className="flex flex-col flex-1 h-full gap-6 md:p-4">
         
-        {/* 상단 네비게이션 */}
-        <div className="flex items-center justify-between mb-10">
-          <button 
-            onClick={() => router.back()}
-            className="group flex items-center gap-2 text-slate-500 hover:text-slate-900 transition-all font-bold"
-          >
-            <div className="p-2 rounded-xl group-hover:bg-white transition-colors">
-              <ArrowLeft size={20} />
-            </div>
-            이전 화면으로
-          </button>
+        {/* 타이틀 섹션 */}
+        <div className="flex justify-between items-center">
+          <Title title="정수장 제어 현황" subtitle="실시간 예측 수요 기반 송수 스케줄링 운영 중" />
           <div className="flex gap-3">
             <button className="flex items-center gap-2 bg-white border border-slate-200 px-5 py-2.5 rounded-2xl text-sm font-bold text-slate-600 hover:bg-slate-50 transition-all">
               <Settings size={18} /> 제어 설정
@@ -61,17 +51,7 @@ export default function WaterPlantControlPage() {
             </button>
           </div>
         </div>
-
-        {/* 타이틀 섹션 */}
-        <div className="mb-10">
-          <div className="flex items-center gap-3 mb-2">
-            <span className="bg-emerald-100 text-emerald-600 text-[10px] font-black px-2.5 py-1 rounded-lg uppercase tracking-wider">Live Control</span>
-            <h1 className="text-3xl md:text-4xl font-black text-slate-900 tracking-tight">
-              중앙 정수장 <span className="text-slate-400 font-light">제어 현황</span>
-            </h1>
-          </div>
-          <p className="text-slate-500 font-medium">실시간 예측 수요 기반 송수 스케줄링 운영 중</p>
-        </div>
+        
 
         {/* 4대 핵심 지표 (송수량, 펌프, 가동률, 잔량) */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
@@ -81,7 +61,7 @@ export default function WaterPlantControlPage() {
             { label: '평균 가동률', value: '72.4', unit: '%', icon: Percent, color: 'text-amber-500', bg: 'bg-amber-50' },
             { label: '수조 잔량', value: '4,280', unit: 'm³', icon: Database, color: 'text-emerald-500', bg: 'bg-emerald-50' },
           ].map((item, idx) => (
-            <div key={idx} className="bg-white p-7 rounded-4xl border border-slate-100 shadow-sm">
+            <div key={idx} className="glass p-7 rounded-4xl border">
               <div className={`${item.bg} w-12 h-12 rounded-2xl flex items-center justify-center mb-5`}>
                 <item.icon className={`${item.color}`} size={24} />
               </div>
@@ -95,7 +75,7 @@ export default function WaterPlantControlPage() {
         </div>
 
         {/* 메인 제어 차트 (송수량 + 가동률 + 잔량) */}
-        <div className="bg-white border border-slate-100 rounded-[40px] p-8 md:p-12 shadow-sm mb-10">
+        <div className="glass rounded-[40px] p-8 md:p-12 mb-10">
           <div className="flex flex-col md:flex-row md:items-center justify-between mb-10 gap-4">
             <div>
               <h3 className="text-xl font-black text-slate-800 flex items-center gap-2 mb-1">
@@ -168,6 +148,5 @@ export default function WaterPlantControlPage() {
         </div>
 
       </div>
-    </div>
   );
 }

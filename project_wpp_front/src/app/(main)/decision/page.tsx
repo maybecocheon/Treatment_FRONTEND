@@ -1,5 +1,6 @@
 'use client'
 
+import Title from "@/components/main/Title";
 import { StrategyType } from "@/data/types";
 import { Zap, ShieldCheck, Settings, BrainCircuit, Info, CheckCircle2, Save, ArrowRight } from "lucide-react";
 import { useMemo, useState } from "react";
@@ -28,10 +29,7 @@ export default function Decision() {
     return (
         <div>
             {/* 헤더 */}
-            <div className="mb-6 md:mb-10">
-                <h2 className="text-2xl md:text-4xl font-black text-slate-900 tracking-tight mb-2">의사결정 시뮬레이션</h2>
-                <p className="text-slate-500 font-medium text-sm md:text-lg">AI 알고리즘이 제안하는 최적의 운영 전략 시뮬레이션</p>
-            </div>
+            <Title title="의사결정 시뮬레이션" subtitle="AI 알고리즘이 제안하는 최적의 운영 전략 시뮬레이션" />
 
             {/* 전략 선택 영역 */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6 mb-6 md:mb-8">

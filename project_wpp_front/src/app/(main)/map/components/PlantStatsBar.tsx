@@ -1,43 +1,74 @@
+'use client'
+
 import { plantData } from '@/data/mockData';
 import { Waves, Gauge, Droplets, TrendingUp } from 'lucide-react';
+import { useState } from 'react';
+import PlantTrendModal from './PlantTrendModal';
 
-const PlantsStats = ({ text, value, unit }: { text: string, value: number, unit: any}) => {
-    return (
-        <div>
-          <p className="text-xs text-gray-500 font-semibold tracking-wider">{text}</p>
-          <p className="text-2xl font-bold text-slate-800 flex">{value.toLocaleString()}{unit}</p>
-        </div>
-    );
-}
+const StatCard: React.FC<{
+  icon: React.ReactNode;
+  label: string;
+  value: number | string;
+  unit?: React.ReactNode;
+  colorClass: string;
+  onClick?: () => void;
+}> = ({ icon, label, value, unit, colorClass, onClick }) => (
+  <button
+    onClick={onClick}
+    className={`glass flex-1 min-w-50 p-5 rounded-2xl flex items-center gap-5 transition-all duration-300 hover:scale-[1.02] hover:bg-white/40 group text-left ${onClick ? 'cursor-pointer' : 'cursor-default'}`}
+  >
+    <div className={`p-3 rounded-2xl transition-colors ${colorClass}`}>
+      {icon}
+    </div>
+    <div className="flex flex-col">
+      <span className="text-[12px] uppercase font-bold tracking-widest text-blue-900/50 mb-1">
+        {label}
+      </span>
+      <div className="flex items-baseline gap-1">
+        <span className="text-2xl font-black text-blue-950">
+          {typeof value === 'number' ? value.toLocaleString() : value}
+        </span>
+        {unit && <span className="text-xs font-semibold text-blue-900/60">{unit}</span>}
+      </div>
+    </div>
+  </button>
+);
 
-export default function PlantStatsBar ({ onStorageClick }: { onStorageClick: () => void }) {
+export default function PlantStatsBar() {
+  const [showTrend, setShowTrend] = useState(false);
+
   return (
-    <div className="flex flex-wrap gap-4 mb-6">
-      <div className="flex-1 min-w-50 bg-white shadow-sm border border-gray-200 p-4 rounded-2xl flex items-center space-x-4">
-        <div className="bg-blue-50 p-3 rounded-xl text-blue-600">
-          <Droplets size={24} />
-        </div>
-        <PlantsStats text="정수장 송수량" value={plantData.outflow} unit={<span className="text-xs ml-1 text-slate-400 font-normal">m³/h</span>}/>
-      </div>
-
-      <div className="flex-1 min-w-50 bg-white shadow-sm border border-gray-200 p-4 rounded-2xl flex items-center space-x-4">
-        <div className="bg-emerald-50 p-3 rounded-xl text-emerald-600">
-          <Gauge size={24} />
-        </div>
-        <PlantsStats text="펌프 가동률" value={plantData.pumpRate} unit="%"/>
-      </div>
-
-      <button 
-        onClick={onStorageClick}
-        className="flex-1 min-w-50 bg-white shadow-sm border border-indigo-100 p-4 rounded-2xl flex items-center space-x-4 
-                    hover:border-indigo-300 hover:shadow-md hover:cursor-pointer transition-all group text-left"
-      >
-        <div className="bg-indigo-50 p-3 rounded-xl text-indigo-600 group-hover:bg-indigo-100 transition-colors">
-          <Waves size={24} />
-        </div>
-        <PlantsStats text="정수장 잔량" value={plantData.currentStorage}
-                        unit={<span className="flex items-baseline">% <TrendingUp size={14} className="ml-2 text-indigo-400" /></span>}/>
-      </button>
+    <div className="flex flex-wrap gap-4 animate-in fade-in slide-in-from-bottom-4 duration-700">
+      <StatCard
+        icon={<Droplets size={24} />}
+        label="정수장 송수량"
+        value={plantData.outflow}
+        unit="m³/h"
+        colorClass="bg-blue-100/50 text-blue-700"
+      />
+      <StatCard
+        icon={<Gauge size={24} />}
+        label="펌프 가동률"
+        value={plantData.pumpRate}
+        unit="%"
+        colorClass="bg-emerald-100/50 text-emerald-700"
+      />
+      <StatCard
+        icon={<Waves size={24} />}
+        label="정수장 잔량"
+        value={plantData.currentStorage}
+        unit={
+          <div className="flex items-center gap-1">
+            % <TrendingUp size={14} className="text-indigo-600" />
+          </div>
+        }
+        colorClass="bg-indigo-100/50 text-indigo-700"
+        onClick={() => setShowTrend(true)}
+      />
+      
+      {showTrend && (
+        <PlantTrendModal onClose={() => setShowTrend(false)} />
+      )}
     </div>
   );
 }
