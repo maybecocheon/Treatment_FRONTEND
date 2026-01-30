@@ -2,7 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import { useAtomValue } from "jotai";
-import { scrollToContentAtom } from "@/atoms/scroll";
+import { scrollToContentAtom } from "@/atoms/landingAtom";
 import { Droplets, ShieldCheck, Target, Zap } from "lucide-react";
 import { TEAM_MEMBERS } from "@/data/mockData";
 

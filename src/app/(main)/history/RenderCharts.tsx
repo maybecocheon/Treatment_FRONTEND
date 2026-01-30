@@ -1,8 +1,11 @@
+import { selectedCategoryAtom } from "@/atoms/categoryAtom";
 import { WaterSystemDatas, MOCK_HISTORY_DATA } from "@/data/mockData";
+import { useAtomValue } from "jotai";
 import { Droplets, Gauge, Waves } from "lucide-react";
 import { Area, AreaChart, Bar, BarChart, CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 
-export default function RenderCharts({ selectedCategory }: { selectedCategory: string }) {
+export default function RenderCharts() {
+  const selectedCategory = useAtomValue(selectedCategoryAtom);
   const currentData = MOCK_HISTORY_DATA[selectedCategory];
   const isReservoir = selectedCategory.startsWith("res");
   const isPlant = selectedCategory === "PLANT";
@@ -13,7 +16,7 @@ export default function RenderCharts({ selectedCategory }: { selectedCategory: s
       {/* 그래프 1: 수위 or 송수량 */}
       {
         (isPlant || isReservoir) && (
-          <div className="bg-white p-8 rounded-[2.5rem] border border-slate-200 shadow-sm">
+          <div className="glass p-8 rounded-[2.5rem]">
             <div className="flex items-center justify-between mb-8">
               <div>
                 <h4 className="text-xl font-black text-slate-800 tracking-tight">
@@ -50,7 +53,7 @@ export default function RenderCharts({ selectedCategory }: { selectedCategory: s
       {/* 그래프 2: 유출량 or 토출 압력 */}
       {
         (isPlant || isReservoir) && (
-          <div className="bg-white p-8 rounded-[2.5rem] border border-slate-200 shadow-sm">
+          <div className="glass p-8 rounded-[2.5rem]">
             <div className="flex items-center justify-between mb-8">
               <div>
                 <h4 className="text-xl font-black text-slate-800 tracking-tight">
@@ -81,7 +84,7 @@ export default function RenderCharts({ selectedCategory }: { selectedCategory: s
 
       {/* 그래프 3: 배수지별 총 수요량 비교 (Overview Only) */}
       {isOverview && (
-        <div className="col-span-1 xl:col-span-2 bg-white p-8 rounded-[2.5rem] border border-slate-200 shadow-sm">
+        <div className="col-span-1 xl:col-span-2 glass p-8 rounded-[2.5rem]">
           <div className="flex items-center justify-between mb-8">
             <div>
               <h4 className="text-xl font-black text-slate-800 tracking-tight">배수지별 총 수요량 비교</h4>

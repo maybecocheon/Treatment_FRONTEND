@@ -5,8 +5,10 @@ import { User, LogOut, Clock, ChevronDown, X, Droplets, MenuIcon } from "lucide-
 import Link from "next/link";
 import { currentUser } from "@/data/mockData"
 import Menu from "./Menu";
+import { useRouter } from "next/navigation";
 
 export default function Header() {
+  const router = useRouter();
   // 시간
   const [mounted, setMounted] = useState(false);
   const [time, setTime] = useState<Date | null>(null);
@@ -109,7 +111,8 @@ export default function Header() {
                   </div>
                 </div>
                 <div className="p-1 space-y-1">
-                  <button className="w-full flex items-center space-x-3 px-4 py-3 text-sm font-bold text-slate-600 hover:bg-sky-50 hover:text-sky-600 rounded-xl transition-colors">
+                  <button className="w-full flex items-center space-x-3 px-4 py-3 text-sm font-bold text-slate-600 hover:bg-sky-50 hover:text-sky-600 rounded-xl transition-colors"
+                          onClick={() => router.push("/setting")}>
                     <User size={16} />
                     <span>프로필 설정</span>
                   </button>

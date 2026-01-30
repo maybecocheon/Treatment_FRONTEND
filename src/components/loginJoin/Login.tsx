@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { ArrowRight, ChevronDown, Lock, User, UserPlus } from "lucide-react";
 import { useSetAtom } from "jotai";
-import { scrollToContentAtom } from "@/atoms/scroll";
+import { scrollToContentAtom } from "@/atoms/landingAtom";
 import Logo from "@/components/loginJoin/Logo";
 import Background from "./Background";
 import Input from "./TailInput";
