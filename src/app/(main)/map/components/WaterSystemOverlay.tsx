@@ -1,14 +1,21 @@
+'use client'
+
 import { WaterSystemData } from "@/data/types";
 import { AlertTriangle, Factory } from "lucide-react";
 import { WaterWave } from "./WaterWave";
+import { useAtomValue } from "jotai";
+import { mapLevelAtom } from "@/atoms/uniAtoms";
+import { useEffect } from "react";
 
 export interface WaterSystemOverlay {
     waterSystem: WaterSystemData;
     onClick?: () => void;
-    mapLevel: number;
 }
 
-export default function WaterSystemOverlay({ waterSystem, onClick, mapLevel }: WaterSystemOverlay) {
+export default function WaterSystemOverlay({ waterSystem, onClick }: WaterSystemOverlay) {
+    // 지도 레벨
+    const mapLevel = useAtomValue(mapLevelAtom);
+    
     // 1. 정수장
     if (waterSystem.type === "plant") {
         return (

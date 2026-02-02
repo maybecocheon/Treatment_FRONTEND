@@ -1,9 +1,9 @@
 export interface WaterSystemData {
   id: string;
   name: string;
-  lat: number;
-  lng: number;
   type: string;
+  lat?: number;
+  lng?: number;
 
   spec?: string;
   v?: string;
@@ -11,24 +11,21 @@ export interface WaterSystemData {
   minLevel?: number;
   maxLevel?: number;
   accuracy?: number;
+
   predictedDemand?: number[];
   actualDemand?: number[];
-  warning?: string;
 
   hourlyCostBaseline?: number[]; // 기존 비용
   hourlyCostOptimized?: number[]; // AI 최적화 비용
   expectedSavingsPercent?: number;
 
-  basePattern?: number[];
   dailyForecast?: number[];
   recalculation?: number[];
 }
 
 export interface PlantStats {
   outflow: number;
-  pumpRate: number;
-  currentStorage: number;
-  storageHistory: { time: string; value: number }[];
+  pumpAverage: number;
 }
 
 export interface TeamMember {
@@ -39,9 +36,11 @@ export interface TeamMember {
 
 export interface User {
   id: string;
-  nickname: string;
-  profileImage: string;
+  password: string;
+  name: string;
+  profileImage?: string;
   role: string;
+  department: string;
 }
 
 export interface HistoryPoint {

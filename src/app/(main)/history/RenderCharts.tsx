@@ -1,5 +1,5 @@
-import { selectedCategoryAtom } from "@/atoms/categoryAtom";
-import { WaterSystemDatas, MOCK_HISTORY_DATA } from "@/data/mockData";
+import { selectedCategoryAtom } from "@/atoms/uniAtoms";
+import { waterSystemDatas, MOCK_HISTORY_DATA } from "@/data/mockData";
 import { useAtomValue } from "jotai";
 import { Droplets, Gauge, Waves } from "lucide-react";
 import { Area, AreaChart, Bar, BarChart, CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
@@ -20,7 +20,7 @@ export default function RenderCharts() {
             <div className="flex items-center justify-between mb-8">
               <div>
                 <h4 className="text-xl font-black text-slate-800 tracking-tight">
-                  {isPlant ? '실시간 송수량 (Supply)' : '시간별 수위 변화 (Level)'}
+                  {isPlant ? '시간별 송수량 (Supply)' : '시간별 수위 변화 (Level)'}
                 </h4>
                 <p className="text-xs text-slate-400 font-bold uppercase tracking-widest mt-1">Hourly Time Series Analysis</p>
               </div>
@@ -93,7 +93,7 @@ export default function RenderCharts() {
           </div>
           <div className="h-75">
             <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={WaterSystemDatas.filter(d => d.id.startsWith("res")).map(r => ({ name: r.name, value: r.actualDemand?.reduce((a, b) => a + b, 0) }))}>
+              <BarChart data={waterSystemDatas.filter(d => d.id.startsWith("res")).map(r => ({ name: r.name, value: r.actualDemand?.reduce((a, b) => a + b, 0) }))}>
                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
                 <XAxis dataKey="name" stroke="#94a3b8" fontSize={12} fontWeight="800" axisLine={false} tickLine={false} />
                 <YAxis stroke="#94a3b8" fontSize={12} fontWeight="800" axisLine={false} tickLine={false} />

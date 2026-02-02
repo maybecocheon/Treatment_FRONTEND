@@ -5,10 +5,12 @@ import { User, LogOut, Clock, ChevronDown, X, Droplets, MenuIcon } from "lucide-
 import Link from "next/link";
 import { currentUser } from "@/data/mockData"
 import Menu from "./Menu";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 
 export default function Header() {
   const router = useRouter();
+  const pathname = usePathname();
+
   // 시간
   const [mounted, setMounted] = useState(false);
   const [time, setTime] = useState<Date | null>(null);
@@ -37,6 +39,11 @@ export default function Header() {
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
+
+  // 경로 변경 시 프로필 닫기
+  useEffect(() => {
+    setShowProfile(false);
+  }, [pathname]);
 
   return (
     <header className="h-16 md:h-20 backdrop-blur-xl sticky top-0 z-50 transition-all">
@@ -93,7 +100,7 @@ export default function Header() {
               </div>
               <div className="text-left hidden sm:block leading-tight">
                 <p className="text-[10px] text-sky-600 font-black uppercase tracking-widest">{currentUser.role}</p>
-                <p className="text-sm font-black text-slate-800">{currentUser.nickname}</p>
+                <p className="text-sm font-black text-slate-800">{currentUser.name}</p>
               </div>
               <ChevronDown size={14} className={`text-slate-400 transition-transform ${showProfile ? "rotate-180" : ""}`} />
             </button>
@@ -101,15 +108,6 @@ export default function Header() {
             {/* 프로필 드롭다운 */}
             {showProfile && (
               <div className="absolute right-0 mt-3 w-60 bg-white border border-slate-100 rounded-3xl shadow-2xl shadow-slate-200/60 p-2 z-50 animate-in fade-in slide-in-from-top-2">
-                <div className="px-4 py-4 border-b border-slate-50 flex items-center gap-3 sm:hidden">
-                  <div className="w-10 h-10 rounded-xl bg-sky-50 flex items-center justify-center">
-                    <User className="w-5 h-5 text-sky-500" />
-                  </div>
-                  <div>
-                    <p className="text-sm font-bold text-slate-900">{currentUser.nickname}</p>
-                    <p className="text-xs text-sky-600 font-medium">{currentUser.role}</p>
-                  </div>
-                </div>
                 <div className="p-1 space-y-1">
                   <button className="w-full flex items-center space-x-3 px-4 py-3 text-sm font-bold text-slate-600 hover:bg-sky-50 hover:text-sky-600 rounded-xl transition-colors"
                           onClick={() => router.push("/setting")}>

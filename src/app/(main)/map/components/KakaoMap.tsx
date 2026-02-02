@@ -1,24 +1,21 @@
 'use client'
 
 import { useEffect, useState } from "react";
-import { CustomOverlayMap, Map, Polygon, Polyline } from "react-kakao-maps-sdk";
+import { CustomOverlayMap, Map, Polygon } from "react-kakao-maps-sdk";
 import sidoData from "@/data/sido.json"
-import { WaterSystemDatas } from "@/data/mockData";
+import { waterSystemDatas } from "@/data/mockData";
 import WaterSystemOverlay from "./WaterSystemOverlay";
-
-import { WaterSystemData } from "@/data/types";
 import MapSkeleton from "./skeletons/MapSkeleton";
 import { useRouter } from "next/navigation";
+import { useAtom } from "jotai";
+import { mapLevelAtom } from "@/atoms/uniAtoms";
 
-interface KakaoMapProps {
-    setSelectedReservoir: (reservoir: WaterSystemData) => void;
-}
 
-export default function KakaoMap({ setSelectedReservoir }: KakaoMapProps) {
+export default function KakaoMap() {
     const router = useRouter();
     const [isClient, setIsClient] = useState(false);
-    const [formattedPath, setFormattedPath] = useState<{ lat: number, lng: number }[]>([])
-    const [mapLevel, setMapLevel] = useState(9);
+    const [formattedPath, setFormattedPath] = useState<{ lat: number, lng: number }[]>([]);
+    const [mapLevel, setMapLevel] = useAtom(mapLevelAtom);
 
     // 부산 시청 좌표를 중심으로 설정
     const center = { lat: 35.1996, lng: 129.0756 };
@@ -56,7 +53,7 @@ export default function KakaoMap({ setSelectedReservoir }: KakaoMapProps) {
         <div style={{ width: "100%", height: "100%" }}>
             <Map
                 center={center}
-                level={9}
+                level={mapLevel}
                 style={{ width: "100%", height: "100%" }}
                 zoomable={true} // 줌인, 줌아웃
                 draggable={true} // 드래그
@@ -78,11 +75,12 @@ export default function KakaoMap({ setSelectedReservoir }: KakaoMapProps) {
                 }
 
                 {/* 정수장 */}
-                {WaterSystemDatas.map((waterSystem) => (
-                    <CustomOverlayMap key={waterSystem.id} position={{ lat: waterSystem.lat, lng: waterSystem.lng }}>
-                        <WaterSystemOverlay waterSystem={waterSystem} onClick={waterSystem.type === "reservoir" ? () => setSelectedReservoir(waterSystem) : () => router.push("/scheduling")} mapLevel={mapLevel} />
+                {waterSystemDatas.map((waterSystem) => (
+                    (waterSystem.type === "plant" || waterSystem.type === "reservoir") && (
+                    <CustomOverlayMap key={waterSystem.id} position={{ lat: waterSystem.lat || 0, lng: waterSystem.lng || 0 }}>
+                        <WaterSystemOverlay waterSystem={waterSystem} onClick={waterSystem.type === "reservoir" ? () => router.push(`/map/${waterSystem.id}`): () => router.push(`/scheduling/${waterSystem.id}`)} />
                     </CustomOverlayMap>
-                ))}
+                )))}
             </Map>
         </div>
     );

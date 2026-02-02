@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, History, ChevronRight, Factory } from "lucide-react";
+import { LayoutDashboard, History, ChevronRight, Factory, Map } from "lucide-react";
 
 interface MenuProps {
   isMobileMenuOpen: boolean;
@@ -14,8 +14,8 @@ export default function Menu({ isMobileMenuOpen, setIsMobileMenuOpen }: MenuProp
   const isActive = (path: string) => pathname === path;
 
   const menuItems = [
-    { name: "지도 기반 현황", path: "/map", icon: <LayoutDashboard size={18} /> },
-    { name: "지능형 펌프 운영 스케줄링", path: "/pump", icon: <Factory size={18} /> },
+    { name: "지도 기반 현황", path: "/map", icon: <Map size={18} /> },
+    { name: "지능형 펌프 운영 스케줄링", path: "/scheduling", icon: <Factory size={18} /> },
     { name: "히스토리 뷰어", path: "/history", icon: <History size={18} /> },
   ];
 
@@ -71,7 +71,7 @@ export default function Menu({ isMobileMenuOpen, setIsMobileMenuOpen }: MenuProp
 
           <div className="mt-6 px-5 py-4 border-t border-slate-100">
             <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em]">
-              Flowise Intelligence System
+              FLOWISE Intelligence System
             </p>
           </div>
         </div>

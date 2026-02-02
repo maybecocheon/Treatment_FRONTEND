@@ -1,152 +1,305 @@
 'use client'
 
-import { 
-  Zap, ArrowLeft, Download, Play, 
-  Settings, Clock, Database, Activity, Info, 
-  Droplet, Gauge, Timer, Percent
-} from "lucide-react";
-import { 
-  XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, 
-  LineChart, Line, ComposedChart, Bar, Area, Legend
-} from 'recharts';
-import { useRouter } from 'next/navigation';
+import React, { useEffect, useMemo } from 'react';
 import Title from '@/components/main/Title';
+import { Activity, DollarSign, Clock, Cpu, BarChart3, Waves, Droplets, Gauge } from 'lucide-react';
+import { AreaChart, Area, CartesianGrid, Tooltip, ResponsiveContainer, XAxis, YAxis } from 'recharts';
+import Category from '@/components/main/TailCategory';
+import { useAtomValue, useSetAtom } from 'jotai';
+import { selectedCategoryAtom } from '@/atoms/uniAtoms';
 
-export default function WaterPlantControlPage() {
+const PumpSchedulingPage: React.FC = () => {
+    const selectedCategory = useAtomValue(selectedCategoryAtom);
+    const setSeletedCategory = useSetAtom(selectedCategoryAtom);
 
-  // Mock 데이터: 시간대별 송수량, 펌프 가동률, 수조 잔량 등
-  const controlData = Array.from({ length: 24 }).map((_, i) => {
-    const isNight = i >= 0 && i <= 6;
-    const isPeak = i >= 14 && i <= 17;
-    
-    // 1. 가동률 (%)
-    const operationRate = isNight ? 95 : (isPeak ? 30 : 65);
-    
-    // 2. 예상 송수량 (m³/h) - 가동률에 비례
-    const flowRate = Number((operationRate * 15.5).toFixed(0));
-    
-    // 3. 수조 잔량 (m³) - 송수량과 수요의 차이로 계산되는 시뮬레이션
-    const storageLevel = Number((4000 + Math.sin(i / 4) * 500 + (isNight ? 800 : -600)).toFixed(0));
+    const generateTrend = (base: number, variance: number, points: number = 24) =>
+        Array.from({ length: points }, () => base + (Math.random() - 0.5) * variance);
 
-    return {
-      time: `${i}h`,
-      flowRate,        // 예상 송수량
-      operationRate,   // 가동률
-      storageLevel,    // 잔량 추이
-    };
-  });
+    const trends = useMemo(() => ({
+        outflow: generateTrend(12000, 2000),
+        storage: generateTrend(75, 15),
+        pumpRate: generateTrend(60, 40),
+        demand: generateTrend(150, 40),
+        prediction: generateTrend(155, 30),
+        level: generateTrend(65, 20)
+    }), [selectedCategory]);
 
-  return (
-    <div className="flex flex-col flex-1 h-full gap-6 md:p-4">
-        
-        {/* 타이틀 섹션 */}
-        <div className="flex justify-between items-center">
-          <Title title="정수장 제어 현황" subtitle="실시간 예측 수요 기반 송수 스케줄링 운영 중" />
-          <div className="flex gap-3">
-            <button className="flex items-center gap-2 bg-white border border-slate-200 px-5 py-2.5 rounded-2xl text-sm font-bold text-slate-600 hover:bg-slate-50 transition-all">
-              <Settings size={18} /> 제어 설정
-            </button>
-            <button className="flex items-center gap-2 bg-blue-600 px-5 py-2.5 rounded-2xl text-sm font-bold text-white hover:bg-blue-700 shadow-xl shadow-blue-200 transition-all">
-              <Play size={18} fill="currentColor" /> 자동 제어 모드 실행
-            </button>
-          </div>
-        </div>
-        
+    useEffect(() => {
+        setSeletedCategory("OVERVIEW");
+    }, []);
 
-        {/* 4대 핵심 지표 (송수량, 펌프, 가동률, 잔량) */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
-          {[
-            { label: '실시간 송수량', value: '1,450', unit: 'm³/h', icon: Droplet, color: 'text-blue-500', bg: 'bg-blue-50' },
-            { label: '가동 펌프 수', value: '4/6', unit: 'Units', icon: Activity, color: 'text-indigo-500', bg: 'bg-indigo-50' },
-            { label: '평균 가동률', value: '72.4', unit: '%', icon: Percent, color: 'text-amber-500', bg: 'bg-amber-50' },
-            { label: '수조 잔량', value: '4,280', unit: 'm³', icon: Database, color: 'text-emerald-500', bg: 'bg-emerald-50' },
-          ].map((item, idx) => (
-            <div key={idx} className="glass p-7 rounded-4xl border">
-              <div className={`${item.bg} w-12 h-12 rounded-2xl flex items-center justify-center mb-5`}>
-                <item.icon className={`${item.color}`} size={24} />
-              </div>
-              <p className="text-slate-400 text-xs font-black uppercase tracking-widest mb-1">{item.label}</p>
-              <div className="flex items-baseline gap-1">
-                <span className="text-2xl font-black text-slate-900">{item.value}</span>
-                <span className="text-slate-400 text-sm font-bold">{item.unit}</span>
-              </div>
-            </div>
-          ))}
-        </div>
+    return (
+        <div className="flex flex-col flex-1 h-full gap-6 md:p-4">
+            <Title title="지능형 펌프 운영 스케줄링" subtitle="AI 기반 펌프 운영 및 전기 요금 최적화 분석" />
 
-        {/* 메인 제어 차트 (송수량 + 가동률 + 잔량) */}
-        <div className="glass rounded-[40px] p-8 md:p-12 mb-10">
-          <div className="flex flex-col md:flex-row md:items-center justify-between mb-10 gap-4">
-            <div>
-              <h3 className="text-xl font-black text-slate-800 flex items-center gap-2 mb-1">
-                <Gauge className="text-blue-600" size={24} /> 통합 송수 제어 시뮬레이션
-              </h3>
-              <p className="text-sm text-slate-400 font-medium">향후 24시간 예상 송수량 및 잔량 변동 추이</p>
-            </div>
-            <div className="flex flex-wrap gap-4">
-              <div className="flex items-center gap-2"><span className="w-3 h-3 bg-blue-500 rounded-sm"></span><span className="text-xs font-bold text-slate-500">예상 송수량</span></div>
-              <div className="flex items-center gap-2"><span className="w-8 h-1 bg-emerald-500 rounded-full"></span><span className="text-xs font-bold text-slate-500">잔량 추이(m³)</span></div>
-              <div className="flex items-center gap-2"><span className="w-3 h-3 bg-slate-200 rounded-full"></span><span className="text-xs font-bold text-slate-500">가동률(%)</span></div>
-            </div>
-          </div>
-          
-          <div className="h-112.5 w-full">
-            <ResponsiveContainer width="100%" height="100%">
-              <ComposedChart data={controlData} margin={{ top: 10, right: 10, left: -10, bottom: 0 }}>
-                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
-                <XAxis dataKey="time" axisLine={false} tickLine={false} tick={{fill: '#94a3b8', fontSize: 12, fontWeight: 600}} dy={10} />
-                <YAxis yAxisId="left" axisLine={false} tickLine={false} tick={{fill: '#94a3b8', fontSize: 11}} />
-                <YAxis yAxisId="right" orientation="right" axisLine={false} tickLine={false} tick={{fill: '#10b981', fontSize: 11}} />
-                <Tooltip 
-                  contentStyle={{ borderRadius: '20px', border: 'none', boxShadow: '0 25px 50px -12px rgb(0 0 0 / 0.15)', padding: '16px' }}
-                />
-                
-                {/* 1. 예상 송수량 (Bar) */}
-                <Bar yAxisId="left" dataKey="flowRate" fill="#3b82f6" radius={[6, 6, 0, 0]} barSize={35} name="송수량(m³/h)" />
-                
-                {/* 2. 가동률 (Area) */}
-                <Area yAxisId="left" type="monotone" dataKey="operationRate" fill="#f1f5f9" stroke="#cbd5e1" name="가동률(%)" />
-                
-                {/* 3. 잔량 추이 (Line) */}
-                <Line 
-                  yAxisId="right" 
-                  type="monotone" 
-                  dataKey="storageLevel" 
-                  stroke="#10b981" 
-                  strokeWidth={4} 
-                  dot={false}
-                  name="잔량(m³)"
-                />
-              </ComposedChart>
-            </ResponsiveContainer>
-          </div>
-          
-          <div className="mt-10 p-8 bg-slate-50 rounded-3xl border border-slate-100 flex flex-col md:flex-row gap-8 items-center">
-             <div className="flex-1">
-                <h4 className="text-slate-900 font-black text-lg mb-2">운영 효율성 브리핑</h4>
-                <p className="text-slate-600 text-sm leading-relaxed font-medium">
-                  현재 송수 시스템은 예측 수요 대비 **105% 가동률**로 안정적인 용수를 공급하고 있습니다. 
-                  야간 시간대 송수량을 증대시켜 정수장 수조 잔량을 최대치로 확보했으며, 
-                  이를 통해 전력 단가가 높은 오후 시간대 펌프 부하를 **최대 40%까지 경감**할 수 있을 것으로 예측됩니다.
-                </p>
-             </div>
-             <div className="flex gap-4">
-                <div className="text-center">
-                    <p className="text-[10px] font-black text-slate-400 uppercase mb-2">System Status</p>
-                    <div className="w-16 h-16 rounded-full border-4 border-emerald-500 flex items-center justify-center text-emerald-600 font-black">
-                        OK
+            <div className="flex-1 flex flex-col gap-6">
+                {/* 1. 에너지 비용 & 최적화 가이드 섹션 */}
+                <div className="grid grid-cols-1 xl:grid-cols-12 gap-6 items-stretch">
+                    {/* 가이드 메시지 패널 */}
+                    <div className="xl:col-span-4 glass rounded-[2.5rem] p-6 border border-white/60 shadow-lg relative overflow-hidden group flex flex-col justify-center">
+                        <div className="absolute -top-6 -right-6 opacity-[0.03] group-hover:opacity-[0.08] transition-all duration-1000 rotate-12">
+                            <Cpu size={120} className="text-blue-900" />
+                        </div>
+                        <div className="flex items-center gap-3 mb-4 relative">
+                            <div className="p-2 glass bg-blue-100/60 rounded-xl text-blue-700">
+                                <Clock size={18} />
+                            </div>
+                            <div>
+                                <h4 className="text-base font-black text-blue-950 tracking-tight">지능형 가동 가이드</h4>
+                                <p className="text-[9px] font-bold text-blue-900/30 uppercase tracking-widest">AI Analysis</p>
+                            </div>
+                        </div>
+                        <div className="relative space-y-3">
+                            <div className="p-4 rounded-3xl bg-emerald-50/40 border border-emerald-100/50 flex gap-4 backdrop-blur-md">
+                                <div className="w-1 bg-emerald-400 rounded-full"></div>
+                                <div className="flex flex-col gap-1">
+                                    <p className="text-sm font-bold text-emerald-950">
+                                        <span className="text-blue-600 font-black">02:00 ~ 05:00</span> 집중 가동 권장
+                                    </p>
+                                    <p className="text-[11px] font-medium text-emerald-900/60 leading-tight">
+                                        야간 경부하 요금을 활용해 에너지를 최적화하세요.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* 통합 비용 분석 패널 */}
+                    <div className="xl:col-span-8 glass rounded-[2.5rem] p-6 border border-white/60 shadow-lg flex flex-col md:flex-row gap-6 items-center">
+                        {/* 타이틀 영역 */}
+                        <div className="flex flex-row md:flex-col gap-3 min-w-45">
+                            <div className="p-2 w-fit glass bg-white/60 rounded-xl text-amber-600 shadow-sm">
+                                <DollarSign size={18} />
+                            </div>
+                            <div>
+                                <h4 className="text-base font-black text-blue-950 tracking-tight">에너지 비용 최적화 리포트</h4>
+                                <p className="text-[9px] font-bold text-blue-900/30 uppercase tracking-widest">Cost Forecast</p>
+                            </div>
+                        </div>
+
+                        {/* 바 그래프 영역 */}
+                        <div className="flex-1 w-full space-y-4 px-2">
+                            <div className="space-y-1">
+                                <div className="flex justify-between items-end px-1">
+                                    <span className="text-[10px] font-bold text-blue-900/40">현재 비용</span>
+                                    <span className="text-xs font-bold text-blue-950">₩13.9M</span>
+                                </div>
+                                <div className="h-2 w-full bg-blue-900/5 rounded-full overflow-hidden">
+                                    <div className="h-full w-full bg-blue-900/20" />
+                                </div>
+                            </div>
+                            <div className="space-y-1">
+                                <div className="flex justify-between items-end px-1">
+                                    <span className="text-[10px] font-bold text-emerald-600">최적화 후 비용 (AI)</span>
+                                    <span className="text-sm font-black text-emerald-600">₩12.48M</span>
+                                </div>
+                                <div className="h-3 w-full bg-emerald-900/5 rounded-full overflow-hidden border border-emerald-100/30">
+                                    <div className="h-full w-[81%] bg-linear-to-r from-emerald-400 to-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.2)]" />
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* 절감 수치 영역 */}
+                        <div className="flex flex-row md:flex-col gap-4 md:gap-1 bg-emerald-500/5 p-4 rounded-2xl border border-emerald-500/10 min-w-40">
+                            <div>
+                                <p className="text-[9px] font-black text-emerald-900/40 uppercase">예상 절감액</p>
+                                <p className="text-xl font-black text-emerald-600 tracking-tighter">- ₩1.42M</p>
+                            </div>
+                            <div className="md:pt-1 md:border-t md:border-emerald-500/10">
+                                <p className="text-[9px] font-black text-emerald-600 uppercase">Saving Rate <span className="text-lg ml-1 font-black">18.5%</span></p>
+                            </div>
+                        </div>
                     </div>
                 </div>
-                <div className="text-center">
-                    <p className="text-[10px] font-black text-slate-400 uppercase mb-2">Efficiency</p>
-                    <div className="w-16 h-16 rounded-full border-4 border-blue-500 flex items-center justify-center text-blue-600 font-black">
-                        94%
+
+                {/* 2. 메인 분석 대시보드 - Charts (Wide Layout) */}
+                <div className="flex-1 flex flex-col gap-4">
+                    <div className="flex items-center justify-between px-2 mb-2">
+                        <h3 className="text-xl font-black text-blue-950 flex items-center gap-2">
+                            <Activity className="text-blue-600" size={24} />
+                            {selectedCategory} 운영 트렌드 (24h)
+                        </h3>
+                    </div>
+
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-stretch">
+                        {selectedCategory === "PLANT" ? (
+                            <ChartBox title="송수량 변동 추이 (m³/h)" data={trends.outflow} color="#3b82f6" icon={<Droplets size={16} />} />
+                        ) : (
+                            <ChartBox
+                                title="수요량 및 예측 (m³/h)"
+                                data={trends.demand}
+                                data2={trends.prediction}
+                                color="#3b82f6"
+                                color2="#818cf8"
+                                label1="현재 실측치"
+                                label2="AI 예측치"
+                                icon={<BarChart3 size={16} />}
+                            />
+                        )}
+
+                        {selectedCategory === "PLANT" ? (
+                            <ChartBox
+                                title="잔량 및 펌프 가동률 통합"
+                                data={trends.storage}
+                                data2={trends.pumpRate}
+                                color="#818cf8"
+                                color2="#10b981"
+                                label1="정수장 잔량 (%)"
+                                label2="펌프 가동률 (%)"
+                                icon={<Gauge size={16} />}
+                            />
+                        ) : (
+                            <ChartBox
+                                title="수위 및 펌프 가동률 통합"
+                                data={trends.level}
+                                data2={trends.pumpRate}
+                                color="#0ea5e9"
+                                color2="#10b981"
+                                label1="배수지 수위 (%)"
+                                label2="가동 펌프률 (%)"
+                                icon={<Waves size={16} />}
+                            />
+                        )}
                     </div>
                 </div>
-             </div>
-          </div>
-        </div>
 
-      </div>
-  );
-}
+                {/* 3. 시설 선택 카테고리 (Moved to Bottom) */}
+                <div className="flex-col gap-3 mt-4">
+                    <Category />
+                </div>
+            </div>
+        </div>
+    );
+};
+
+
+
+const ChartBox: React.FC<{
+    title: string;
+    data: number[];
+    data2?: number[];
+    color: string;
+    color2?: string;
+    label1?: string;
+    label2?: string;
+    icon: React.ReactNode
+}> = ({ title, data, data2, color, color2, label1, label2, icon }) => {
+
+    // Recharts 형식에 맞게 데이터 변환 (24시간 기준)
+    const chartData = useMemo(() => {
+        return data.map((val, i) => ({
+            time: `${i}h`,
+            value1: val,
+            value2: data2 ? data2[i] : null,
+        }));
+    }, [data, data2]);
+
+    return (
+        <div className="glass rounded-[2.5rem] p-6 flex flex-col gap-4 group transition-all duration-500 hover:shadow-md h-full">
+            <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2.5">
+                    <div className="p-2 rounded-xl bg-slate-200/50 text-blue-900/40 group-hover:text-blue-600 transition-colors">
+                        {React.cloneElement(icon as React.ReactElement)}
+                    </div>
+                    <h5 className="text-[14px] font-semibold text-blue-950 uppercase tracking-tight">{title}</h5>
+                </div>
+            </div>
+
+            <div className="w-full h-52 relative px-1">
+                <ResponsiveContainer width="100%" height="100%">
+                    <AreaChart data={chartData} margin={{ top: 5, right: 5, left: -20, bottom: 0 }}>
+                        <defs>
+                            {/* 1. 첫 번째 데이터용 그라데이션: 위는 선 색상, 아래로 갈수록 투명하게 */}
+                            <linearGradient id="colorValue1" x1="0" y1="0" x2="0" y2="1">
+                                <stop offset="5%" stopColor={color} stopOpacity={0.15} />
+                                <stop offset="95%" stopColor={color} stopOpacity={0.01} />
+                            </linearGradient>
+
+                            {/* 2. 두 번째 데이터용 그라데이션 (선택 사항) */}
+                            {color2 && (
+                                <linearGradient id="colorValue2" x1="0" y1="0" x2="0" y2="1">
+                                    <stop offset="5%" stopColor={color2} stopOpacity={0.1} />
+                                    <stop offset="95%" stopColor={color2} stopOpacity={0} />
+                                </linearGradient>
+                            )}
+                        </defs>
+
+                        {/* x축: 시간 표시 */}
+                        <XAxis
+                            dataKey="time"
+                            hide={false}
+                            axisLine={false}
+                            tickLine={false}
+                            tick={{ fill: '#94a3b8', fontSize: 10 }}
+                            interval={5} // 6시간 간격으로 표시 (0, 6, 12, 18...)
+                            unit="h"
+                        />
+
+                        {/* y축: 수치 표시 */}
+                        <YAxis
+                            hide={false}
+                            axisLine={false}
+                            tickLine={false}
+                            tick={{ fill: '#94a3b8', fontSize: 10 }}
+                            // 0부터 최대값까지 적절히 배분
+                            domain={['auto', 'auto']}
+                        />
+
+                        {/* 그리드 선도 아주 연하게 (얌전하게) */}
+                        <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
+
+                        <Tooltip
+                            contentStyle={{
+                                backgroundColor: 'rgba(255, 255, 255, 0.95)',
+                                borderRadius: '12px',
+                                border: 'none',
+                                boxShadow: '0 4px 12px rgba(0,0,0,0.05)'
+                            }}
+                        />
+
+                        {/* 실제 Area: fill에 위에서 만든 그라데이션 ID를 연결 */}
+                        <Area
+                            type="monotone"
+                            dataKey="value1"
+                            stroke={color}
+                            strokeWidth={2.5}
+                            fill={`url(#colorValue1)`} // 검정색 대신 그라데이션 사용
+                            fillOpacity={1} // opacity는 그라데이션 내부 stopOpacity에서 조절됨
+                        />
+
+                        {data2 && (
+                            <Area
+                                type="monotone"
+                                dataKey="value2"
+                                stroke={color2}
+                                strokeWidth={2}
+                                strokeDasharray="5 5" // 예측치는 점선으로 얌전하게
+                                fill="transparent"    // 두 번째 데이터는 채우기 없이 선만 남기면 더 깔끔함
+                            />
+                        )}
+                    </AreaChart>
+                </ResponsiveContainer>
+            </div>
+
+            {/* 범례 영역 */}
+            {(label1 || label2) && (
+                <div className="flex items-center justify-center gap-6">
+                    {label1 && (
+                        <div className="flex items-center gap-2">
+                            <div className="w-3 h-1 rounded-full" style={{ backgroundColor: color }}></div>
+                            <span className="text-[10px] font-bold text-slate-500 uppercase">{label1}</span>
+                        </div>
+                    )}
+                    {label2 && (
+                        <div className="flex items-center gap-2">
+                            <div className="w-3 h-1 rounded-full bg-slate-300" style={{ backgroundColor: color2, borderStyle: 'dashed', borderWidth: '1px' }}></div>
+                            <span className="text-[10px] font-bold text-slate-500 uppercase">{label2}</span>
+                        </div>
+                    )}
+                </div>
+            )}
+        </div>
+    );
+};
+
+export default PumpSchedulingPage;

@@ -1,44 +1,62 @@
 'use client'
 
-import { WaterSystemData } from "@/data/types";
 import { BarChart3, Droplets, TrendingUp, Waves, X, ArrowRight, AlertTriangle, Zap } from "lucide-react";
-import { CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
-import { usePathname, useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { Brush, CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
+import { useRouter } from "next/navigation";
+import React, { useEffect, useState } from "react";
 
-export default function ReservoirDetailsModal({ reservoir, onClose }: { reservoir: WaterSystemData; onClose: () => void; }) {
+interface ModalProps {
+    params: {
+        id: string;
+    };
+}
+
+export default function ReservoirDetailsPage({ params }: ModalProps) {
+    // 차트 데이터
+    const [reservoir, setReservoir] = React.useState<any>(null);
+    const [chartData, setChartData] = React.useState<any[]>([]);
+    const [visibleCount, setVisibleCount] = useState(1440);
+
     const router = useRouter();
 
-    const chartData = reservoir.basePattern?.map((_, idx) => ({
-        time: `${idx}h`,
-        base: reservoir.basePattern?.[idx] || 0,
-        daily: reservoir.dailyForecast?.[idx] || 0,
-        recal: reservoir.recalculation?.[idx] || 0,
-    })) || [];
+    const { id } = params;
+    //const reservoir = fetchData?.find(r => r.id === id);
 
     // 수위 위험 상태 체크
-    const isLevelCritical = reservoir.currentLevel! < reservoir.minLevel!;
+    const isLevelCritical = reservoir?.currentLevel! < reservoir?.minLevel!;
 
+    // 만수위
+    const maxLevel = reservoir?.maxLevel || 8.0;
+
+    const onClose = () => {
+        router.push("/map");
+    };
+
+    const handleBrushChange = (range: { endIndex: number; startIndex: number; }) => {
+        // 줌 된 영역에 포함된 데이터 개수 계산
+        setVisibleCount(range.endIndex - range.startIndex);
+    };
+
+    // 모달이 마운트(열림)될 때 스크롤 방지 & fetch 차트데이터
     useEffect(() => {
-        if (!reservoir?.id) return; // 데이터가 없으면 실행 안 함
-
-        const currentPath = window.location.pathname;
-
-        if (!currentPath.includes(reservoir.id)) {
-            window.history.pushState(null, "", `${currentPath}/${reservoir.id}`);
-        }
-
         document.body.style.overflow = "hidden";
 
-        return () => {
-            // 닫힐 때는 ID가 붙기 전의 원래 경로로 복구
-            const basePath = currentPath.replace(`/${reservoir.id}`, "");
-            window.history.replaceState(null, "", basePath);
-            document.body.style.overflow = "auto";
-        };
-    }, [reservoir.id]);
+        const fetchChartData = async () => {
+            const response = await fetch("/api/proxy/reservoir/chart/minite/10?date=2023-01-06");
+            const data = await response.json();
+            setReservoir(data);
+            setChartData(data.chartData.map((_: any, idx: number) => ({
+                time: data.chartData?.[idx]?.time.split("T")[1].substring(0, 5) || "",
+                actualValue: data.chartData?.[idx]?.actualValue || 0,
+                predictedValue: data.chartData?.[idx]?.predictedValue || 0,
+            })));
+            console.log("Fetched Chart Data:", data);
+        }
+        fetchChartData();
+        return () => { document.body.style.overflow = "auto" };
+    }, []);
 
-    // 브라우저 "뒤로가기" 클릭 시 모달이 닫히도록 하고 싶다면 이 로직을 추가하세요.
+    // 브라우저 "뒤로가기" 클릭 시 모달 닫기
     useEffect(() => {
         const handlePopState = () => {
             onClose();
@@ -46,6 +64,11 @@ export default function ReservoirDetailsModal({ reservoir, onClose }: { reservoi
         window.addEventListener("popstate", handlePopState);
         return () => window.removeEventListener("popstate", handlePopState);
     }, [onClose]);
+
+    useEffect(() => {
+        // 차트 데이터가 변경될 때마다 로그 출력
+        console.log("데이터 업데이트:", reservoir);
+    }, [reservoir]);
 
     return (
         <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-md flex items-center justify-center z-50 p-4 md:p-6 animate-in fade-in duration-300">
@@ -59,7 +82,7 @@ export default function ReservoirDetailsModal({ reservoir, onClose }: { reservoi
                         </div>
                         <div>
                             <h3 className="text-xl md:text-2xl font-black text-slate-900 tracking-tight">
-                                {reservoir.name}
+                                {reservoir?.name}
                             </h3>
                             <p className={`${isLevelCritical ? "text-red-400" : "text-slate-400"} text-xs md:text-sm font-medium`}>
                                 {isLevelCritical ? "즉각적인 펌프 가동 검토가 필요합니다" : "실시간 재산출 기반 용수 수요 예측 현황"}
@@ -82,7 +105,7 @@ export default function ReservoirDetailsModal({ reservoir, onClose }: { reservoi
                             </div>
                             <div className="flex-1">
                                 <h4 className="text-red-900 font-bold text-lg leading-tight">저수위 경보 발생</h4>
-                                <p className="hidden md:block text-red-600 text-sm font-medium">현재 수위가 설정된 최저치({reservoir.minLevel}m)보다 낮습니다. 공급 부족이 예상됩니다.</p>
+                                <p className="hidden md:block text-red-600 text-sm font-medium">현재 수위가 설정된 최저치({reservoir?.minLevel}m)보다 낮습니다. 공급 부족이 예상됩니다.</p>
                             </div>
                             <button className="bg-red-500 text-white px-5 py-2.5 rounded-xl font-bold text-sm hover:bg-red-600 transition-colors">
                                 즉시 조치
@@ -99,9 +122,9 @@ export default function ReservoirDetailsModal({ reservoir, onClose }: { reservoi
                             <div className="flex items-end justify-between">
                                 <div className="flex items-baseline gap-1">
                                     <span className={`text-4xl font-black ${isLevelCritical ? "text-red-600" : "text-slate-900"}`}>
-                                        {reservoir.currentLevel?.toFixed(1)}
+                                        {reservoir?.currentLevel?.toFixed(1)}
                                     </span>
-                                    <span className="text-slate-500 font-bold text-lg">/ {reservoir.maxLevel}m</span>
+                                    <span className="text-slate-500 font-bold text-lg">/ {maxLevel.toFixed(1)}m</span>
                                 </div>
                                 <span className={`px-3 py-1 rounded-full text-[12px] font-semibold ${isLevelCritical ? "bg-red-100 text-red-600" : "bg-emerald-100 text-emerald-600"}`}>
                                     {isLevelCritical ? "위험" : "안정"}
@@ -114,9 +137,9 @@ export default function ReservoirDetailsModal({ reservoir, onClose }: { reservoi
                                 <BarChart3 size={14} className="text-indigo-500" /> 알고리즘 예측 신뢰도
                             </p>
                             <div className="flex items-center justify-between gap-4">
-                                <span className="text-4xl font-black text-slate-900">{reservoir.accuracy}%</span>
-                                <div className="flex-1 h-3 bg-slate-100 rounded-full overflow-hidden">
-                                    <div className="bg-indigo-500 h-full rounded-full transition-all duration-1000" style={{ width: `${reservoir.accuracy}%` }} />
+                                <span className="text-4xl font-black text-slate-900">{reservoir?.predictionAccuracy?.toFixed(1)}%</span>
+                                <div className="flex-1 h-3 bg-slate-300 rounded-full overflow-hidden">
+                                    <div className="bg-indigo-500 h-full rounded-full transition-all duration-1000" style={{ width: `${reservoir?.predictionAccuracy?.toFixed(1)}%` }} />
                                 </div>
                             </div>
                         </div>
@@ -129,21 +152,54 @@ export default function ReservoirDetailsModal({ reservoir, onClose }: { reservoi
                                 <TrendingUp size={20} className="text-emerald-500" /> 단계별 용수수요 예측 추이
                             </h4>
                             <div className="flex flex-wrap gap-3">
-                                <div className="flex items-center gap-1.5"><span className="w-2 h-2 bg-slate-300 rounded-full"></span><span className="text-[10px] font-bold text-slate-500 uppercase">기본 패턴</span></div>
                                 <div className="flex items-center gap-1.5"><span className="w-2 h-2 bg-blue-400 rounded-full"></span><span className="text-[10px] font-bold text-slate-500 uppercase">예측</span></div>
                                 <div className="flex items-center gap-1.5"><span className="w-2 h-2 bg-emerald-500 rounded-full"></span><span className="text-[10px] font-bold text-slate-500 uppercase">실시간 데이터</span></div>
                             </div>
                         </div>
                         <div className="h-80 w-full">
                             <ResponsiveContainer width="100%" height="100%">
-                                <LineChart data={chartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                                <LineChart data={chartData} margin={{ top: 10, right: 25, left: -20, bottom: 20 }}>
                                     <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
-                                    <XAxis dataKey="time" axisLine={false} tickLine={false} tick={{ fill: "#94a3b8", fontSize: 11 }} dy={10} interval={3} />
-                                    <YAxis axisLine={false} tickLine={false} tick={{ fill: "#94a3b8", fontSize: 11 }} dx={-5} />
-                                    <Tooltip contentStyle={{ borderRadius: "16px", border: "none", boxShadow: "0 20px 25px -5px rgb(0 0 0 / 0.1)" }} />
-                                    <Line type="monotone" dataKey="base" stroke="#cbd5e1" strokeDasharray="5 5" strokeWidth={2} dot={false} />
-                                    <Line type="monotone" dataKey="daily" stroke="#60a5fa" strokeWidth={2} dot={false} />
-                                    <Line type="monotone" dataKey="recal" stroke="#10b981" strokeWidth={4} dot={{ r: 4, fill: "#10b981", strokeWidth: 2, stroke: "#fff" }} />
+                                    <XAxis dataKey="time" hide axisLine={false} tickLine={false} />
+                                    <YAxis axisLine={false} tickLine={false} />
+                                    <Tooltip />
+
+                                    {/* 메인 선 */}
+                                    <Line type="monotone" dataKey="predictedValue" stroke="#10b981" strokeWidth={4} dot={false} />
+                                    <Line type="monotone" dataKey="actualValue" stroke="#60a5fa" strokeWidth={2} dot={false} />
+
+                                    {/* 줌 컨트롤러 */}
+                                    <Brush
+                                        dataKey="time"
+                                        height={40}
+                                        stroke="#60a5fa"
+                                        fill="#fff"
+                                        gap={10}
+                                        travellerWidth={10}
+                                        onChange={handleBrushChange}
+                                    >
+                                        <XAxis
+                                            dataKey="time"
+                                            axisLine={false}
+                                            tickLine={false}
+                                            hide={false}
+                                            interval={0}
+                                            tick={{ fill: "#94a3b8", fontSize: 10 }}
+                                            /* 줌 상태에 따라 텍스트 포맷 조절 */
+                                            tickFormatter={(value) => {
+                                                // 아주 많이 확대했을 때 (분 단위)
+                                                if (visibleCount < 35) {
+                                                    return value;
+                                                }
+                                                // 적당히 확대했을 때 (10분 단위)
+                                                if (visibleCount < 200) {
+                                                    return value.endsWith("0") ? value : ""; 
+                                                }
+                                                // 전체적으로 볼 때 (시간 단위)
+                                                return value.includes(":00") ? value : "";
+                                            }}
+                                        />
+                                    </Brush>
                                 </LineChart>
                             </ResponsiveContainer>
                         </div>
@@ -151,7 +207,7 @@ export default function ReservoirDetailsModal({ reservoir, onClose }: { reservoi
 
                     {/* 하단 페이지 이동 가이드 */}
                     <button
-                        onClick={() => router.push(`/scheduling/${reservoir.id}`)}
+                        onClick={() => router.push(`/scheduling/${reservoir?.id}`)}
                         className="group bg-sky-100 shadow-2xl relative w-full p-8 overflow-hidden rounded-[2.5rem] text-slate-900 transition-all hover:bg-slate-100 active:scale-[0.99] shadow-slate-200"
                     >
                         <div className="absolute top-0 right-0 w-64 h-64 bg-sky-500/10 rounded-full -translate-y-1/2 translate-x-1/2 blur-3xl group-hover:bg-sky-500/20 transition-colors" />

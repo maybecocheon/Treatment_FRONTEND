@@ -1,9 +1,7 @@
-'use client'
+"use client"
 
-import { plantData } from '@/data/mockData';
-import { Waves, Gauge, Droplets, TrendingUp } from 'lucide-react';
-import { useEffect, useState } from 'react';
-import PlantTrendModal from './PlantTrendModal';
+import { plantData, waterSystemDatas } from "@/data/mockData";
+import { Waves, Gauge, Droplets, TrendingUp } from "lucide-react";
 
 const StatCard: React.FC<{
   icon: React.ReactNode;
@@ -11,12 +9,8 @@ const StatCard: React.FC<{
   value: number | string;
   unit?: React.ReactNode;
   colorClass: string;
-  onClick?: () => void;
-}> = ({ icon, label, value, unit, colorClass, onClick }) => (
-  <button
-    onClick={onClick}
-    className={`glass flex-1 w-full p-6 rounded-4xl flex flex-col justify-center items-center gap-4 transition-all duration-300 hover:scale-[1.02] hover:bg-white/40 group ${onClick ? 'cursor-pointer' : 'cursor-default'}`}
-  >
+}> = ({ icon, label, value, unit, colorClass }) => (
+  <div className="glass flex-1 w-full p-6 rounded-4xl flex flex-col justify-center items-center gap-4 transition-all duration-300 hover:scale-[1.02] hover:bg-white/40 group">
     <div className={`p-4 rounded-2xl transition-colors shadow-inner ${colorClass}`}>
       {icon}
     </div>
@@ -26,17 +20,15 @@ const StatCard: React.FC<{
       </span>
       <div className="flex items-baseline gap-1">
         <span className="text-3xl font-black text-blue-950 tracking-tight">
-          {typeof value === 'number' ? value.toLocaleString() : value}
+          {typeof value === "number" ? value.toLocaleString() : value}
         </span>
         {unit && <span className="text-sm font-bold text-blue-900/60">{unit}</span>}
       </div>
     </div>
-  </button>
+  </div>
 );
 
 export default function PlantStatsBar() {
-  const [showTrend, setShowTrend] = useState(false);
-
   return (
     <div className="flex flex-col justify-stretch gap-4 animate-in fade-in slide-in-from-bottom-4 duration-700 h-full min-w-55">
       <StatCard
@@ -48,27 +40,18 @@ export default function PlantStatsBar() {
       />
       <StatCard
         icon={<Gauge size={28} />}
-        label="펌프 가동률"
-        value={plantData.pumpRate}
-        unit="%"
+        label="평균 압력"
+        value={plantData.pumpAverage}
+        unit="kgf/㎠"
         colorClass="bg-emerald-100/60 text-emerald-700"
       />
       <StatCard
         icon={<Waves size={28} />}
-        label="정수장 잔량"
-        value={plantData.currentStorage}
-        unit={
-          <div className="flex items-center gap-1">
-            % <TrendingUp size={16} className="text-indigo-600" />
-          </div>
-        }
+        label="배수지 개수"
+        value={waterSystemDatas.filter(ws => ws.type === "reservoir").length}
+        unit="개"
         colorClass="bg-indigo-100/60 text-indigo-700"
-        onClick={() => setShowTrend(true)}
       />
-      
-      {showTrend && (
-        <PlantTrendModal onClose={() => setShowTrend(false)} />
-      )}
     </div>
   );
 }

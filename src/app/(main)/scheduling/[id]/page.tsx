@@ -10,12 +10,11 @@ import {
   LineChart, Line, ComposedChart, Bar, Area
 } from 'recharts';
 import { useRouter } from 'next/navigation';
-import { WaterSystemDatas } from "@/data/mockData"; // 데이터 경로에 맞춰 수정하세요
+import { waterSystemDatas } from "@/data/mockData"; // 데이터 경로에 맞춰 수정하세요
 
 export default function EnergySchedulingPage({ params }: { params: { id: string } }) {
   const router = useRouter();
-  const reservoir = WaterSystemDatas.find(r => r.id === params.id) || WaterSystemDatas[2];
-
+  const reservoir = waterSystemDatas.find(r => r.id === params.id) || waterSystemDatas[2];
   // Mock 데이터: 시간대별 전기요금, 펌프 가동계획, 예상 수위 변화
   const schedulingData = Array.from({ length: 24 }).map((_, i) => {
     // 전기 요금 (경부하/중부하/최대부하 패턴)

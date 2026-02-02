@@ -4,10 +4,11 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { ArrowRight, ChevronDown, Lock, User, UserPlus } from "lucide-react";
 import { useSetAtom } from "jotai";
-import { scrollToContentAtom } from "@/atoms/landingAtom";
+import { scrollToContentAtom } from "@/atoms/uniAtoms";
 import Logo from "@/components/loginJoin/Logo";
 import Background from "./Background";
-import Input from "./TailInput";
+import Input from "../TailInput";
+import TailButton from "../TailButton";
 
 export default function Login() {
     const triggerScroll = useSetAtom(scrollToContentAtom);
@@ -76,14 +77,7 @@ export default function Login() {
                                 <Input icon={Lock} type="password" placeholder="비밀번호" name="password" value={credentials.password} onChange={handleChange} />
                             </div>
                         </div>
-                        <button
-                            type="submit"
-                            className="group relative w-full py-4 bg-sky-500 hover:bg-sky-600 text-white rounded-2xl font-bold text-lg shadow-lg shadow-sky-500/20 transition-all active:scale-[0.98] overflow-hidden"
-                        >
-                            <span className="relative z-10 flex items-center justify-center gap-2">
-                                로그인 <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-                            </span>
-                        </button>
+                        <TailButton text="로그인" icon={ArrowRight} style="bg-sky-500 hover:bg-sky-600" />
                     </form>
 
                     <div className="w-full bg-slate-50/50 backdrop-blur-md border-t border-slate-100 p-5 flex items-center justify-center gap-2">

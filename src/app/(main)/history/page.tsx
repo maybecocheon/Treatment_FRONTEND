@@ -1,7 +1,7 @@
 'use client'
 
 import RenderCharts from "@/app/(main)/history/RenderCharts";
-import { selectedCategoryAtom } from "@/atoms/categoryAtom";
+import { selectedCategoryAtom } from "@/atoms/uniAtoms";
 import Category from "@/components/main/TailCategory";
 import Title from "@/components/main/Title";
 import { useAtomValue, useSetAtom } from "jotai";

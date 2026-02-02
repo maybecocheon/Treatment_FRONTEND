@@ -3,24 +3,16 @@ import { WaterSystemData, PlantStats, User, HistoryPoint, TeamMember } from '@/d
 
 export const currentUser: User = {
   id: 'admin_flowwise',
-  nickname: '관리자_홍길동',
+  name: '관리자_홍길동',
+  password: 'abcd1234!',
   profileImage: 'https://picsum.photos/seed/user1/200/200',
   role: 'Administrator',
+  department: '정수운영팀',
 };
 
 export const plantData: PlantStats = {
   outflow: 12450,
-  pumpRate: 85.5,
-  currentStorage: 78,
-  storageHistory: [
-    { time: '00:00', value: 72 },
-    { time: '04:00', value: 75 },
-    { time: '08:00', value: 82 },
-    { time: '12:00', value: 80 },
-    { time: '16:00', value: 78 },
-    { time: '20:00', value: 76 },
-    { time: '24:00', value: 78 },
-  ]
+  pumpAverage: 85.5,
 };
 
 const DEMAND_SAMPLE = {
@@ -36,12 +28,13 @@ const SAVINGS_SAMPLE = {
 
 const ALGORITHM_PROCESS_SAMPLE = {
   // 단계별 예측 필드
-  basePattern: [450, 420, 400, 380, 410, 460, 550, 620, 650, 630, 600, 580, 560, 550, 570, 600, 640, 680, 700, 650, 580, 520, 480, 460], // 과거 데이터 분석 (기본 패턴)
   dailyForecast: [460, 430, 410, 390, 420, 470, 560, 630, 660, 640, 610, 590, 570, 560, 580, 610, 650, 690, 710, 660, 590, 530, 490, 470], // 전일실적 비교 (당일 예측)
   recalculation: [465, 425, 405, 385, 425, 475, 565, 635, 665, 645, 615, 595, 575, 565, 585, 615, 655, 695, 715, 665, 595, 535, 495, 475], // 15분 주기 실시간 재산출
 };
 
-export const WaterSystemDatas: WaterSystemData[] = [
+export const waterSystemDatas: WaterSystemData[] = [
+  { id: 'OVERVIEW', name: '전체', type: 'overview' },
+  
   // 1. 중심부 (정수장)
   { id: 'plant_central', name: '중앙 정수장', lat: 35.2800, lng: 129.0800, type: 'plant' },
 

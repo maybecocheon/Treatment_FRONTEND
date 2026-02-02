@@ -37,6 +37,22 @@
   }
 }
 
+/* Recharts Brush 컴포넌트의 글자 위치 조정 스타일 */
+/* 1. 공통 스타일: 아래로 내리기 및 크기 조절 */
+.recharts-brush-texts text {
+  font-size: 11px;
+}
+
+/* 2. 왼쪽 글자 (시작 값): 오른쪽으로 이동 */
+.recharts-brush-texts text:first-child {
+  transform: translate(10px, 30px); 
+}
+
+/* 3. 오른쪽 글자 (끝 값): 왼쪽으로 이동 */
+.recharts-brush-texts text:last-child {
+  transform: translate(-10px, 30px); 
+}
+
 body {
   background: var(--background);
   color: var(--foreground);
