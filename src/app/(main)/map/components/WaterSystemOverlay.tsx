@@ -5,7 +5,6 @@ import { AlertTriangle, Factory } from "lucide-react";
 import { WaterWave } from "./WaterWave";
 import { useAtomValue } from "jotai";
 import { mapLevelAtom } from "@/atoms/uniAtoms";
-import { useEffect } from "react";
 
 export interface WaterSystemOverlay {
     waterSystem: WaterSystemData;

@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, History, ChevronRight, Factory, Map } from "lucide-react";
+import { History, ChevronRight, Factory, Map, LayoutDashboard } from "lucide-react";
 
 interface MenuProps {
   isMobileMenuOpen: boolean;
@@ -11,12 +11,13 @@ interface MenuProps {
 
 export default function Menu({ isMobileMenuOpen, setIsMobileMenuOpen }: MenuProps) {
   const pathname = usePathname();
-  const isActive = (path: string) => pathname === path;
+  const isActive = (path: string) => pathname.includes(path.split("/")[1]);
 
   const menuItems = [
+    { name: "대시보드", path: "/dashboard", icon: <LayoutDashboard size={18} /> },
     { name: "지도 기반 현황", path: "/map", icon: <Map size={18} /> },
-    { name: "지능형 펌프 운영 스케줄링", path: "/scheduling", icon: <Factory size={18} /> },
-    { name: "히스토리 뷰어", path: "/history", icon: <History size={18} /> },
+    { name: "지능형 펌프 운영 스케줄링", path: "/scheduling/1", icon: <Factory size={18} /> },
+    { name: "히스토리 뷰어", path: "/history/overview", icon: <History size={18} /> },
   ];
 
   return (

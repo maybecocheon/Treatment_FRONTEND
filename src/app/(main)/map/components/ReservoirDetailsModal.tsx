@@ -1,62 +1,39 @@
-'use client'
+"use client"
 
-import { BarChart3, Droplets, TrendingUp, Waves, X, ArrowRight, AlertTriangle, Zap } from "lucide-react";
-import { Brush, CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
+import { BarChart3, Droplets, Waves, X, ArrowRight, AlertTriangle, Zap, TrendingUp } from "lucide-react";
 import { useRouter } from "next/navigation";
-import React, { useEffect, useState } from "react";
-
-interface ModalProps {
-    params: {
-        id: string;
-    };
-}
+import React, { useEffect, useMemo, useState } from "react";
+import { ModalProps } from "@/app/props/ModalProps";
+import TailChart from "@/components/main/TailChart";
+import { fetchPredictionData } from "@/fetchs/fetchPredictionData";
 
 export default function ReservoirDetailsPage({ params }: ModalProps) {
-    // 차트 데이터
-    const [reservoir, setReservoir] = React.useState<any>(null);
-    const [chartData, setChartData] = React.useState<any[]>([]);
-    const [visibleCount, setVisibleCount] = useState(1440);
-
+    const { id } = params;
     const router = useRouter();
 
-    const { id } = params;
-    //const reservoir = fetchData?.find(r => r.id === id);
-
-    // 수위 위험 상태 체크
-    const isLevelCritical = reservoir?.currentLevel! < reservoir?.minLevel!;
+    // 차트 데이터
+    const [reservoir, setReservoir] = React.useState<any>(null);
+    const [rawChartData, setRawChartData] = useState<Array<{ time: string; actualValue: number | null; predictedValue: number }>>([]);
+    const [selectedRange, setSelectedRange] = useState("24h");
 
     // 만수위
-    const maxLevel = reservoir?.maxLevel || 8.0;
-
-    const onClose = () => {
-        router.push("/map");
-    };
-
-    const handleBrushChange = (range: { endIndex: number; startIndex: number; }) => {
-        // 줌 된 영역에 포함된 데이터 개수 계산
-        setVisibleCount(range.endIndex - range.startIndex);
-    };
+    const maxLevel = reservoir?.maxLevel || 10.0;
+    const minLevel = reservoir?.minLevel || 5.0;
+    // 수위 위험 상태 체크
+    const isLevelCritical = reservoir?.currentLevel! < minLevel;
 
     // 모달이 마운트(열림)될 때 스크롤 방지 & fetch 차트데이터
     useEffect(() => {
         document.body.style.overflow = "hidden";
-
-        const fetchChartData = async () => {
-            const response = await fetch("/api/proxy/reservoir/chart/minite/10?date=2023-01-06");
-            const data = await response.json();
-            setReservoir(data);
-            setChartData(data.chartData.map((_: any, idx: number) => ({
-                time: data.chartData?.[idx]?.time.split("T")[1].substring(0, 5) || "",
-                actualValue: data.chartData?.[idx]?.actualValue || 0,
-                predictedValue: data.chartData?.[idx]?.predictedValue || 0,
-            })));
-            console.log("Fetched Chart Data:", data);
-        }
-        fetchChartData();
+        fetchPredictionData({ setReservoir, setRawChartData, id });
         return () => { document.body.style.overflow = "auto" };
     }, []);
 
     // 브라우저 "뒤로가기" 클릭 시 모달 닫기
+    const onClose = () => {
+        router.push("/map");
+    };
+
     useEffect(() => {
         const handlePopState = () => {
             onClose();
@@ -65,10 +42,24 @@ export default function ReservoirDetailsPage({ params }: ModalProps) {
         return () => window.removeEventListener("popstate", handlePopState);
     }, [onClose]);
 
-    useEffect(() => {
-        // 차트 데이터가 변경될 때마다 로그 출력
-        console.log("데이터 업데이트:", reservoir);
-    }, [reservoir]);
+    // 필터링 로직 (캐싱을 위해 useMemo 사용)
+    const filteredData = useMemo(() => {
+        if (!rawChartData) return [];
+
+        const lastIndex = rawChartData.length;
+        let dataLimit = 0;
+
+        // 선택된 범위에 따라 데이터 자르기
+        switch (selectedRange) {
+            case "3h": dataLimit = 180; break;
+            case "6h": dataLimit = 360; break;
+            case "24h": dataLimit = 1440; break;
+            default: dataLimit = rawChartData.length;
+        }
+
+        // 마지막부터 dataLimit 개수만큼 자르기
+        return rawChartData.slice(Math.max(0, lastIndex - dataLimit));
+    }, [rawChartData, selectedRange]);
 
     return (
         <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-md flex items-center justify-center z-50 p-4 md:p-6 animate-in fade-in duration-300">
@@ -82,7 +73,7 @@ export default function ReservoirDetailsPage({ params }: ModalProps) {
                         </div>
                         <div>
                             <h3 className="text-xl md:text-2xl font-black text-slate-900 tracking-tight">
-                                {reservoir?.name}
+                                {reservoir?.reservoirName} 상세 정보
                             </h3>
                             <p className={`${isLevelCritical ? "text-red-400" : "text-slate-400"} text-xs md:text-sm font-medium`}>
                                 {isLevelCritical ? "즉각적인 펌프 가동 검토가 필요합니다" : "실시간 재산출 기반 용수 수요 예측 현황"}
@@ -94,9 +85,8 @@ export default function ReservoirDetailsPage({ params }: ModalProps) {
                     </button>
                 </div>
 
-                {/* Content Area */}
+                {/* 메인 */}
                 <div className="p-6 md:p-10 overflow-y-auto custom-scrollbar bg-slate-50/30">
-
                     {/* 수위 경고 배너 (위험 시에만 노출) */}
                     {isLevelCritical && (
                         <div className="mb-8 flex items-center gap-4 bg-red-50 border-2 border-red-100 p-6 rounded-3xl animate-pulse">
@@ -149,61 +139,34 @@ export default function ReservoirDetailsPage({ params }: ModalProps) {
                     <div className="glass rounded-4xl p-8 mb-10">
                         <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-8 gap-4">
                             <h4 className="font-bold text-slate-800 flex items-center gap-2">
-                                <TrendingUp size={20} className="text-emerald-500" /> 단계별 용수수요 예측 추이
+                                <TrendingUp size={20} className="text-emerald-500" />단계별 용수수요 예측 추이
                             </h4>
-                            <div className="flex flex-wrap gap-3">
-                                <div className="flex items-center gap-1.5"><span className="w-2 h-2 bg-blue-400 rounded-full"></span><span className="text-[10px] font-bold text-slate-500 uppercase">예측</span></div>
-                                <div className="flex items-center gap-1.5"><span className="w-2 h-2 bg-emerald-500 rounded-full"></span><span className="text-[10px] font-bold text-slate-500 uppercase">실시간 데이터</span></div>
+                            <div className="flex flex-col gap-3 items-end">
+                                <div className="flex gap-2">
+                                    {["3h", "6h", "24h"].map(t => (
+                                        <button
+                                            key={t}
+                                            onClick={() => setSelectedRange(t)}
+                                            className={`text-[12px] px-4 py-1 rounded-2xl transition-colors ${selectedRange === t
+                                                ? "bg-sky-500 text-white shadow-md"
+                                                : "bg-slate-200 text-slate-500 hover:bg-slate-100"
+                                                }`}
+                                        >
+                                            {t}
+                                        </button>
+                                    ))}
+                                </div>
+                                <div className="flex gap-3">
+                                    <div className="flex items-center gap-1.5"><span className="w-2 h-2 bg-blue-400 rounded-full"></span><span className="text-[10px] font-bold text-slate-500 uppercase">실시간</span></div>
+                                    <div className="flex items-center gap-1.5"><span className="w-2 h-2 bg-emerald-500 rounded-full"></span><span className="text-[10px] font-bold text-slate-500 uppercase">예측</span></div>
+                                </div>
                             </div>
                         </div>
                         <div className="h-80 w-full">
-                            <ResponsiveContainer width="100%" height="100%">
-                                <LineChart data={chartData} margin={{ top: 10, right: 25, left: -20, bottom: 20 }}>
-                                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
-                                    <XAxis dataKey="time" hide axisLine={false} tickLine={false} />
-                                    <YAxis axisLine={false} tickLine={false} />
-                                    <Tooltip />
-
-                                    {/* 메인 선 */}
-                                    <Line type="monotone" dataKey="predictedValue" stroke="#10b981" strokeWidth={4} dot={false} />
-                                    <Line type="monotone" dataKey="actualValue" stroke="#60a5fa" strokeWidth={2} dot={false} />
-
-                                    {/* 줌 컨트롤러 */}
-                                    <Brush
-                                        dataKey="time"
-                                        height={40}
-                                        stroke="#60a5fa"
-                                        fill="#fff"
-                                        gap={10}
-                                        travellerWidth={10}
-                                        onChange={handleBrushChange}
-                                    >
-                                        <XAxis
-                                            dataKey="time"
-                                            axisLine={false}
-                                            tickLine={false}
-                                            hide={false}
-                                            interval={0}
-                                            tick={{ fill: "#94a3b8", fontSize: 10 }}
-                                            /* 줌 상태에 따라 텍스트 포맷 조절 */
-                                            tickFormatter={(value) => {
-                                                // 아주 많이 확대했을 때 (분 단위)
-                                                if (visibleCount < 35) {
-                                                    return value;
-                                                }
-                                                // 적당히 확대했을 때 (10분 단위)
-                                                if (visibleCount < 200) {
-                                                    return value.endsWith("0") ? value : ""; 
-                                                }
-                                                // 전체적으로 볼 때 (시간 단위)
-                                                return value.includes(":00") ? value : "";
-                                            }}
-                                        />
-                                    </Brush>
-                                </LineChart>
-                            </ResponsiveContainer>
+                            <TailChart chartData={filteredData || []} />
                         </div>
                     </div>
+
 
                     {/* 하단 페이지 이동 가이드 */}
                     <button
