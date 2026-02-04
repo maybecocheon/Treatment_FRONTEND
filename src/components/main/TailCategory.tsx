@@ -1,41 +1,20 @@
 'use client'
 
-import { fetchFacilityAll } from "@/fetchs/fetchFacilityAll";
+import { useFacilitiesData } from "@/hooks/useFacilitiesData";
 import { Database, Droplets, Factory } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
-interface Facility {
-    facilityId: number | string;
-    name: string;
-    type: string;
-}
 
 export default function TailCategory({ text, params }: { text: string, params: string }) {
     const router = useRouter();
-    const [facilities, setFacilities] = useState<Facility[]>([]);
+    const { loadFacilities, getFilteredFacilities } = useFacilitiesData();
 
     useEffect(() => {
-        fetchFacilityAll({ setFacilities });
+        loadFacilities();
     }, []);
 
-    // 데이터 필터링
-    const getFilteredData = () => {
-        if (!facilities) return [];
-
-        const base = facilities.filter(f => f.type === "배수지" || f.type === "정수장");
-
-        // scheduling이 아닐 때 "전체" 추가 (push 대신 스프레드 연산자 사용)
-        if (text !== "scheduling") {
-            return [
-                { facilityId: "overview", name: "전체", type: "overview" }, 
-                ...base
-            ];
-        }
-        return base;
-    };
-
-    const filteredData = getFilteredData();
+    const filteredData = getFilteredFacilities(text);
 
     return (
         <div className="glass p-4 rounded-3xl flex flex-col xl:flex-row items-stretch xl:items-center gap-4">

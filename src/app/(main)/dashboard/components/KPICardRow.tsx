@@ -1,11 +1,37 @@
+'use client'
+
 import { KPIData } from '@/data/types';
 import TailCard from './TailCard';
+import { useTreatmentData } from '@/hooks/useTreatmentData';
+import { useEffect } from 'react';
+import { useReservoirLevel } from '@/hooks/useReservoirLevel';
 
 interface Props {
   data: KPIData;
 }
 
 export default function KPICardRow({ data }: Props) {
+  const { treatment, loadTreatment } = useTreatmentData();
+  const { reservoirLevels, loadLevels } = useReservoirLevel();
+
+  useEffect(() => {
+    loadTreatment();
+    loadLevels();
+  }, [])
+
+  if (!treatment || !reservoirLevels) return null;
+
+  // 수위
+  const levelAvg = reservoirLevels.map(f => f.level).reduce((acc, cur) => acc + cur, 0) / reservoirLevels.length;
+  const minFacility = reservoirLevels.reduce((min, cur) => {return (cur.level < min.level) ? cur : min;}, reservoirLevels[0]);
+
+  const minName = minFacility.reservoirName;
+  const minLevel = minFacility.level;
+
+  const maxFacility = reservoirLevels.reduce((max, cur) => {return (cur.level > max.level) ? cur : max;}, reservoirLevels[0]);
+  const maxName = maxFacility.reservoirName;
+  const maxLevel = maxFacility.level;
+
   const getRiskColor = (score: number) => {
     if (score > 70) return 'text-rose-500';
     if (score > 40) return 'text-amber-500';
@@ -22,30 +48,30 @@ export default function KPICardRow({ data }: Props) {
     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
       <TailCard
         label="송수량"
-        value={`${data.flowRate.toLocaleString()}`}
+        value={treatment.flowOutAmt.toLocaleString(undefined, { maximumFractionDigits: 0 })}
         unit="m³/h"
         subLabel={`${data.flowChange > 0 ? '▲' : '▼'} ${Math.abs(data.flowChange)}%`}
         color="text-slate-900"
       />
       <TailCard
         label="평균 수위"
-        value={`${data.avgLevel}`}
+        value={levelAvg.toFixed(2)}
         unit="m"
         subLabel="모든 배수지"
         color="text-sky-600"
       />
       <TailCard
         label="최저 수위"
-        value={`${data.minLevelValue}`}
+        value={minLevel.toFixed(2)}
         unit="m"
-        subLabel={data.minLevelReservoir}
+        subLabel={minName}
         color={data.minLevelValue < 25 ? 'text-rose-600' : 'text-amber-600'}
       />
       <TailCard
         label="최고 수위"
-        value={`${data.maxLevelValue}`}
+        value={maxLevel.toFixed(2)}
         unit="m"
-        subLabel="안정 유지"
+        subLabel={maxName}
         color="text-sky-600"
       />
       <TailCard

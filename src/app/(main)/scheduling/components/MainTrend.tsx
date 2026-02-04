@@ -2,7 +2,7 @@
 import { ModalProps } from '@/app/props/ModalProps';
 import { Activity, BarChart3, Droplets, Gauge, Waves } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { useEffect,  useState } from 'react'
+import { useEffect, useState } from 'react'
 import ChartBox from './ChartBox';
 
 
@@ -53,42 +53,33 @@ export default function MainTrend({ params }: ModalProps) {
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-stretch">
-                {reservoir?.category === "PLANT" ? (
-                    <ChartBox title="송수량 변동 추이 (m³/h)" data={chartData.map(d => d.actualValue || 0)} color="#3b82f6" icon={Droplets} />
+                {reservoir?.category === "정수장" ? (
+                    <ChartBox title="송수량 변동 추이 (m³/h) & 압력" data={chartData.map(d => d.actualValue || 0)} color="#3b82f6" icon={Droplets} />
                 ) : (
                     <ChartBox
-                        title="수요량 및 예측 (m³/h)"
+                        title="수요 (m³/h) & 수위"
                         data={chartData.map(d => d.actualValue || 0)}
                         data2={chartData.map(d => d.predictedValue || 0)}
                         color="#3b82f6"
                         color2="#818cf8"
-                        label1="현재 실측치"
-                        label2="AI 예측치"
+                        label1="현재 수요"
+                        label2="수위"
                         icon={BarChart3}
                     />
                 )}
 
-                {reservoir?.category === "PLANT" ? (
+                {(
                     <ChartBox
-                        title="잔량 및 펌프 가동률 통합"
+                        title="펌프 스케줄링 최적화"
                         data={chartData.map(d => d.storage || 0)}
-                        data2={chartData.map(d => d.pumpRate || 0)  }
+                        data2={chartData.map(d => d.pumpRate || 0)}
+                        data3={chartData.map(d => d || 0)}
                         color="#818cf8"
                         color2="#10b981"
-                        label1="정수장 잔량 (%)"
-                        label2="펌프 가동률 (%)"
+                        label1="예측 수위 (%)"
+                        label2="예측 수요 (%)"
+                        label3="예측 가압"
                         icon={Gauge}
-                    />
-                ) : (
-                    <ChartBox
-                        title="수위 및 펌프 가동률 통합"
-                        data={chartData.map(d => d.level || 0)}
-                        data2={chartData.map(d => d.pumpRate || 0)}
-                        color="#0ea5e9"
-                        color2="#10b981"
-                        label1="배수지 수위 (%)"
-                        label2="가동 펌프률 (%)"
-                        icon={Waves}
                     />
                 )}
             </div>

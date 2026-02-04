@@ -33,9 +33,27 @@ const ALGORITHM_PROCESS_SAMPLE = {
   recalculation: [465, 425, 405, 385, 425, 475, 565, 635, 665, 645, 615, 595, 575, 565, 585, 615, 655, 695, 715, 665, 595, 535, 495, 475], // 15분 주기 실시간 재산출
 };
 
+export const FACILITY_COORDS: Record<string, { lat: number; lng: number }> = {
+  "1": { lat: 35.2800, lng: 129.0800 }, // 중앙 정수장
+  "2": { lat: 35.2200, lng: 129.0400 }, // AA 가압장
+  "3": { lat: 35.1300, lng: 129.1000 }, // AB 가압장
+  "4": { lat: 35.1900, lng: 129.0100 }, // A 배수지
+  "5": { lat: 35.1700, lng: 129.0000 }, // B 배수지
+  "6": { lat: 35.1800, lng: 129.0200 }, // C 배수지
+  "7": { lat: 35.1500, lng: 129.0300 }, // D 배수지
+  "8": { lat: 35.1300, lng: 129.0100 }, // E 배수지
+  "9": { lat: 35.1000, lng: 129.0000 }, // F 배수지
+  "10": { lat: 35.1700, lng: 129.0900 }, // G 배수지
+  "11": { lat: 35.1900, lng: 129.1500 }, // H 배수지
+  "12": { lat: 35.1500, lng: 129.1200 }, // I 배수지
+  "13": { lat: 35.2200, lng: 129.1300 }, // J 배수지
+  "14": { lat: 35.1300, lng: 129.1400 }, // K 배수지
+  "15": { lat: 35.0900, lng: 129.1100 }, // L 배수지
+};
+
 export const waterSystemDatas: WaterSystemData[] = [
   { id: 'overview', name: '전체', type: 'overview' },
-  
+
   // 1. 중심부 (정수장)
   { id: '1', name: '중앙 정수장', lat: 35.2800, lng: 129.0800, type: 'plant' },
 
@@ -46,14 +64,14 @@ export const waterSystemDatas: WaterSystemData[] = [
   { id: '6', name: 'C 배수지', lat: 35.1800, lng: 129.0200, type: 'reservoir', v: '1,500m³', currentLevel: 2.8, maxLevel: 5.0, minLevel: 1.5, accuracy: 97.5, ...DEMAND_SAMPLE, ...SAVINGS_SAMPLE, ...ALGORITHM_PROCESS_SAMPLE },
   { id: '7', name: 'D 배수지', lat: 35.1500, lng: 129.0300, type: 'reservoir', v: '1,000m³', currentLevel: 2.5, maxLevel: 5.0, minLevel: 1.5, accuracy: 97.5, ...DEMAND_SAMPLE, ...SAVINGS_SAMPLE, ...ALGORITHM_PROCESS_SAMPLE },
   { id: '8', name: 'E 배수지', lat: 35.1300, lng: 129.0100, type: 'reservoir', v: '2,000m³', currentLevel: 4.1, maxLevel: 5.0, minLevel: 1.5, accuracy: 97.5, ...DEMAND_SAMPLE, ...SAVINGS_SAMPLE, ...ALGORITHM_PROCESS_SAMPLE },
-  { id: '9', name: 'F 배수지', lat: 35.1000, lng: 129.0000, type: 'reservoir', v: '1,000m³', currentLevel: 2.8, maxLevel: 5.0, minLevel: 1.5, accuracy: 97.5, ...DEMAND_SAMPLE , ...SAVINGS_SAMPLE, ...ALGORITHM_PROCESS_SAMPLE },
+  { id: '9', name: 'F 배수지', lat: 35.1000, lng: 129.0000, type: 'reservoir', v: '1,000m³', currentLevel: 2.8, maxLevel: 5.0, minLevel: 1.5, accuracy: 97.5, ...DEMAND_SAMPLE, ...SAVINGS_SAMPLE, ...ALGORITHM_PROCESS_SAMPLE },
 
   // 3. 동측 및 기타 계통 (AB가압장 라인)
   { id: '10', name: 'G 배수지', lat: 35.1700, lng: 129.0900, type: 'reservoir', v: '300m³', currentLevel: 1.8, maxLevel: 3.0, minLevel: 0.8, accuracy: 97.5, ...DEMAND_SAMPLE, ...SAVINGS_SAMPLE, ...ALGORITHM_PROCESS_SAMPLE },
   { id: '11', name: 'H 배수지', lat: 35.1900, lng: 129.1500, type: 'reservoir', v: '100m³', currentLevel: 0.5, maxLevel: 2.0, minLevel: 0.7, accuracy: 97.5, ...DEMAND_SAMPLE, ...SAVINGS_SAMPLE, ...ALGORITHM_PROCESS_SAMPLE },
   { id: '12', name: 'I 배수지', lat: 35.1500, lng: 129.1200, type: 'reservoir', v: '300m³', currentLevel: 1.5, maxLevel: 3.0, minLevel: 0.8, accuracy: 97.5, ...DEMAND_SAMPLE, ...SAVINGS_SAMPLE, ...ALGORITHM_PROCESS_SAMPLE },
   { id: '13', name: 'J 배수지', lat: 35.2200, lng: 129.1300, type: 'reservoir', v: '2,000m³', currentLevel: 3.5, maxLevel: 5.0, minLevel: 1.5, accuracy: 97.5, ...DEMAND_SAMPLE, ...SAVINGS_SAMPLE, ...ALGORITHM_PROCESS_SAMPLE },
-  
+
 
   { id: '3', name: 'AB 가압장', lat: 35.1300, lng: 129.1000, type: 'booster', spec: 'Q=1,000m³/day' },
   { id: '14', name: 'K 배수지', lat: 35.1300, lng: 129.1400, type: 'reservoir', v: '3,456m³', currentLevel: 4.2, maxLevel: 6.0, minLevel: 2.0, accuracy: 97.5, ...DEMAND_SAMPLE, ...SAVINGS_SAMPLE, ...ALGORITHM_PROCESS_SAMPLE },
@@ -126,57 +144,57 @@ export const generateMockKPIData = (): KPIData => ({
 });
 
 export const generateRiskEvents = (): RiskEvent[] => [
-  { 
-    id: '1', 
-    reservoir: '배수지 B', 
-    type: '저수위 위험', 
-    score: 78, 
-    status: 'Critical', 
-    detail: '현재 수위 18% (하한 20%)', 
-    subDetail: '관압 미달 확률 42% 상향' 
+  {
+    id: '1',
+    reservoir: '배수지 B',
+    type: '저수위 위험',
+    score: 78,
+    status: 'Critical',
+    detail: '현재 수위 18% (하한 20%)',
+    subDetail: '관압 미달 확률 42% 상향'
   },
-  { 
-    id: '2', 
-    reservoir: '배수지 D', 
-    type: '수요 급증', 
-    score: 63, 
-    status: 'Warning', 
-    detail: '최근 1h 수요 +27% 급증', 
-    subDetail: '예상 저수위 도달 시점: 6h 후' 
+  {
+    id: '2',
+    reservoir: '배수지 D',
+    type: '수요 급증',
+    score: 63,
+    status: 'Warning',
+    detail: '최근 1h 수요 +27% 급증',
+    subDetail: '예상 저수위 도달 시점: 6h 후'
   },
-  { 
-    id: '3', 
-    reservoir: '배수지 A', 
-    type: '수위 상승', 
-    score: 41, 
-    status: 'Info', 
-    detail: '현재 75% 상승 중', 
-    subDetail: '월류 가능성 낮음 (상한 90%)' 
+  {
+    id: '3',
+    reservoir: '배수지 A',
+    type: '수위 상승',
+    score: 41,
+    status: 'Info',
+    detail: '현재 75% 상승 중',
+    subDetail: '월류 가능성 낮음 (상한 90%)'
   },
-  { 
-    id: '4', 
-    reservoir: '펌프장 #1', 
-    type: '비효율 운전', 
-    score: 35, 
-    status: 'Info', 
-    detail: '펌프 과부하 구간 진입', 
-    subDetail: '출력 95% 초과 지속' 
+  {
+    id: '4',
+    reservoir: '펌프장 #1',
+    type: '비효율 운전',
+    score: 35,
+    status: 'Info',
+    detail: '펌프 과부하 구간 진입',
+    subDetail: '출력 95% 초과 지속'
   },
-  { 
-    id: '5', 
-    reservoir: '정수장', 
-    type: '부하 집중', 
-    score: 22, 
-    status: 'Info', 
-    detail: '전체 송수량 한계 도달 중', 
-    subDetail: '예비 펌프 가동 준비 권장' 
+  {
+    id: '5',
+    reservoir: '정수장',
+    type: '부하 집중',
+    score: 22,
+    status: 'Info',
+    detail: '전체 송수량 한계 도달 중',
+    subDetail: '예비 펌프 가동 준비 권장'
   }
 ];
 
 export const generatePredictionData = (): PredictionPoint[] => {
   const data: PredictionPoint[] = [];
   const hours = ['08', '10', '12', '14', '16', '18', '20', '22', '00', '02', '04', '06'];
-  
+
   hours.forEach((h, i) => {
     data.push({
       time: `${h}:00`,
@@ -199,7 +217,7 @@ export const generateRiskFactors = (): RiskFactor[] => [
 export const generatePumpSchedule = (): PumpScheduleItem[] => {
   const data: PumpScheduleItem[] = [];
   const hours = Array.from({ length: 24 }, (_, i) => `${i.toString().padStart(2, '0')}:00`);
-  
+
   hours.forEach((h, i) => {
     const hourNum = parseInt(h.split(':')[0]);
     let rateType: any = 'Off-Peak';
@@ -230,5 +248,3 @@ export const COLORS = {
   warning: '#fb923c', // orange-400
   danger: '#ff4b4b' // bright red
 };
-
-export const RESERVOIRS = ['배수지 A', '배수지 B', '배수지 C', '배수지 D', '배수지 E'];

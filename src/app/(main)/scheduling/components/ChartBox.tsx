@@ -7,14 +7,16 @@ export interface ChartBoxProps {
     title: string;
     data: number[]; 
     data2?: number[];
+    data3?: number[];
     color: string;
     color2?: string;
     label1?: string;
     label2?: string;
+    label3?: string;
     icon: LucideIcon;
 }
 
-export default function ChartBox({ title, data, data2, color, color2, label1, label2, icon: Icon }: ChartBoxProps) {
+export default function ChartBox({ title, data, data2, data3, color, color2, label1, label2, label3, icon: Icon }: ChartBoxProps) {
 
     // Recharts 형식에 맞게 데이터 변환 (24시간 기준)
     const chartData = useMemo(() => {
@@ -22,8 +24,9 @@ export default function ChartBox({ title, data, data2, color, color2, label1, la
             time: `${i}h`,
             value1: val,
             value2: data2 ? data2[i] : null,
+            value3: data3 ? data3[i] : null,
         }));
-    }, [data, data2]);
+    }, [data, data2, data3]);
 
     return (
         <div className="glass rounded-[2.5rem] p-6 flex flex-col gap-4 group transition-all duration-500 hover:shadow-md h-full">
@@ -33,6 +36,14 @@ export default function ChartBox({ title, data, data2, color, color2, label1, la
                         <Icon size={16} />
                     </div>
                     <h5 className="text-[14px] font-semibold text-blue-950 uppercase tracking-tight">{title}</h5>
+                    {title === "수요 (m³/h) & 수위" && <select
+                        value={"배수지"}
+                        // onChange={}
+                        className="bg-slate-50 border border-slate-200 text-[10px] lg:text-xs rounded-lg px-2 py-1 focus:outline-none focus:ring-2 focus:ring-sky-500/20 text-slate-700 font-bold"
+                    >
+                        <option>A 배수지</option>
+                        {/* {facilities.filter(f => f.type === "배수지").map(f => <option key={f.facilityId} value={f.name}>{f.name}</option>)} */}
+                    </select>}
                 </div>
             </div>
 
@@ -108,12 +119,23 @@ export default function ChartBox({ title, data, data2, color, color2, label1, la
                                 fill="transparent"    // 두 번째 데이터는 채우기 없이 선만 남기면 더 깔끔함
                             />
                         )}
+
+                        {data3 && (
+                            <Area
+                                type="monotone"
+                                dataKey="value2"
+                                stroke={color2}
+                                strokeWidth={2}
+                                strokeDasharray="5 5" // 예측치는 점선으로 얌전하게
+                                fill="transparent"    // 두 번째 데이터는 채우기 없이 선만 남기면 더 깔끔함
+                            />
+                        )}
                     </AreaChart>
                 </ResponsiveContainer>
             </div>
 
             {/* 범례 영역 */}
-            {(label1 || label2) && (
+            {(label1 || label2 || label3) && (
                 <div className="flex items-center justify-center gap-6">
                     {label1 && (
                         <div className="flex items-center gap-2">
@@ -125,6 +147,12 @@ export default function ChartBox({ title, data, data2, color, color2, label1, la
                         <div className="flex items-center gap-2">
                             <div className="w-3 h-1 rounded-full bg-slate-300" style={{ backgroundColor: color2, borderStyle: 'dashed', borderWidth: '1px' }}></div>
                             <span className="text-[10px] font-bold text-slate-500 uppercase">{label2}</span>
+                        </div>
+                    )}
+                    {label3 && (
+                        <div className="flex items-center gap-2">
+                            <div className="w-3 h-1 rounded-full bg-slate-300" style={{ backgroundColor: color2, borderStyle: 'dashed', borderWidth: '1px' }}></div>
+                            <span className="text-[10px] font-bold text-slate-500 uppercase">{label3}</span>
                         </div>
                     )}
                 </div>

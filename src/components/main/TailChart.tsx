@@ -25,8 +25,8 @@ export default function TailChart({ chartData }: TailChartProps) {
                 <Tooltip />
 
                 {/* 메인 선 */}
-                <Line type="monotone" dataKey="predictedValue" name="예측" stroke="#10b981" strokeWidth={4} dot={false} />
-                <Line type="monotone" dataKey="actualValue" name="실시간" stroke="#60a5fa" strokeWidth={2} dot={false} />
+                <Line type="monotone" dataKey="predictedValue" name="예측" stroke="#10b981" strokeWidth={4} dot={false} isAnimationActive={false} />
+                <Line type="monotone" dataKey="actualValue" name="실시간" stroke="#60a5fa" strokeWidth={2} dot={false} isAnimationActive={false}  />
             </LineChart>
         </ResponsiveContainer>
     )

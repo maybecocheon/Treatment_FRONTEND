@@ -6,6 +6,7 @@ import Link from "next/link";
 import { currentUser } from "@/data/mockData"
 import Menu from "./Menu";
 import { usePathname, useRouter } from "next/navigation";
+import { useVirtualClock } from "@/hooks/useVirtualClock";
 
 export default function Header() {
   const router = useRouter();
@@ -13,8 +14,8 @@ export default function Header() {
 
   // 시간
   const [mounted, setMounted] = useState(false);
-  const [time, setTime] = useState<Date | null>(null);
-
+  const { time } = useVirtualClock();
+  
   // 프로필
   const [showProfile, setShowProfile] = useState(false);
   const profileRef = useRef<HTMLDivElement>(null);
@@ -25,8 +26,6 @@ export default function Header() {
   // 마운트 시 시간 설정
   useEffect(() => {
     setMounted(true);
-    const timer = setInterval(() => { setTime(new Date()); }, 1000);
-    return () => clearInterval(timer);
   }, []);
 
   // 프로필 외부 클릭 시 닫기
@@ -51,7 +50,7 @@ export default function Header() {
 
         {/* 로고 영역 */}
         <div className="flex items-center gap-8">
-          <Link href="/" className="flex items-center gap-2.5 group">
+          <Link href="/dashboard" className="flex items-center gap-2.5 group">
             <div className="bg-linear-to-br from-sky-400 to-blue-600 p-1.5 rounded-xl shadow-lg shadow-sky-500/20 group-hover:scale-110 transition-transform">
               <Droplets className="w-5 h-5 text-white" />
             </div>
@@ -70,21 +69,11 @@ export default function Header() {
             <div className="flex flex-col items-start leading-none gap-1">
               {/* 날짜 표시 */}
               <span className="text-[12px] text-slate-400 tabular-nums">
-                {mounted ? time?.toLocaleDateString("ko-KR", {
-                  year: "numeric",
-                  month: "2-digit",
-                  day: "2-digit",
-                  weekday: "short"
-                }) : "0000. 00. 00. -"}
+                {mounted && time ? time.split(" ")[0] : "0000-00-00"}
               </span>
               {/* 시간 표시 */}
               <span className="text-sm font-semibold text-slate-700 tabular-nums tracking-wider">
-                {mounted ? time?.toLocaleTimeString("ko-KR", {
-                  hour12: false,
-                  hour: "2-digit",
-                  minute: "2-digit",
-                  second: "2-digit"
-                }) : "--:--:--"}
+                {mounted && time ? time.split(" ")[1] : "00:00:00"}
               </span>
             </div>
           </div>

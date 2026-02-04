@@ -1,22 +1,33 @@
 'use client'
 
-import { WaterSystemData } from "@/data/types";
 import { AlertTriangle, Factory } from "lucide-react";
 import { WaterWave } from "./WaterWave";
 import { useAtomValue } from "jotai";
 import { mapLevelAtom } from "@/atoms/uniAtoms";
+import { useEffect } from "react";
+import { usePredictionData } from "@/hooks/usePredictionData";
+import { FacilityType } from "@/hooks/useFacilitiesData";
 
-export interface WaterSystemOverlay {
-    waterSystem: WaterSystemData;
+export interface FacilityOverlay {
+    facility: FacilityType;
     onClick?: () => void;
 }
 
-export default function WaterSystemOverlay({ waterSystem, onClick }: WaterSystemOverlay) {
+export default function FacilityOverlay({ facility, onClick }: FacilityOverlay) {
     // 지도 레벨
     const mapLevel = useAtomValue(mapLevelAtom);
-    
+
+    // 수위 레벨 얻기
+    const { minuteData, loadData } = usePredictionData();
+
+    useEffect(() => {
+        loadData("10");
+    }, [])
+
+    if (!minuteData) return null;
+
     // 1. 정수장
-    if (waterSystem.type === "plant") {
+    if (facility.type === "정수장") {
         return (
             <div className="flex flex-col items-center group cursor-pointer transition-all duration-300 hover:-translate-y-2" onClick={onClick}>
                 <div className="relative">
@@ -26,17 +37,17 @@ export default function WaterSystemOverlay({ waterSystem, onClick }: WaterSystem
                     </div>
                 </div>
                 <div className="mt-2 bg-slate-700/70 text-white text-[10px] px-3 py-1 rounded-full font-semibold">
-                    {waterSystem.name || "광역 정수장"}
+                    {facility.name || "광역 정수장"}
                 </div>
             </div>
         );
     }
 
     // 2. 배수지
-    const isDanger = (waterSystem.currentLevel ?? 0) < (waterSystem.minLevel ?? 0);
-    const levelPercent = ((waterSystem.currentLevel ?? 0) / (waterSystem.maxLevel ?? 1)) * 100;
+    const isDanger = (minuteData.currentLevel > minuteData.maxLevel * 0.91) || (minuteData.currentLevel < minuteData.maxLevel * 0.4);
+    const levelPercent = (minuteData.currentLevel / minuteData.maxLevel) * 100;
 
-    if (waterSystem.type === "reservoir") {
+    if (facility.type === "배수지") {
         // mapLevel이 9 이상일 때, 위험(isDanger)하지 않은 오버레이는 렌더링하지 않음
         if (mapLevel >= 9 && !isDanger) {
             return null;
@@ -64,14 +75,14 @@ export default function WaterSystemOverlay({ waterSystem, onClick }: WaterSystem
                     <div className="relative p-3 flex flex-col items-center justify-center h-full">
                         <div className="flex flex-col items-center">
                             <span className={`font-black uppercase tracking-tighter text-slate-700 leading-none ${mapLevel >= 8 ? "text-[14px]" : "text-[12px] mb-1"}`}>
-                                {mapLevel >= 8 ? waterSystem.currentLevel?.toFixed(1) : waterSystem.name}
+                                {mapLevel >= 8 ? minuteData?.currentLevel?.toFixed(1) : facility.name}
                             </span>
 
                             {/* 8레벨 미만일 때만 상세 수위 표시 */}
                             {mapLevel < 8 && (
                                 <div className="flex items-baseline gap-1">
                                     <span className={`text-xl font-black ${isDanger ? "text-red-600" : "text-slate-700"}`}>
-                                        {waterSystem.currentLevel?.toFixed(1)}
+                                        {minuteData?.currentLevel?.toFixed(1)}
                                     </span>
                                     <span className="text-[10px] text-slate-500 font-bold uppercase">m</span>
                                 </div>

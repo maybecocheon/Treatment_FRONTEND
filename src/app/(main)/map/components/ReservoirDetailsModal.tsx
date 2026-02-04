@@ -2,31 +2,26 @@
 
 import { BarChart3, Droplets, Waves, X, ArrowRight, AlertTriangle, Zap, TrendingUp } from "lucide-react";
 import { useRouter } from "next/navigation";
-import React, { useEffect, useMemo, useState } from "react";
+import { useEffect } from "react";
 import { ModalProps } from "@/app/props/ModalProps";
 import TailChart from "@/components/main/TailChart";
-import { fetchPredictionData } from "@/fetchs/fetchPredictionData";
+import { usePredictionData } from "@/hooks/usePredictionData";
+import { selectedRangeAtom } from "@/atoms/uniAtoms";
+import { useAtom } from "jotai";
 
-export default function ReservoirDetailsPage({ params }: ModalProps) {
+export default function minuteDataDetailsPage({ params }: ModalProps) {
     const { id } = params;
     const router = useRouter();
 
     // 차트 데이터
-    const [reservoir, setReservoir] = React.useState<any>(null);
-    const [rawChartData, setRawChartData] = useState<Array<{ time: string; actualValue: number | null; predictedValue: number }>>([]);
-    const [selectedRange, setSelectedRange] = useState("24h");
-
-    // 만수위
-    const maxLevel = reservoir?.maxLevel || 10.0;
-    const minLevel = reservoir?.minLevel || 5.0;
-    // 수위 위험 상태 체크
-    const isLevelCritical = reservoir?.currentLevel! < minLevel;
+    const { minuteData, loadData, filteredChartData, resetRange } = usePredictionData();
+    const [selectedRange, setSelectedRange] = useAtom(selectedRangeAtom);
 
     // 모달이 마운트(열림)될 때 스크롤 방지 & fetch 차트데이터
     useEffect(() => {
         document.body.style.overflow = "hidden";
-        fetchPredictionData({ setReservoir, setRawChartData, id });
-        return () => { document.body.style.overflow = "auto" };
+        loadData(id);
+        return () => { { document.body.style.overflow = "auto" }; resetRange(); }
     }, []);
 
     // 브라우저 "뒤로가기" 클릭 시 모달 닫기
@@ -42,24 +37,13 @@ export default function ReservoirDetailsPage({ params }: ModalProps) {
         return () => window.removeEventListener("popstate", handlePopState);
     }, [onClose]);
 
-    // 필터링 로직 (캐싱을 위해 useMemo 사용)
-    const filteredData = useMemo(() => {
-        if (!rawChartData) return [];
+    if (!minuteData) return null;
 
-        const lastIndex = rawChartData.length;
-        let dataLimit = 0;
-
-        // 선택된 범위에 따라 데이터 자르기
-        switch (selectedRange) {
-            case "3h": dataLimit = 180; break;
-            case "6h": dataLimit = 360; break;
-            case "24h": dataLimit = 1440; break;
-            default: dataLimit = rawChartData.length;
-        }
-
-        // 마지막부터 dataLimit 개수만큼 자르기
-        return rawChartData.slice(Math.max(0, lastIndex - dataLimit));
-    }, [rawChartData, selectedRange]);
+    // 고수위 & 저수위
+    const maxLevelAlert = minuteData?.maxLevel * 0.8;
+    const minLevelAlert = minuteData?.maxLevel * 0.3;
+    // 수위 위험 상태 체크
+    const isLevelCritical = (minuteData?.currentLevel < minLevelAlert) || (minuteData?.currentLevel > maxLevelAlert);
 
     return (
         <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-md flex items-center justify-center z-50 p-4 md:p-6 animate-in fade-in duration-300">
@@ -73,7 +57,7 @@ export default function ReservoirDetailsPage({ params }: ModalProps) {
                         </div>
                         <div>
                             <h3 className="text-xl md:text-2xl font-black text-slate-900 tracking-tight">
-                                {reservoir?.reservoirName} 상세 정보
+                                {minuteData.minuteDataName} 상세 정보
                             </h3>
                             <p className={`${isLevelCritical ? "text-red-400" : "text-slate-400"} text-xs md:text-sm font-medium`}>
                                 {isLevelCritical ? "즉각적인 펌프 가동 검토가 필요합니다" : "실시간 재산출 기반 용수 수요 예측 현황"}
@@ -94,8 +78,12 @@ export default function ReservoirDetailsPage({ params }: ModalProps) {
                                 <AlertTriangle className="text-white w-6 h-6" />
                             </div>
                             <div className="flex-1">
-                                <h4 className="text-red-900 font-bold text-lg leading-tight">저수위 경보 발생</h4>
-                                <p className="hidden md:block text-red-600 text-sm font-medium">현재 수위가 설정된 최저치({reservoir?.minLevel}m)보다 낮습니다. 공급 부족이 예상됩니다.</p>
+                                <h4 className="text-red-900 font-bold text-lg leading-tight">{minuteData?.currentLevel < minLevelAlert ? "저수위 경보 발생" : "고수위 경보 발생"}</h4>
+                                <p className="hidden md:block text-red-600 text-sm font-medium">
+                                    현재 수위가 설정된 
+                                    {minuteData?.currentLevel < minLevelAlert ? 
+                                            ` 최저치(${minLevelAlert.toFixed(2)}m)보다 낮습니다. 공급 부족이 예상됩니다.` : ` 최고치(${maxLevelAlert.toFixed(2)}m)보다 높습니다. 공급 과잉이 예상됩니다.`}
+                                    </p>
                             </div>
                             <button className="bg-red-500 text-white px-5 py-2.5 rounded-xl font-bold text-sm hover:bg-red-600 transition-colors">
                                 즉시 조치
@@ -112,9 +100,9 @@ export default function ReservoirDetailsPage({ params }: ModalProps) {
                             <div className="flex items-end justify-between">
                                 <div className="flex items-baseline gap-1">
                                     <span className={`text-4xl font-black ${isLevelCritical ? "text-red-600" : "text-slate-900"}`}>
-                                        {reservoir?.currentLevel?.toFixed(1)}
+                                        {minuteData?.currentLevel?.toFixed(1)}
                                     </span>
-                                    <span className="text-slate-500 font-bold text-lg">/ {maxLevel.toFixed(1)}m</span>
+                                    <span className="text-slate-500 font-bold text-lg">/ {minuteData?.maxLevel?.toFixed(1)}m</span>
                                 </div>
                                 <span className={`px-3 py-1 rounded-full text-[12px] font-semibold ${isLevelCritical ? "bg-red-100 text-red-600" : "bg-emerald-100 text-emerald-600"}`}>
                                     {isLevelCritical ? "위험" : "안정"}
@@ -127,9 +115,9 @@ export default function ReservoirDetailsPage({ params }: ModalProps) {
                                 <BarChart3 size={14} className="text-indigo-500" /> 알고리즘 예측 신뢰도
                             </p>
                             <div className="flex items-center justify-between gap-4">
-                                <span className="text-4xl font-black text-slate-900">{reservoir?.predictionAccuracy?.toFixed(1)}%</span>
+                                <span className="text-4xl font-black text-slate-900">{minuteData?.predictionAccuracy?.toFixed(1)}%</span>
                                 <div className="flex-1 h-3 bg-slate-300 rounded-full overflow-hidden">
-                                    <div className="bg-indigo-500 h-full rounded-full transition-all duration-1000" style={{ width: `${reservoir?.predictionAccuracy?.toFixed(1)}%` }} />
+                                    <div className="bg-indigo-500 h-full rounded-full transition-all duration-1000" style={{ width: `${minuteData?.predictionAccuracy?.toFixed(1)}%` }} />
                                 </div>
                             </div>
                         </div>
@@ -147,8 +135,8 @@ export default function ReservoirDetailsPage({ params }: ModalProps) {
                                         <button
                                             key={t}
                                             onClick={() => setSelectedRange(t)}
-                                            className={`text-[12px] px-4 py-1 rounded-2xl transition-colors ${selectedRange === t
-                                                ? "bg-sky-500 text-white shadow-md"
+                                            className={`text-[12px] px-4 py-1 rounded-2xl transition-colors ${selectedRange === t ?
+                                                 "bg-sky-500 text-white shadow-md"
                                                 : "bg-slate-200 text-slate-500 hover:bg-slate-100"
                                                 }`}
                                         >
@@ -163,14 +151,14 @@ export default function ReservoirDetailsPage({ params }: ModalProps) {
                             </div>
                         </div>
                         <div className="h-80 w-full">
-                            <TailChart chartData={filteredData || []} />
+                            <TailChart chartData={filteredChartData || []} />
                         </div>
                     </div>
 
 
                     {/* 하단 페이지 이동 가이드 */}
                     <button
-                        onClick={() => router.push(`/scheduling/${reservoir?.id}`)}
+                        onClick={() => router.push(`/scheduling/${id}`)}
                         className="group bg-sky-100 shadow-2xl relative w-full p-8 overflow-hidden rounded-[2.5rem] text-slate-900 transition-all hover:bg-slate-100 active:scale-[0.99] shadow-slate-200"
                     >
                         <div className="absolute top-0 right-0 w-64 h-64 bg-sky-500/10 rounded-full -translate-y-1/2 translate-x-1/2 blur-3xl group-hover:bg-sky-500/20 transition-colors" />

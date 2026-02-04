@@ -1,50 +1,30 @@
 
 'use client'
 
-import React, { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { ComposedChart, Line, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, ReferenceLine, Area } from 'recharts';
-import { RESERVOIRS } from '@/data/mockData';
 import TailChart from '@/components/main/TailChart';
-import { fetchPredictionData } from '@/fetchs/fetchPredictionData';
-import { fetchFacilityAll } from '@/fetchs/fetchFacilityAll';
+import { usePredictionData } from '@/hooks/usePredictionData';
+import { selectedRangeAtom } from '@/atoms/uniAtoms';
+import { useAtom } from 'jotai';
+import { useFacilitiesData } from '@/hooks/useFacilitiesData';
 
-interface PredictionPanelProps {
-  selectedReservoir: string;
-  onReservoirChange: (name: string) => void;
-}
+export default function PredictionPanel() {
+  const { facilities, loadFacilities } = useFacilitiesData();
+  const [selectedReservoir, setSelectedReservoir] = useState("A배수지");
 
-export default function PredictionPanel({ selectedReservoir, onReservoirChange }: PredictionPanelProps) {
-  const [reservoir, setReservoir] = React.useState<any>(null);
-  const [rawChartData, setRawChartData] = useState<Array<{ time: string; actualValue: number | null; predictedValue: number }>>([]);
-  const
-  const [selectedRange, setSelectedRange] = useState("24h");
-
-  // useEffect(() => {
-  //   fetchFacilityAll();
-  // }, [])
+  const { loadData, filteredChartData, resetRange } = usePredictionData();
+  const [selectedRange, setSelectedRange] = useAtom(selectedRangeAtom);
 
   useEffect(() => {
-    fetchPredictionData({ setReservoir, setRawChartData, id: "10" });
+    loadFacilities();
+    return () => resetRange();
+  }, [])
+
+  useEffect(() => {
+    const facilityId = facilities.filter(f => f.name === selectedReservoir).map(f => f.facilityId);
+    loadData(String(facilityId));
   }, [selectedReservoir]);
-
-  // 필터링 로직 (캐싱을 위해 useMemo 사용)
-  const filteredData = useMemo(() => {
-    if (!rawChartData) return [];
-
-    const lastIndex = rawChartData.length;
-    let dataLimit = 0;
-
-    // 선택된 범위에 따라 데이터 자르기
-    switch (selectedRange) {
-      case "3h": dataLimit = 180; break;
-      case "6h": dataLimit = 360; break;
-      case "24h": dataLimit = 1440; break;
-      default: dataLimit = rawChartData.length;
-    }
-
-    // 마지막부터 dataLimit 개수만큼 자르기
-    return rawChartData.slice(Math.max(0, lastIndex - dataLimit)).filter(data => !data.actualValue);
-  }, [rawChartData, selectedRange]);
 
   return (
     <div className="glass backdrop-blur-xl rounded-3xl p-3 lg:p-4 h-full flex flex-col min-h-0">
@@ -53,10 +33,10 @@ export default function PredictionPanel({ selectedReservoir, onReservoirChange }
           <h2 className="text-xs lg:text-sm font-black text-slate-800">예측 대시보드</h2>
           <select
             value={selectedReservoir}
-            onChange={(e) => onReservoirChange(e.target.value)}
+            onChange={(e) => setSelectedReservoir(e.target.value)}
             className="bg-slate-50 border border-slate-200 text-[10px] lg:text-xs rounded-lg px-2 py-1 focus:outline-none focus:ring-2 focus:ring-sky-500/20 text-slate-700 font-bold"
           >
-            {RESERVOIRS.map(r => <option key={r} value={r}>{r}</option>)}
+            {facilities.filter(f => f.type === "배수지").map(f => <option key={f.facilityId} value={f.name}>{f.name}</option>)}
           </select>
         </div>
         <div className="flex gap-1">
@@ -78,7 +58,7 @@ export default function PredictionPanel({ selectedReservoir, onReservoirChange }
       <div className="flex-1 min-h-0 flex flex-col lg:flex-row gap-4">
         <div className="flex-3 min-h-0">
           <div className="h-70 w-full">
-          <TailChart chartData={filteredData || []} />
+          <TailChart chartData={filteredChartData.filter(data => !data.actualValue) || []} />
           </div>
           
           {/* <ResponsiveContainer width="100%" height="100%">

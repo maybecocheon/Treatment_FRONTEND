@@ -3,24 +3,28 @@
 import { useEffect, useState } from "react";
 import { CustomOverlayMap, Map, Polygon } from "react-kakao-maps-sdk";
 import sidoData from "@/data/sido.json"
-import { waterSystemDatas } from "@/data/mockData";
-import WaterSystemOverlay from "./WaterSystemOverlay";
+import FacilityOverlay from "./FacilityOverlay";
 import MapSkeleton from "./skeletons/MapSkeleton";
 import { useRouter } from "next/navigation";
 import { useAtom } from "jotai";
 import { mapLevelAtom } from "@/atoms/uniAtoms";
+import { useFacilitiesData } from "@/hooks/useFacilitiesData";
 
 
 export default function KakaoMap() {
     const router = useRouter();
+
     const [isClient, setIsClient] = useState(false);
     const [formattedPath, setFormattedPath] = useState<{ lat: number, lng: number }[]>([]);
     const [mapLevel, setMapLevel] = useAtom(mapLevelAtom);
+
+    const { loadFacilities, facilities } = useFacilitiesData();
 
     // 부산 시청 좌표를 중심으로 설정
     const center = { lat: 35.1996, lng: 129.0756 };
 
     useEffect(() => {
+
         // 카카오맵 형식(lat, lng)으로 변경
         if (sidoData && sidoData.features) {
             try {
@@ -44,6 +48,7 @@ export default function KakaoMap() {
         }
         // 브라우저 준비 시까지 렌더링 미룸
         setIsClient(true);
+        loadFacilities();
     }, []);
 
     if (!isClient)
@@ -74,13 +79,13 @@ export default function KakaoMap() {
                     )
                 }
 
-                {/* 정수장 */}
-                {waterSystemDatas.map((waterSystem) => (
-                    (waterSystem.type === "plant" || waterSystem.type === "reservoir") && (
-                    <CustomOverlayMap key={waterSystem.id} position={{ lat: waterSystem.lat || 0, lng: waterSystem.lng || 0 }}>
-                        <WaterSystemOverlay waterSystem={waterSystem} onClick={waterSystem.type === "reservoir" ? () => router.push(`/map/${waterSystem.id}`): () => router.push(`/scheduling/${waterSystem.id}`)} />
+                {/* 정수장과 배수지 */}
+                {facilities && 
+                facilities.map(facility => ((facility.type === "정수장" || facility.type === "배수지") && 
+                    <CustomOverlayMap key={facility.facilityId} position={{ lat: facility.lat || 0, lng: facility.lng || 0 }}>
+                        <FacilityOverlay facility={facility} onClick={facility.type === "배수지" ? () => router.push(`/map/${facility.facilityId}`): () => router.push(`/scheduling/${facility.facilityId}`)} />
                     </CustomOverlayMap>
-                )))}
+                ))}
             </Map>
         </div>
     );

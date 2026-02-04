@@ -18,9 +18,9 @@ export default async function SchedulingPage({ params }: { params: Promise<{ id:
                 <MainTrend params={{ id }} />
 
                 {/* 3. 시설 선택 카테고리 (Moved to Bottom) */}
-                <div className="flex-col gap-3 mt-4">
+                {/* <div className="flex-col gap-3 mt-4">
                     <Category text="scheduling" params={id} />
-                </div>
+                </div> */}
             </div>
         </div>
     );

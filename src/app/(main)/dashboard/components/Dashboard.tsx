@@ -1,18 +1,18 @@
 'use client'
 
 import { useEffect, useState } from "react";
-import { PumpSchedulePanel } from "./components/PumpSchedulePanel";
-import { RiskDetailPanel } from "./components/RiskDetailPanel";
-import { RiskEventPanel } from "./components/RiskEventPanel";
+import { PumpSchedulePanel } from "./PumpSchedulePanel";
+import { RiskDetailPanel } from "./RiskDetailPanel";
+import { RiskEventPanel } from "./RiskEventPanel";
 import { KPIData, PredictionPoint, PumpScheduleItem, RiskEvent, RiskFactor } from "@/data/types";
 import { generateMockKPIData, generatePredictionData, generatePumpSchedule, generateRiskEvents, generateRiskFactors } from "@/data/mockData";
-import KPICardRow from "./components/KPICardRow";
-import PredictionPanel from "./components/PredictionPanel";
+import KPICardRow from "./KPICardRow";
+import PredictionPanel from "./PredictionPanel";
 
 export default function Dashboard() {
     const [kpi, setKpi] = useState<KPIData | null>(null);
     const [events, setEvents] = useState<RiskEvent[]>([]);
-    const [predictionData, setPredictionData] = useState<PredictionPoint[]>([]);
+    // const [predictionData, setPredictionData] = useState<PredictionPoint[]>([]);
     const [riskFactors, setRiskFactors] = useState<RiskFactor[]>([]);
     const [schedule, setSchedule] = useState<PumpScheduleItem[]>([]);
     const [selectedReservoir, setSelectedReservoir] = useState('배수지 B');
@@ -21,7 +21,7 @@ export default function Dashboard() {
         // Initial data load
         setKpi(generateMockKPIData());
         setEvents(generateRiskEvents());
-        setPredictionData(generatePredictionData());
+        // fetchPredictionData({ setReservoir, setRawChartData, id: "10" });
         setRiskFactors(generateRiskFactors());
         setSchedule(generatePumpSchedule());
     }, [selectedReservoir]);
@@ -41,10 +41,7 @@ export default function Dashboard() {
 
                 {/* Row 3: 예측 */}
                 <div className="flex-1 min-h-75 lg:min-h-0">
-                    <PredictionPanel
-                        selectedReservoir={selectedReservoir}
-                        onReservoirChange={setSelectedReservoir}
-                    />
+                    <PredictionPanel />
                 </div>
 
                 {/* Row 4: 펌프 스케줄링 */}
