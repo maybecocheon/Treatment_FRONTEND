@@ -1,5 +1,4 @@
-import { currentUser } from "@/data/mockData";
-import { User } from "@/data/types";
+import { UserProfile } from "@/types/types";
 import { atom } from "jotai";
 
 // 로그인 페이지에서 스크롤 위치 제어
@@ -12,7 +11,7 @@ export const selectedCategoryAtom = atom<string>("OVERVIEW");
 export const mapLevelAtom = atom<number>(9);
 
 // 사용자 정보 상태
-export const currentUserAtom = atom<User | null>(currentUser);
+export const userProfileAtom = atom<UserProfile | null>(null);
 
 // header 및 전역에서 공유될 시간 상태
 export const virtualTimeAtom = atom("");

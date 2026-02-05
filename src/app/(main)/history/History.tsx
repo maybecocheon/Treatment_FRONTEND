@@ -1,10 +1,10 @@
 'use client'
 
 import { useState } from "react";
-import { Calendar, Filter } from "lucide-react";
+import { Calendar, Droplets, Filter, Gauge, Waves } from "lucide-react";
 import Title from "@/components/main/Title";
-import Category from "@/components/main/TailCategory";
-import RenderCharts from "@/app/(main)/history/RenderCharts";
+import TailCategory from "@/components/main/TailCategory";
+import HistoryChartBox from "./HistoryChartBox";
 
 export default function History({ params }: { params: { id: string } }) {
     const { id } = params;
@@ -15,18 +15,6 @@ export default function History({ params }: { params: { id: string } }) {
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
                 {/* 헤더 영역 */}
                 <Title title="히스토리 뷰어" subtitle="과거 운영 데이터 분석 및 리포트 조회" />
-
-                {/* <div className="flex items-center gap-3 w-full md:w-auto">
-          <button className="flex-1 md:flex-none flex items-center justify-center gap-2 px-6 py-3 bg-white border border-slate-200 rounded-2xl text-slate-600 font-bold text-sm shadow-sm hover:bg-slate-50 transition-colors">
-            <Download className="w-4 h-4" />
-            <span className="hidden sm:inline">데이터 추출 (CSV)</span>
-            <span className="sm:hidden">CSV</span>
-          </button>
-          <button className="flex-1 md:flex-none px-6 py-3 bg-blue-600 text-white rounded-2xl font-black text-sm shadow-lg shadow-blue-500/30 hover:bg-blue-500 transition-all flex items-center justify-center gap-2">
-            보고서 생성
-            <ArrowUpRight className="w-4 h-4" />
-          </button>
-        </div> */}
 
                 {/* 날짜 */}
                 <div className="glass p-2 rounded-3xl flex items-center gap-4 w-full md:w-auto">
@@ -47,10 +35,57 @@ export default function History({ params }: { params: { id: string } }) {
             </div>
 
             {/* 필터 */}
-            <Category text="history" params={id} />
+            <TailCategory text="history" params={id} />
 
             {/* 메인 대시보드 */}
-            <RenderCharts />
+            <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
+                <div className="h-full w-full">
+                    <HistoryChartBox
+                        title={true ? '시간별 송수량 (Supply)' : '시간별 수위 변화 (Level)'}
+                        time={["1"]}
+                        data={[1]}
+                        color="#3b82f6"
+                        color2="#818cf8"
+                        label1="현재 수요"
+                        label2="수요 예측"
+                        icon={true ? Waves : Droplets}
+                    />
+                </div>
+                <div className="h-full w-full">
+                    <HistoryChartBox
+                        title={true ? '정수장 토출 압력 (Pressure)' : '시간별 유출량 (Outflow)'}
+                        time={["1"]}
+                        data={[1]}
+                        color="#3b82f6"
+                        color2="#818cf8"
+                        label1="현재 수요"
+                        label2="수요 예측"
+                        icon={Gauge}
+                    />
+                </div>
+            </div>
+            {/* 그래프 3: 배수지별 총 수요량 비교 (Overview Only) */}
+            {/* {isOverview && (
+                    <div className="col-span-1 xl:col-span-2 glass p-8 rounded-[2.5rem]">
+                      <div className="flex items-center justify-between mb-8">
+                        <div>
+                          <h4 className="text-xl font-black text-slate-800 tracking-tight">배수지별 총 수요량 비교</h4>
+                          <p className="text-xs text-slate-400 font-bold uppercase tracking-widest mt-1">Aggregated Demand Comparison</p>
+                        </div>
+                      </div>
+                      <div className="h-75">
+                        <ResponsiveContainer width="100%" height="100%">
+                          <BarChart data={waterSystemDatas.filter(d => d.id.startsWith("res")).map(r => ({ name: r.name, value: r.actualDemand?.reduce((a, b) => a + b, 0) }))}>
+                            <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
+                            <XAxis dataKey="name" stroke="#94a3b8" fontSize={12} fontWeight="800" axisLine={false} tickLine={false} />
+                            <YAxis stroke="#94a3b8" fontSize={12} fontWeight="800" axisLine={false} tickLine={false} />
+                            <Tooltip />
+                            <Bar dataKey="value" fill="#6366f1" radius={[10, 10, 0, 0]} barSize={60} />
+                          </BarChart>
+                        </ResponsiveContainer>
+                      </div>
+                    </div>
+                  )} */}
 
             {/* Stats Summary Grid */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 mt-6 md:mt-8">

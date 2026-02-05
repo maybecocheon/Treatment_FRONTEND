@@ -17,23 +17,70 @@ export default function Join() {
     const [formData, setFormData] = useState({
         username: "",
         password: "",
-        confirmPassword: "",
-        name: "",
-        dept: ""
+        passwordChk: "",
+        alias: "",
+        department: ""
     });
 
-    const passwordMsg = usePasswordMatch(formData.password, formData.confirmPassword);
+    // 아이디 중복 확인, 비밀번호 유효성 검사
+    const [usernameChecked, setUsernameChecked] = useState<boolean>(false);
+    const [checkedMsg, setCheckedMsg] = useState<string>("");
+    const passwordMsg = usePasswordMatch(formData.password, formData.passwordChk);
     const { passwordRule, usernameRule } = useValidationRules({ password: formData.password, username: formData.username });
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         const { name, value } = e.target;
         setFormData(prev => ({ ...prev, [name]: value }));
+
+        // 아이디를 수정하면 다시 중복확인
+        if (name === "username") {
+            setUsernameChecked(false);
+        }
     }
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        router.push("/");
+
+        // 유효성 검사 추가
+        if (!usernameChecked) return alert("아이디 중복 확인을 실시해 주세요.");
+        if (formData.password !== formData.passwordChk) return alert("비밀번호가 일치하지 않습니다.");
+
+        try {
+            const response = await fetch(`/api/proxy/auth/signup`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(formData),
+            });
+            if (response.ok) {
+                alert("회원가입 성공. 서비스를 이용하시려면 로그인해 주세요.");
+                router.push("/");
+            } else {
+                alert("실패")
+            }
+        } catch (error) {
+            alert("회원가입 실패. 다시 시도해 주세요.");
+        }
     };
+
+    const handleDuplicate = async () => {
+        if (!formData.username) {
+            alert("아이디를 입력해 주세요.");
+            return;
+        }
+
+        try {
+            const response = await fetch(`/api/proxy/member/check/${formData.username}`);
+            if (response.ok) {
+                setUsernameChecked(true);
+                setCheckedMsg("✅ 사용 가능한 아이디입니다.")
+            } else {
+                setUsernameChecked(false);
+                setCheckedMsg("❌ 이미 사용 중인 아이디입니다.");
+            }
+        } catch (error) {
+            alert("아이디 중복 확인 중 오류가 발생했습니다.");
+        }
+    }
 
     return (
         <section className="relative min-h-screen w-full flex items-center justify-center overflow-auto bg-slate-50 py-12 md:py-20">
@@ -48,12 +95,6 @@ export default function Join() {
                     <div className="h-30 flex items-baseline justify-center overflow-hidden p-4 mb-4">
                         <Logo scale={0.45} />
                     </div>
-
-                    {/* 구분선 */}
-                    {/* <div className="relative w-full h-px mt-4 mb-6">
-                        <div className="absolute inset-0 bg-linear-to-r from-transparent via-sky-300 to-transparent opacity-50" />
-                    </div> */}
-
                     <h1 className="text-2xl font-black text-slate-800 tracking-tight">
                         계정 생성
                     </h1>
@@ -64,23 +105,35 @@ export default function Join() {
                     <div className="space-y-3">
                         <p className="text-[11px] text-sky-600 font-bold uppercase tracking-wider ml-1">사원 정보</p>
                         {/* 성명 및 부서 선택 */}
-                        <Input icon={User} placeholder="성함" name="name" onChange={handleChange} />
-                        <TailSelect />
+                        <Input icon={User} placeholder="성함" name="alias" value={formData.alias} onChange={handleChange} />
+                        <TailSelect onChange={handleChange} />
                     </div>
 
                     {/* 로그인 정보 */}
                     <div className="space-y-3">
                         <p className="text-[11px] text-sky-600 font-bold uppercase tracking-wider ml-1">로그인 정보</p>
                         {/* 아이디, 비밀번호, 비밀번호 확인 */}
-                        <Input icon={Mail} placeholder="아이디" name="username" onChange={handleChange} />
-                        {usernameRule && (<p className="text-xs text-red-500 ml-2 font-medium">{usernameRule}</p>)}
+                        <div className="w-full flex items-center gap-2">
+                            <div className="flex-1">
+                                <Input icon={Mail} placeholder="아이디" name="username" value={formData.username} onChange={handleChange} />
+                            </div>
+                            <button
+                                type="button"
+                                className="shrink-0 h-12 px-3.5 bg-slate-500 hover:bg-slate-600 text-white rounded-xl font-semibold text-[11px] md:text-xs shadow-sm transition-all active:scale-[0.96] flex items-center justify-center whitespace-nowrap"
+                                onClick={handleDuplicate}
+                            >
+                                중복확인
+                            </button>
+                        </div>
+                        {usernameRule && (<p className="text-xs text-red-500 ml-2">{usernameRule}</p>)}
+                        {checkedMsg && (<p className={`text-xs ${usernameChecked ? "text-green-600" : "text-red-500"} ml-2`}>{checkedMsg}</p>)}
 
-                        <Input icon={Lock} type="password" placeholder="비밀번호" name="password" onChange={handleChange} />
-                        {passwordRule && (<p className="text-xs text-red-500 ml-2 font-medium">{passwordRule}</p>)}
+                        <Input icon={Lock} type="password" placeholder="비밀번호" name="password"  value={formData.password} onChange={handleChange} />
+                        {passwordRule && (<p className="text-xs text-red-500 ml-2">{passwordRule}</p>)}
 
-                        <Input icon={Lock} type="password" placeholder="비밀번호 확인" name="confirmPassword" onChange={handleChange} />
+                        <Input icon={Lock} type="password" placeholder="비밀번호 확인" name="passwordChk" value={formData.passwordChk} onChange={handleChange} />
                         {passwordMsg && (
-                            <p className={`text-xs ml-2 font-medium mt-1 ${formData.password === formData.confirmPassword ? 'text-sky-600' : 'text-red-500'}`}>
+                            <p className={`text-xs ml-2 mt-1 ${formData.password === formData.passwordChk ? 'text-sky-600' : 'text-red-500'}`}>
                                 {passwordMsg}
                             </p>
                         )}

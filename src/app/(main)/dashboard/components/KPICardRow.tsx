@@ -19,18 +19,20 @@ export default function KPICardRow({ data }: Props) {
     loadLevels();
   }, [])
 
-  if (!treatment || !reservoirLevels) return null;
+  // 데이터가 없을 때를 대비한 데이터 계산 로직
+  const hasLevels = reservoirLevels && reservoirLevels.length > 0;
+  
+  const levelAvg = hasLevels 
+    ? reservoirLevels.map(f => f.level).reduce((acc, cur) => acc + cur, 0) / reservoirLevels.length 
+    : 0;
 
-  // 수위
-  const levelAvg = reservoirLevels.map(f => f.level).reduce((acc, cur) => acc + cur, 0) / reservoirLevels.length;
-  const minFacility = reservoirLevels.reduce((min, cur) => {return (cur.level < min.level) ? cur : min;}, reservoirLevels[0]);
+  const minFacility = hasLevels 
+    ? reservoirLevels.reduce((min, cur) => (cur.level < min.level ? cur : min), reservoirLevels[0])
+    : { reservoirName: '-', level: 0 };
 
-  const minName = minFacility.reservoirName;
-  const minLevel = minFacility.level;
-
-  const maxFacility = reservoirLevels.reduce((max, cur) => {return (cur.level > max.level) ? cur : max;}, reservoirLevels[0]);
-  const maxName = maxFacility.reservoirName;
-  const maxLevel = maxFacility.level;
+  const maxFacility = hasLevels 
+    ? reservoirLevels.reduce((max, cur) => (cur.level > max.level ? cur : max), reservoirLevels[0])
+    : { reservoirName: '-', level: 0 };
 
   const getRiskColor = (score: number) => {
     if (score > 70) return 'text-rose-500';
@@ -48,30 +50,30 @@ export default function KPICardRow({ data }: Props) {
     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
       <TailCard
         label="송수량"
-        value={treatment.flowOutAmt.toLocaleString(undefined, { maximumFractionDigits: 0 })}
+        value={treatment ? treatment.flowOutAmt.toLocaleString(undefined, { maximumFractionDigits: 0 }) : "---"}
         unit="m³/h"
-        subLabel={`${data.flowChange > 0 ? '▲' : '▼'} ${Math.abs(data.flowChange)}%`}
+        subLabel="정수장"
         color="text-slate-900"
       />
       <TailCard
         label="평균 수위"
-        value={levelAvg.toFixed(2)}
+        value={hasLevels ? levelAvg.toFixed(2) : "---"}
         unit="m"
         subLabel="모든 배수지"
         color="text-sky-600"
       />
       <TailCard
         label="최저 수위"
-        value={minLevel.toFixed(2)}
+        value={hasLevels ? minFacility.level.toFixed(2) : "---"}
         unit="m"
-        subLabel={minName}
+        subLabel={minFacility.reservoirName}
         color={data.minLevelValue < 25 ? 'text-rose-600' : 'text-amber-600'}
       />
       <TailCard
         label="최고 수위"
-        value={maxLevel.toFixed(2)}
+        value={hasLevels ? maxFacility.level.toFixed(2) : "---"}
         unit="m"
-        subLabel={maxName}
+        subLabel={maxFacility.reservoirName}
         color="text-sky-600"
       />
       <TailCard

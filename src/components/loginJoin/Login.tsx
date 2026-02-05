@@ -9,48 +9,45 @@ import Logo from "@/components/loginJoin/Logo";
 import Background from "./Background";
 import Input from "../TailInput";
 import TailButton from "../TailButton";
+import { useUser } from "@/hooks/useUser";
 
 export default function Login() {
     const triggerScroll = useSetAtom(scrollToContentAtom);
     const router = useRouter();
-    const server_url = process.env.NEXT_PUBLIC_SERVER_URL;
-    const [credentials, setCredentials] = useState({ username: "", password: "" });
+    const [formData, setFormData] = useState({ username: "", password: "" });
+
+    // 로그인 성공 시 불러올 유저 프로필
+    const { loadProfile } = useUser(); 
 
     useEffect(() => {
         triggerScroll(0);
         return () => triggerScroll(0);
     }, []);
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        loginButton();
-    };
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setCredentials({ ...credentials, [e.target.id]: e.target.value });
-    };
-
-    const loginButton = async () => {
         try {
-            const response = await fetch(`${server_url}/oauth/login`, {
+            const response = await fetch(`/api/proxy/auth/login`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(credentials),
+                body: JSON.stringify(formData),
+
             });
             if (response.ok) {
-                const jwtToken = response.headers.get("Authorization");
-                if (jwtToken) {
-                    localStorage.setItem("jwtToken", jwtToken);
-                    localStorage.setItem("username", credentials.username);
-                }
-                router.push("/map");
+                localStorage.setItem("lastLoginTime", new Date().toLocaleString());
+                await loadProfile();
+                router.push("/dashboard");
             } else {
                 alert("로그인 실패. 다시 시도해 주세요.");
             }
         } catch (error) {
             console.error("로그인 오류: ", error);
-            alert("로그인 실패. 다시 시도해 주세요.");
         }
+    };
+
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setFormData({ ...formData, [e.target.name]: e.target.value });
     };
 
     return (
@@ -70,11 +67,11 @@ export default function Login() {
                         <div className="space-y-4">
                             <div className="relative group">
                                 <User className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400 group-focus-within:text-sky-500 transition-colors" />
-                                <Input icon={User} type="text" placeholder="아이디" name="username" value={credentials.username} onChange={handleChange} />
+                                <Input icon={User} type="text" placeholder="아이디" name="username" value={formData.username} onChange={handleChange} />
                             </div>
                             <div className="relative group">
                                 <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400 group-focus-within:text-sky-500 transition-colors" />
-                                <Input icon={Lock} type="password" placeholder="비밀번호" name="password" value={credentials.password} onChange={handleChange} />
+                                <Input icon={Lock} type="password" placeholder="비밀번호" name="password" value={formData.password} onChange={handleChange} />
                             </div>
                         </div>
                         <TailButton text="로그인" icon={ArrowRight} style="bg-sky-500 hover:bg-sky-600" />

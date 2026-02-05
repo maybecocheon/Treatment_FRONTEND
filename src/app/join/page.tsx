@@ -1,5 +1,5 @@
 import { Suspense } from 'react';
-import Join from './components/Join';
+import Join from './Join';
 import PageFallback from '@/components/loading/PageFallback';
 import JoinSkeleton from '@/components/loginJoin/skeletons/JoinSkeleton';
 

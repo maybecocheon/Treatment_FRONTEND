@@ -1,9 +1,8 @@
-'use client';
+'use client'
 
-import { ModalProps } from "@/app/props/ModalProps";
 import { Cpu, DollarSign, Moon, Sun, CheckCircle2, AlertTriangle, Activity } from "lucide-react";
 
-export default function GuidePannel({ params }: ModalProps) {
+export default function GuidePannels() {
     return (
         <div className="grid grid-cols-1 xl:grid-cols-12 gap-6 items-stretch">
             {/* 1. 심야 정수 계획 패널 */}
@@ -45,7 +44,7 @@ export default function GuidePannel({ params }: ModalProps) {
                 </div>
             </div>
 
-            {/* 2. 주간 가동 및 결과 예측 패널 (E-4 통합) */}
+            {/* 2. 주간 가동 및 결과 예측 패널 */}
             <div className="xl:col-span-3 glass rounded-[2.5rem] p-6 relative overflow-hidden group flex flex-col gap-5">
                 {/* 주간 가동 섹션 */}
                 <div className="flex items-center gap-3 mb-4 relative">
@@ -73,7 +72,7 @@ export default function GuidePannel({ params }: ModalProps) {
                 </div>
             </div>
 
-            {/* E-4. 배수지 수위·관압 충족 결과 미리보기 */}
+            {/* 3. 배수지 수위·관압 충족 결과 미리보기 */}
             <div className="xl:col-span-3 glass rounded-[2.5rem] p-6 relative overflow-hidden group flex flex-col gap-5">
                 <div className="flex items-center gap-3 relative">
                     <div className="p-2 glass bg-blue-100/60 rounded-xl text-blue-600">
@@ -108,7 +107,7 @@ export default function GuidePannel({ params }: ModalProps) {
                 </div>
             </div>
 
-            {/* 3. 통합 비용 분석 패널 */}
+            {/* 4. 통합 비용 분석 패널 */}
             <div className="xl:col-span-3 glass rounded-[2.5rem] p-6 relative overflow-hidden group flex flex-col justify-center">
                 <div className="flex items-center gap-3 mb-4 relative">
                     <div className="p-2 glass bg-white/60 rounded-xl text-amber-600">

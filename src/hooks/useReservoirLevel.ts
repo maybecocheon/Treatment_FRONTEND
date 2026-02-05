@@ -1,3 +1,4 @@
+import { myFetch } from "@/app/api/api";
 import { useCallback, useState } from "react";
 
 export interface ReservoirLevelType {
@@ -11,7 +12,8 @@ export function useReservoirLevel() {
 
     const loadLevels = useCallback(async () => {
             try {
-                const response = await fetch("/api/proxy/reservoir/levels?date=2023-01-06 00:00:01");
+                const response = await myFetch("/api/proxy/reservoir/levels?date=2023-01-06 00:00:01");
+                if (!response) return;
                 const data = await response.json();
                 setReservoirLevels(data);
             } catch (error) {

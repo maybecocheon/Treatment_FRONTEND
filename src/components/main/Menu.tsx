@@ -16,7 +16,7 @@ export default function Menu({ isMobileMenuOpen, setIsMobileMenuOpen }: MenuProp
   const menuItems = [
     { name: "대시보드", path: "/dashboard", icon: <LayoutDashboard size={18} /> },
     { name: "지도 기반 현황", path: "/map", icon: <Map size={18} /> },
-    { name: "지능형 펌프 운영 스케줄링", path: "/scheduling/1", icon: <Factory size={18} /> },
+    { name: "지능형 펌프 운영 스케줄링", path: "/scheduling", icon: <Factory size={18} /> },
     { name: "히스토리 뷰어", path: "/history/overview", icon: <History size={18} /> },
   ];
 

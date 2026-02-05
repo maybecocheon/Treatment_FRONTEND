@@ -2,16 +2,15 @@
 'use client'
 
 import { useEffect, useState } from 'react';
-import { ComposedChart, Line, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, ReferenceLine, Area } from 'recharts';
-import TailChart from '@/components/main/TailChart';
 import { usePredictionData } from '@/hooks/usePredictionData';
 import { selectedRangeAtom } from '@/atoms/uniAtoms';
 import { useAtom } from 'jotai';
 import { useFacilitiesData } from '@/hooks/useFacilitiesData';
+import TailChart from '@/components/main/TailChart';
 
 export default function PredictionPanel() {
   const { facilities, loadFacilities } = useFacilitiesData();
-  const [selectedReservoir, setSelectedReservoir] = useState("A배수지");
+  const [selectedReservoir, setSelectedReservoir] = useState("");
 
   const { loadData, filteredChartData, resetRange } = usePredictionData();
   const [selectedRange, setSelectedRange] = useAtom(selectedRangeAtom);
@@ -27,8 +26,8 @@ export default function PredictionPanel() {
   }, [selectedReservoir]);
 
   return (
-    <div className="glass backdrop-blur-xl rounded-3xl p-3 lg:p-4 h-full flex flex-col min-h-0">
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 mb-2 shrink-0">
+    <div className="glass backdrop-blur-xl rounded-3xl p-3 lg:p-4 h-full flex flex-col min-h-0 overflow-hidden">
+      <div className="flex flex-row justify-between items-start sm:items-center gap-2 mb-2 shrink-0">
         <div className="flex items-center gap-2">
           <h2 className="text-xs lg:text-sm font-black text-slate-800">예측 대시보드</h2>
           <select
@@ -56,41 +55,21 @@ export default function PredictionPanel() {
       </div>
 
       <div className="flex-1 min-h-0 flex flex-col lg:flex-row gap-4">
-        <div className="flex-3 min-h-0">
-          <div className="h-70 w-full">
-          <TailChart chartData={filteredChartData.filter(data => !data.actualValue) || []} />
+        <div className="flex-3 min-h-70 lg:min-h-0 h-full">
+          <div className="h-full w-full">
+            <TailChart
+              time={filteredChartData.map(d => d.time || 0)}
+              data={filteredChartData.map(d => d.actualValue || 0)}
+              data2={filteredChartData.map(d => d.predictedValue || 0)}
+              color="#3b82f6"
+              color2="#818cf8"
+              label1="현재 수요"
+              label2="수요 예측"
+            />
           </div>
-          
-          {/* <ResponsiveContainer width="100%" height="100%">
-            <ComposedChart data={data} margin={{ top: 5, right: 5, left: -20, bottom: 0 }}>
-              <defs>
-                <linearGradient id="fillLevelLight" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor={COLORS.level} stopOpacity={0.2}/>
-                  <stop offset="95%" stopColor={COLORS.level} stopOpacity={0}/>
-                </linearGradient>
-                <linearGradient id="fillDemandLight" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor={COLORS.demand} stopOpacity={0.3}/>
-                  <stop offset="95%" stopColor={COLORS.demand} stopOpacity={0.05}/>
-                </linearGradient>
-              </defs>
-              <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" vertical={false} />
-              <XAxis dataKey="time" stroke="#94a3b8" fontSize={9} tickMargin={4} />
-              <YAxis yAxisId="left" stroke={COLORS.demand} fontSize={9} />
-              <YAxis yAxisId="right" orientation="right" stroke={COLORS.level} fontSize={9} domain={[0, 100]} />
-              <Tooltip 
-                contentStyle={{ backgroundColor: 'rgba(255, 255, 255, 0.9)', backdropFilter: 'blur(10px)', border: '1px solid #e2e8f0', borderRadius: '12px', fontSize: '10px' }}
-              />
-              <Legend wrapperStyle={{ fontSize: '9px', paddingTop: '5px' }} iconSize={8} />
-              <ReferenceLine y={85} yAxisId="right" stroke={COLORS.peak} strokeDasharray="3 3" opacity={0.2} />
-              <ReferenceLine y={25} yAxisId="right" stroke={COLORS.peak} strokeDasharray="3 3" opacity={0.2} />
-              <Bar yAxisId="left" dataKey="demand" fill="url(#fillDemandLight)" name="용수 수요" barSize={10} radius={[4, 4, 0, 0]} />
-              <Line yAxisId="right" type="monotone" dataKey="level" stroke={COLORS.level} name="배수지 수위" strokeWidth={3} dot={false} />
-              <Area yAxisId="right" type="monotone" dataKey="level" fill="url(#fillLevelLight)" stroke="none" />
-            </ComposedChart>
-          </ResponsiveContainer> */}
         </div>
 
-        <div className="flex-1 bg-slate-50/50 rounded-2xl p-3 border border-slate-200 flex flex-col justify-center gap-3 shrink-0">
+        <div className="flex-1 bg-slate-50/50 rounded-2xl p-3 border border-slate-200 flex flex-col justify-center gap-3 shrink-0 lg:shrink lg:min-h-0">
           <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none">Stability</h3>
 
           <div className="space-y-4">

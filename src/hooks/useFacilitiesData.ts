@@ -1,15 +1,9 @@
 'use client'
 
+import { myFetch } from "@/app/api/api";
 import { FACILITY_COORDS } from "@/data/mockData";
+import { FacilityType } from "@/types/types";
 import { useState, useCallback, useMemo } from "react";
-
-export interface FacilityType {
-    facilityId: number | string;
-    name: string;
-    type: string;
-    lat?: number; 
-    lng?: number;
-}
 
 export function useFacilitiesData() {
     const [facilities, setFacilities] = useState<FacilityType[]>([]);
@@ -17,7 +11,8 @@ export function useFacilitiesData() {
     // 1. 데이터를 불러오는 함수
     const loadFacilities = useCallback(async () => {
         try {
-            const response = await fetch("/api/proxy/facility/all");
+            const response = await myFetch("/api/proxy/facility/all");
+            if (!response) return;
             const data = await response.json();
             setFacilities(data);
         } catch (error) {
@@ -38,16 +33,10 @@ export function useFacilitiesData() {
     }, [facilities]);
 
     // 3. 필터링 로직을 수행
-    const getFilteredFacilities = useCallback((mode: string = "basic") => {
-        const base = facilitiesWithCoords.filter(f => f.type === "배수지" || f.type === "정수장");
-
-        if (mode !== "scheduling") {
-            return [
-                { facilityId: "overview", name: "전체", type: "overview" },
-                ...base
-            ];
-        }
-        return base;
+    const getFilteredFacilities = useCallback((text = "basic") => {
+        const filtered = facilitiesWithCoords.filter(f => f.type === "배수지" || f.type === "정수장");
+        if (text.includes("history")) return [{facilityId: "overview", type: "overview", name: "전체"}, ...filtered];
+        return filtered;
     }, [facilitiesWithCoords]);
 
     return { facilities: facilitiesWithCoords, getFilteredFacilities, loadFacilities };

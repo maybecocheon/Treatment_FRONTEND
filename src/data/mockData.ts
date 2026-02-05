@@ -11,11 +11,6 @@ export const currentUser: User = {
   department: '정수운영팀',
 };
 
-export const plantData: PlantStats = {
-  outflow: 12450,
-  pumpAverage: 85.5,
-};
-
 const DEMAND_SAMPLE = {
   predictedDemand: [45, 48, 52, 58, 62, 55, 48, 42, 40, 45, 50, 55],
   actualDemand: [44, 49, 50, 57, 65, 53, 47, 43, 41, 44, 51, 56],

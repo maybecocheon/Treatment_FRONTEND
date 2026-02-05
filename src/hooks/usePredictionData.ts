@@ -1,15 +1,16 @@
 'use client'
 
-import { useMemo, useState, useCallback, useEffect, useRef } from "react";
+import { useMemo, useState, useCallback } from "react";
 import { useAtom, useAtomValue } from "jotai";
 import { selectedRangeAtom, virtualTimeAtom } from "@/atoms/uniAtoms";
+import { myFetch } from "@/app/api/api";
 
-export function usePredictionData(id?: string) { 
+export function usePredictionData(id?: string) {
     const [rawChartData, setRawChartData] = useState<any[]>([]);
     const [minuteData, setMinuteData] = useState<any | null>(null);
     const [selectedRange, setSelectedRange] = useAtom(selectedRangeAtom);
 
-    const time = useAtomValue(virtualTimeAtom);
+    // const time = useAtomValue(virtualTimeAtom);
 
     // 마지막으로 데이터를 불러온 '분(Minute)'을 저장
     // const lastUpdatedMinute = useRef<string>("");
@@ -18,10 +19,10 @@ export function usePredictionData(id?: string) {
         if (!id) return;
 
         try {
-            const formattedTime = time.replace("T", " "); // 가상 시계 시간 사용
-            const response = await fetch(`/api/proxy/reservoir/chart/minite/${id}?date=2023-01-06 00:00:00`);
+            // const formattedTime = time.replace("T", " "); // 가상 시계 시간 사용
+            const response = await myFetch(`/api/proxy/reservoir/chart/minite/${id}?date=2023-01-06 00:00:00`);
+            if (!response) return;
             const data = await response.json();
-
             setMinuteData(data);
             const chartList = data.chartData ? data.chartData : [];
             setRawChartData(chartList.map((item: any, idx: number) => ({
@@ -29,7 +30,6 @@ export function usePredictionData(id?: string) {
                 actualValue: idx < 1000 ? item.actualValue : null,
                 predictedValue: item.predictedValue || 0,
             })));
-
             // 호출 성공 시 마지막 업데이트 시간(분 단위) 기록
             // lastUpdatedMinute.current = time.split("T")[1]?.substring(0, 5);
         } catch (error) {

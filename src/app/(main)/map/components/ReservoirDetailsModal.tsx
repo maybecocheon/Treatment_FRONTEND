@@ -4,10 +4,10 @@ import { BarChart3, Droplets, Waves, X, ArrowRight, AlertTriangle, Zap, Trending
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { ModalProps } from "@/app/props/ModalProps";
-import TailChart from "@/components/main/TailChart";
 import { usePredictionData } from "@/hooks/usePredictionData";
 import { selectedRangeAtom } from "@/atoms/uniAtoms";
 import { useAtom } from "jotai";
+import TailChart from "@/components/main/TailChart";
 
 export default function minuteDataDetailsPage({ params }: ModalProps) {
     const { id } = params;
@@ -80,10 +80,10 @@ export default function minuteDataDetailsPage({ params }: ModalProps) {
                             <div className="flex-1">
                                 <h4 className="text-red-900 font-bold text-lg leading-tight">{minuteData?.currentLevel < minLevelAlert ? "저수위 경보 발생" : "고수위 경보 발생"}</h4>
                                 <p className="hidden md:block text-red-600 text-sm font-medium">
-                                    현재 수위가 설정된 
-                                    {minuteData?.currentLevel < minLevelAlert ? 
-                                            ` 최저치(${minLevelAlert.toFixed(2)}m)보다 낮습니다. 공급 부족이 예상됩니다.` : ` 최고치(${maxLevelAlert.toFixed(2)}m)보다 높습니다. 공급 과잉이 예상됩니다.`}
-                                    </p>
+                                    현재 수위가 설정된
+                                    {minuteData?.currentLevel < minLevelAlert ?
+                                        ` 최저치(${minLevelAlert.toFixed(2)}m)보다 낮습니다. 공급 부족이 예상됩니다.` : ` 최고치(${maxLevelAlert.toFixed(2)}m)보다 높습니다. 공급 과잉이 예상됩니다.`}
+                                </p>
                             </div>
                             <button className="bg-red-500 text-white px-5 py-2.5 rounded-xl font-bold text-sm hover:bg-red-600 transition-colors">
                                 즉시 조치
@@ -136,7 +136,7 @@ export default function minuteDataDetailsPage({ params }: ModalProps) {
                                             key={t}
                                             onClick={() => setSelectedRange(t)}
                                             className={`text-[12px] px-4 py-1 rounded-2xl transition-colors ${selectedRange === t ?
-                                                 "bg-sky-500 text-white shadow-md"
+                                                "bg-sky-500 text-white shadow-md"
                                                 : "bg-slate-200 text-slate-500 hover:bg-slate-100"
                                                 }`}
                                         >
@@ -144,21 +144,24 @@ export default function minuteDataDetailsPage({ params }: ModalProps) {
                                         </button>
                                     ))}
                                 </div>
-                                <div className="flex gap-3">
-                                    <div className="flex items-center gap-1.5"><span className="w-2 h-2 bg-blue-400 rounded-full"></span><span className="text-[10px] font-bold text-slate-500 uppercase">실시간</span></div>
-                                    <div className="flex items-center gap-1.5"><span className="w-2 h-2 bg-emerald-500 rounded-full"></span><span className="text-[10px] font-bold text-slate-500 uppercase">예측</span></div>
-                                </div>
                             </div>
                         </div>
-                        <div className="h-80 w-full">
-                            <TailChart chartData={filteredChartData || []} />
+                        <div className="h-full w-full">
+                            <TailChart
+                                time={filteredChartData.map(d => d.time || 0)}
+                                data={filteredChartData.map(d => d.actualValue || 0)}
+                                data2={filteredChartData.map(d => d.predictedValue || 0)}
+                                color="#3b82f6"
+                                color2="#818cf8"
+                                label1="현재 수요"
+                                label2="수요 예측"
+                            />
                         </div>
                     </div>
 
-
                     {/* 하단 페이지 이동 가이드 */}
                     <button
-                        onClick={() => router.push(`/scheduling/${id}`)}
+                        onClick={() => router.push(`/scheduling`)}
                         className="group bg-sky-100 shadow-2xl relative w-full p-8 overflow-hidden rounded-[2.5rem] text-slate-900 transition-all hover:bg-slate-100 active:scale-[0.99] shadow-slate-200"
                     >
                         <div className="absolute top-0 right-0 w-64 h-64 bg-sky-500/10 rounded-full -translate-y-1/2 translate-x-1/2 blur-3xl group-hover:bg-sky-500/20 transition-colors" />

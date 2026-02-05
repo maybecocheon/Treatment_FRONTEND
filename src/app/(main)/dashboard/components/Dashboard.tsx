@@ -26,7 +26,7 @@ export default function Dashboard() {
         setSchedule(generatePumpSchedule());
     }, [selectedReservoir]);
 
-    if (!kpi) return <div>Loading...</div>;
+    if (!kpi) return null;
 
     return (
         <div className="flex-1 flex flex-col lg:grid lg:grid-cols-12 gap-2 lg:gap-3 min-h-0 overflow-y-auto lg:overflow-hidden">
@@ -65,7 +65,6 @@ export default function Dashboard() {
                 </div>
 
             </div>
-
         </div>
     )
 }

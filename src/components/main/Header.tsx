@@ -3,10 +3,10 @@
 import { useState, useEffect, useRef } from "react";
 import { User, LogOut, Clock, ChevronDown, X, Droplets, MenuIcon } from "lucide-react";
 import Link from "next/link";
-import { currentUser } from "@/data/mockData"
 import Menu from "./Menu";
 import { usePathname, useRouter } from "next/navigation";
 import { useVirtualClock } from "@/hooks/useVirtualClock";
+import { useUser } from "@/hooks/useUser";
 
 export default function Header() {
   const router = useRouter();
@@ -15,21 +15,27 @@ export default function Header() {
   // 시간
   const [mounted, setMounted] = useState(false);
   const { time } = useVirtualClock();
-  
+
   // 프로필
   const [showProfile, setShowProfile] = useState(false);
   const profileRef = useRef<HTMLDivElement>(null);
+  const { profile, setProfile, loadProfile } = useUser();
 
   // 모바일 메뉴
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
-  // 마운트 시 시간 설정
   useEffect(() => {
+    // 1. 마운트 시 시간 설정
     setMounted(true);
-  }, []);
 
-  // 프로필 외부 클릭 시 닫기
-  useEffect(() => {
+    // 2. 프로필 불러오기
+    const cached = localStorage.getItem("user_info");
+    if (cached) {
+      setProfile(JSON.parse(cached));
+    }
+    loadProfile();
+
+    // 3. 프로필 외부 클릭 시 닫기
     const handleClickOutside = (e: MouseEvent) => {
       if (profileRef.current && !profileRef.current.contains(e.target as Node)) {
         setShowProfile(false);
@@ -44,6 +50,29 @@ export default function Header() {
     setShowProfile(false);
   }, [pathname]);
 
+  const handleClick = () => async () => {
+    if (!confirm("로그아웃하시겠습니까?")) return;
+
+    try {
+      const response = await fetch(`/api/proxy/auth/logout`, {
+        method: "POST",
+        // 쿠키(RefreshToken)를 서버로 보내서 서버에서도 토큰을 무효화하게 합니다.
+        credentials: "include",
+      });
+      if (response.ok) {
+        localStorage.clear();
+        alert("성공적으로 로그아웃되었습니다.");
+        router.push("/");
+        router.refresh();
+      }
+    } catch (error) {
+      console.error("로그아웃 오류: ", error);
+      alert("로그아웃 처리 중 오류가 발생했습니다.");
+    }
+  };
+
+  if (!profile) return <p>로딩 중...</p>;
+
   return (
     <header className="h-16 md:h-20 backdrop-blur-xl sticky top-0 z-50 transition-all">
       <div className="glass max-w-8xl mx-auto h-full flex items-center justify-between px-4 md:px-8">
@@ -56,7 +85,7 @@ export default function Header() {
             </div>
             <span className="text-xl font-black tracking-tighter text-slate-900">FLOWISE</span>
           </Link>
-          
+
           {/* 네비게이션 메뉴 */}
           <Menu isMobileMenuOpen={isMobileMenuOpen} setIsMobileMenuOpen={setIsMobileMenuOpen} />
         </div>
@@ -88,8 +117,8 @@ export default function Header() {
                 <User size={18} />
               </div>
               <div className="text-left hidden sm:block leading-tight">
-                <p className="text-[10px] text-sky-600 font-black uppercase tracking-widest">{currentUser.role}</p>
-                <p className="text-sm font-black text-slate-800">{currentUser.name}</p>
+                <p className="text-[10px] text-sky-600 font-black uppercase tracking-widest">{profile.department}</p>
+                <p className="text-sm font-black text-slate-800">{profile.alias}</p>
               </div>
               <ChevronDown size={14} className={`text-slate-400 transition-transform ${showProfile ? "rotate-180" : ""}`} />
             </button>
@@ -99,11 +128,12 @@ export default function Header() {
               <div className="absolute right-0 mt-3 w-60 bg-white border border-slate-100 rounded-3xl shadow-2xl shadow-slate-200/60 p-2 z-50 animate-in fade-in slide-in-from-top-2">
                 <div className="p-1 space-y-1">
                   <button className="w-full flex items-center space-x-3 px-4 py-3 text-sm font-bold text-slate-600 hover:bg-sky-50 hover:text-sky-600 rounded-xl transition-colors"
-                          onClick={() => router.push("/setting")}>
+                    onClick={() => router.push("/setting")}>
                     <User size={16} />
                     <span>프로필 설정</span>
                   </button>
-                  <button className="w-full flex items-center space-x-3 px-4 py-3 text-sm font-bold text-red-500 hover:bg-red-50 rounded-xl transition-colors">
+                  <button className="w-full flex items-center space-x-3 px-4 py-3 text-sm font-bold text-red-500 hover:bg-red-50 rounded-xl transition-colors"
+                    onClick={handleClick}>
                     <LogOut size={16} />
                     <span>로그아웃</span>
                   </button>

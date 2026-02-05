@@ -1,3 +1,4 @@
+import { myFetch } from "@/app/api/api";
 import { useCallback, useState } from "react";
 
 export interface TreatmentType {
@@ -11,7 +12,8 @@ export function useTreatmentData() {
 
     const loadTreatment = useCallback(async () => {
         try {
-            const response = await fetch("/api/proxy/treatment/now?date=2023-01-06 00:00:01");
+            const response = await myFetch("/api/proxy/treatment/now?date=2023-01-06 00:00:01");
+            if (!response) return;
             const data = await response.json();
             setTreatment(data);
         } catch (error) {
