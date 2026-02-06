@@ -26,9 +26,9 @@ export default function PredictionPanel() {
   }, [selectedReservoir]);
 
   return (
-    <div className="glass backdrop-blur-xl rounded-3xl p-3 lg:p-4 h-full flex flex-col min-h-0 overflow-hidden">
-      <div className="flex flex-row justify-between items-start sm:items-center gap-2 mb-2 shrink-0">
-        <div className="flex items-center gap-2">
+    <div className="glass backdrop-blur-xl rounded-3xl p-4 h-full flex flex-col overflow-hidden">
+      <div className="flex justify-between items-start sm:items-center gap-2 mb-2 shrink-0">
+        <div className="flex flex-col md:flex-row items-center gap-2">
           <h2 className="text-xs lg:text-sm font-black text-slate-800">예측 대시보드</h2>
           <select
             value={selectedReservoir}
@@ -54,22 +54,22 @@ export default function PredictionPanel() {
         </div>
       </div>
 
-      <div className="flex-1 min-h-0 flex flex-col lg:flex-row gap-4">
-        <div className="flex-3 min-h-70 lg:min-h-0 h-full">
-          <div className="h-full w-full">
+      <div className="flex-1 flex flex-col lg:flex-row gap-4">
+        <div className="flex-3 py-5">
             <TailChart
               time={filteredChartData.map(d => d.time || 0)}
               data={filteredChartData.map(d => d.actualValue || 0)}
               data2={filteredChartData.map(d => d.predictedValue || 0)}
-              color="#3b82f6"
-              color2="#818cf8"
+              data3={[1,2,3,4,5,6]}
+              data4={[6,1,2,5,4,5]}
               label1="현재 수요"
               label2="수요 예측"
+              label3="현재 수위"
+              label4="수위 예측"
             />
-          </div>
         </div>
 
-        <div className="flex-1 bg-slate-50/50 rounded-2xl p-3 border border-slate-200 flex flex-col justify-center gap-3 shrink-0 lg:shrink lg:min-h-0">
+        <div className="flex-1 bg-slate-50/50 rounded-2xl p-3 border border-slate-200 flex flex-col justify-center gap-3">
           <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none">Stability</h3>
 
           <div className="space-y-4">

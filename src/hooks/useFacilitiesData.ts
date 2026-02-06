@@ -1,6 +1,6 @@
 'use client'
 
-import { myFetch } from "@/app/api/api";
+import { myFetch } from "@/api/api";
 import { FACILITY_COORDS } from "@/data/mockData";
 import { FacilityType } from "@/types/types";
 import { useState, useCallback, useMemo } from "react";

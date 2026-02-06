@@ -1,4 +1,4 @@
-import { myFetch } from '@/app/api/api';
+import { myFetch } from '@/api/api';
 import { userProfileAtom } from '@/atoms/uniAtoms';
 import { useAtom } from 'jotai';
 
@@ -7,7 +7,7 @@ export function useUser() {
 
   const loadProfile = async () => {
     try {
-      const response = await myFetch('/api/proxy/member/profile'); 
+      const response = await myFetch("/api/proxy/member/profile"); 
       
       if (response && response.ok) {
         const data = await response.json();
@@ -23,7 +23,6 @@ export function useUser() {
 
         // 2. 로컬스토리지 캐싱 (새로고침 대비)
         localStorage.setItem("user_info", JSON.stringify(userInfo));
-        console.log(userInfo)
       }
     } catch (e) {
       setProfile(null);

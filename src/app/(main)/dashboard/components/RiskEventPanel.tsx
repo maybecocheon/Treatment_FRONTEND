@@ -8,7 +8,7 @@ interface Props {
 
 export const RiskEventPanel: React.FC<Props> = ({ events }) => {
   return (
-    <div className="bg-white/70 backdrop-blur-xl border border-white/60 rounded-3xl p-4 flex flex-col h-full shadow-[0_8px_30px_rgb(0,0,0,0.04)] min-h-0">
+    <div className="bg-white/70 backdrop-blur-xl border border-white/60 rounded-3xl p-4 flex flex-col h-full shadow-[0_8px_30px_rgb(0,0,0,0.04)]">
       <div className="flex justify-between items-center mb-3 shrink-0">
         <h2 className="text-xs lg:text-sm font-black text-slate-800 flex items-center gap-2">
           <span className="relative flex h-2 w-2">

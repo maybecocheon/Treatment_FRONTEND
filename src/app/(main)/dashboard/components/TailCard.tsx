@@ -14,7 +14,7 @@ export default function TailCard({ label, value, unit, subLabel, color }: TailCa
     const isLoading = value === "---" || value === "";
 
     return (
-        <div className="glass backdrop-blur-lg rounded-2xl p-4 flex flex-col justify-between transition-shadow h-full min-h-25">
+        <div className="glass backdrop-blur-lg rounded-2xl p-4 flex flex-col justify-between transition-shadow h-full min-h-20">
             <p className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">{label}</p>
             
             <div className="flex items-baseline gap-1 my-1 min-h-7">

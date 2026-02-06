@@ -9,15 +9,13 @@ import Logo from "@/components/loginJoin/Logo";
 import Background from "./Background";
 import Input from "../TailInput";
 import TailButton from "../TailButton";
-import { useUser } from "@/hooks/useUser";
+import { useLogin } from "@/hooks/useLogin";
 
 export default function Login() {
     const triggerScroll = useSetAtom(scrollToContentAtom);
     const router = useRouter();
     const [formData, setFormData] = useState({ username: "", password: "" });
-
-    // 로그인 성공 시 불러올 유저 프로필
-    const { loadProfile } = useUser(); 
+    const { handleLogin, isLoading } = useLogin();
 
     useEffect(() => {
         triggerScroll(0);
@@ -26,24 +24,8 @@ export default function Login() {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-
-        try {
-            const response = await fetch(`/api/proxy/auth/login`, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(formData),
-
-            });
-            if (response.ok) {
-                localStorage.setItem("lastLoginTime", new Date().toLocaleString());
-                await loadProfile();
-                router.push("/dashboard");
-            } else {
-                alert("로그인 실패. 다시 시도해 주세요.");
-            }
-        } catch (error) {
-            console.error("로그인 오류: ", error);
-        }
+        const success = await handleLogin(formData);
+        if (success) setFormData({ username: "", password: "" });
     };
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -74,7 +56,8 @@ export default function Login() {
                                 <Input icon={Lock} type="password" placeholder="비밀번호" name="password" value={formData.password} onChange={handleChange} />
                             </div>
                         </div>
-                        <TailButton text="로그인" icon={ArrowRight} style="bg-sky-500 hover:bg-sky-600" />
+                        
+                        <TailButton disabled={ isLoading } text="로그인" icon={ArrowRight} style="bg-sky-500 hover:bg-sky-600" />
                     </form>
 
                     <div className="w-full bg-slate-50/50 backdrop-blur-md border-t border-slate-100 p-5 flex items-center justify-center gap-2">

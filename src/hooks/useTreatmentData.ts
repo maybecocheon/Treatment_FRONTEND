@@ -1,4 +1,4 @@
-import { myFetch } from "@/app/api/api";
+import { myFetch } from "@/api/api";
 import { useCallback, useState } from "react";
 
 export interface TreatmentType {

@@ -10,7 +10,7 @@ interface Props {
 
 export const RiskDetailPanel: React.FC<Props> = ({ factors, totalScore }) => {
   return (
-    <div className="bg-white/70 backdrop-blur-xl border border-white/60 rounded-3xl p-3 lg:p-4 h-full flex flex-col shadow-[0_8px_30px_rgb(0,0,0,0.04)] min-h-0">
+    <div className="bg-white/70 backdrop-blur-xl border border-white/60 rounded-3xl p-3 lg:p-4 h-full flex flex-col shadow-[0_8px_30px_rgb(0,0,0,0.04)]">
       <h2 className="text-xs lg:text-sm font-black text-slate-800 mb-2 shrink-0">운영 리스크 가중치</h2>
       
       <div className="flex-1 flex flex-col sm:flex-row min-h-0 gap-2">

@@ -4,11 +4,12 @@ import { useState } from "react";
 import { Calendar, Droplets, Filter, Gauge, Waves } from "lucide-react";
 import Title from "@/components/main/Title";
 import TailCategory from "@/components/main/TailCategory";
-import HistoryChartBox from "./HistoryChartBox";
+import TailChart from "@/components/main/TailChart";
+import ChartBox from "@/components/main/ChartBox";
 
 export default function History({ params }: { params: { id: string } }) {
     const { id } = params;
-    const [selectedDate, setSelectedDate] = useState<string>("2024-05-20");
+    const [selectedDate, setSelectedDate] = useState<string>("2023-01-06");
 
     return (
         <div className="flex flex-col flex-1 h-full gap-6 md:p-4">
@@ -39,30 +40,35 @@ export default function History({ params }: { params: { id: string } }) {
 
             {/* 메인 대시보드 */}
             <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
-                <div className="h-full w-full">
-                    <HistoryChartBox
-                        title={true ? '시간별 송수량 (Supply)' : '시간별 수위 변화 (Level)'}
+                <ChartBox
+                    title={true ? '시간별 송수량 (Supply)' : '시간별 수위 변화 (Level)'}
+                    icon={true ? Waves : Droplets}
+                    textSize="text-[20px]"
+                >
+                    <TailChart
                         time={["1"]}
                         data={[1]}
-                        color="#3b82f6"
-                        color2="#818cf8"
                         label1="현재 수요"
                         label2="수요 예측"
-                        icon={true ? Waves : Droplets}
+                        label3="현재 수위"
+                        label4="수위 예측"
                     />
-                </div>
-                <div className="h-full w-full">
-                    <HistoryChartBox
-                        title={true ? '정수장 토출 압력 (Pressure)' : '시간별 유출량 (Outflow)'}
+                </ChartBox>
+                <ChartBox
+                    title={true ? '정수장 토출 압력 (Pressure)' : '시간별 유출량 (Outflow)'}
+                    icon={Gauge}
+                    color="text-green-700"
+                    textSize="text-[20px]"
+                >
+                    <TailChart
                         time={["1"]}
                         data={[1]}
-                        color="#3b82f6"
-                        color2="#818cf8"
                         label1="현재 수요"
                         label2="수요 예측"
-                        icon={Gauge}
+                        label3="현재 수위"
+                        label4="수위 예측"
                     />
-                </div>
+                </ChartBox>
             </div>
             {/* 그래프 3: 배수지별 총 수요량 비교 (Overview Only) */}
             {/* {isOverview && (

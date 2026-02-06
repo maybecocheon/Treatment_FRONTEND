@@ -4,6 +4,7 @@ import Login from '@/components/loginJoin/Login';
 import LoginSkeleton from '@/components/loginJoin/skeletons/LoginSkeleton';
 import IntroduceSkeleton from '@/components/loginJoin/skeletons/IntroduceSkeleton';
 import PageFallback from '@/components/loading/PageFallback';
+import Footer from '@/components/Footer';
 
 export default function LoginPage() {
   return (
@@ -18,6 +19,7 @@ export default function LoginPage() {
       <Suspense fallback={<PageFallback skeleton={<IntroduceSkeleton />} />}>
         <Introduce />
       </Suspense>
+      <Footer />
     </div>
   );
 };

@@ -7,10 +7,15 @@ import Menu from "./Menu";
 import { usePathname, useRouter } from "next/navigation";
 import { useVirtualClock } from "@/hooks/useVirtualClock";
 import { useUser } from "@/hooks/useUser";
+import { useLogout } from "@/hooks/useLogout";
+import HeaderSkeleton from "../skeletons/HeaderSkeleton";
 
 export default function Header() {
   const router = useRouter();
   const pathname = usePathname();
+
+  // 로그아웃
+  const { handleLogout, isLoading } = useLogout();
 
   // 시간
   const [mounted, setMounted] = useState(false);
@@ -50,28 +55,11 @@ export default function Header() {
     setShowProfile(false);
   }, [pathname]);
 
-  const handleClick = () => async () => {
-    if (!confirm("로그아웃하시겠습니까?")) return;
-
-    try {
-      const response = await fetch(`/api/proxy/auth/logout`, {
-        method: "POST",
-        // 쿠키(RefreshToken)를 서버로 보내서 서버에서도 토큰을 무효화하게 합니다.
-        credentials: "include",
-      });
-      if (response.ok) {
-        localStorage.clear();
-        alert("성공적으로 로그아웃되었습니다.");
-        router.push("/");
-        router.refresh();
-      }
-    } catch (error) {
-      console.error("로그아웃 오류: ", error);
-      alert("로그아웃 처리 중 오류가 발생했습니다.");
-    }
+  const handleClick = () => {
+    handleLogout(true);
   };
 
-  if (!profile) return <p>로딩 중...</p>;
+  if (!profile) return <HeaderSkeleton />
 
   return (
     <header className="h-16 md:h-20 backdrop-blur-xl sticky top-0 z-50 transition-all">
@@ -133,7 +121,8 @@ export default function Header() {
                     <span>프로필 설정</span>
                   </button>
                   <button className="w-full flex items-center space-x-3 px-4 py-3 text-sm font-bold text-red-500 hover:bg-red-50 rounded-xl transition-colors"
-                    onClick={handleClick}>
+                    onClick={handleClick}
+                    disabled={isLoading}>
                     <LogOut size={16} />
                     <span>로그아웃</span>
                   </button>

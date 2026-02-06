@@ -3,13 +3,13 @@
 import { BarChart3, Droplets, Waves, X, ArrowRight, AlertTriangle, Zap, TrendingUp } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
-import { ModalProps } from "@/app/props/ModalProps";
 import { usePredictionData } from "@/hooks/usePredictionData";
 import { selectedRangeAtom } from "@/atoms/uniAtoms";
 import { useAtom } from "jotai";
 import TailChart from "@/components/main/TailChart";
+import { ParamsType } from "@/types/types";
 
-export default function minuteDataDetailsPage({ params }: ModalProps) {
+export default function ReservoirDetailsModal({ params }: ParamsType) {
     const { id } = params;
     const router = useRouter();
 
@@ -127,7 +127,7 @@ export default function minuteDataDetailsPage({ params }: ModalProps) {
                     <div className="glass rounded-4xl p-8 mb-10">
                         <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-8 gap-4">
                             <h4 className="font-bold text-slate-800 flex items-center gap-2">
-                                <TrendingUp size={20} className="text-emerald-500" />단계별 용수수요 예측 추이
+                                <TrendingUp size={20} className="text-emerald-500" />수요량 및 수위 예측 추이
                             </h4>
                             <div className="flex flex-col gap-3 items-end">
                                 <div className="flex gap-2">
@@ -151,34 +151,36 @@ export default function minuteDataDetailsPage({ params }: ModalProps) {
                                 time={filteredChartData.map(d => d.time || 0)}
                                 data={filteredChartData.map(d => d.actualValue || 0)}
                                 data2={filteredChartData.map(d => d.predictedValue || 0)}
-                                color="#3b82f6"
-                                color2="#818cf8"
+                                data3={[1, 2, 3, 4, 5, 6]}
+                                data4={[6, 1, 2, 5, 4, 5]}
                                 label1="현재 수요"
                                 label2="수요 예측"
+                                label3="현재 수위"
+                                label4="수위 예측"
                             />
                         </div>
                     </div>
 
-                    {/* 하단 페이지 이동 가이드 */}
-                    <button
-                        onClick={() => router.push(`/scheduling`)}
-                        className="group bg-sky-100 shadow-2xl relative w-full p-8 overflow-hidden rounded-[2.5rem] text-slate-900 transition-all hover:bg-slate-100 active:scale-[0.99] shadow-slate-200"
-                    >
-                        <div className="absolute top-0 right-0 w-64 h-64 bg-sky-500/10 rounded-full -translate-y-1/2 translate-x-1/2 blur-3xl group-hover:bg-sky-500/20 transition-colors" />
-                        <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-6">
-                            <div className="text-center md:text-left">
-                                <h4 className="text-xl font-black flex items-center justify-center md:justify-start gap-3">
-                                    <Zap size={24} className="fill-sky-400 text-sky-400" /> AI 펌프 운영 최적화 리포트
-                                </h4>
-                                <p className="text-slate-600 text-sm mt-1 tracking-tight">전력 요금을 최소화하는 최적 가동 스케줄링 데이터 확인</p>
-                            </div>
-                            <div className="flex items-center gap-3 bg-sky-500 px-8 py-4 rounded-2xl font-black group-hover:bg-sky-300/50 transition-all">
-                                자세히 보기 <ArrowRight size={20} className="group-hover:translate-x-2 transition-transform" />
-                            </div>
+                {/* 하단 페이지 이동 가이드 */}
+                <button
+                    onClick={() => router.push(`/scheduling`)}
+                    className="group bg-sky-100 shadow-2xl relative w-full p-8 overflow-hidden rounded-[2.5rem] text-slate-900 transition-all hover:bg-slate-100 active:scale-[0.99] shadow-slate-200"
+                >
+                    <div className="absolute top-0 right-0 w-64 h-64 bg-sky-500/10 rounded-full -translate-y-1/2 translate-x-1/2 blur-3xl group-hover:bg-sky-500/20 transition-colors" />
+                    <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-6">
+                        <div className="text-center md:text-left">
+                            <h4 className="text-xl font-black flex items-center justify-center md:justify-start gap-3">
+                                <Zap size={24} className="fill-sky-400 text-sky-400" /> AI 펌프 운영 최적화 리포트
+                            </h4>
+                            <p className="text-slate-600 text-sm mt-1 tracking-tight">전력 요금을 최소화하는 최적 가동 스케줄링 데이터 확인</p>
                         </div>
-                    </button>
-                </div>
+                        <div className="flex items-center gap-3 bg-sky-500 px-8 py-4 rounded-2xl font-black group-hover:bg-sky-300/50 transition-all">
+                            자세히 보기 <ArrowRight size={20} className="group-hover:translate-x-2 transition-transform" />
+                        </div>
+                    </div>
+                </button>
             </div>
+        </div>
         </div>
     );
 }

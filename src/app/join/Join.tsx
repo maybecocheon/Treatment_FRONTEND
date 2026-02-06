@@ -10,6 +10,7 @@ import TailSelect from '@/components/TailSelect';
 import TailButton from '@/components/TailButton';
 import { usePasswordMatch } from '@/hooks/usePasswordMatch';
 import { useValidationRules } from '@/hooks/useValidationRules';
+import { toast } from 'sonner';
 
 export default function Join() {
     const router = useRouter();
@@ -24,7 +25,6 @@ export default function Join() {
 
     // 아이디 중복 확인, 비밀번호 유효성 검사
     const [usernameChecked, setUsernameChecked] = useState<boolean>(false);
-    const [checkedMsg, setCheckedMsg] = useState<string>("");
     const passwordMsg = usePasswordMatch(formData.password, formData.passwordChk);
     const { passwordRule, usernameRule } = useValidationRules({ password: formData.password, username: formData.username });
 
@@ -42,48 +42,73 @@ export default function Join() {
         e.preventDefault();
 
         // 유효성 검사 추가
-        if (!usernameChecked) return alert("아이디 중복 확인을 실시해 주세요.");
-        if (formData.password !== formData.passwordChk) return alert("비밀번호가 일치하지 않습니다.");
+        if (!usernameChecked)
+            return toast.warning("아이디 중복 확인 필요", {
+                description: "먼저 아이디 중복 확인을 실시해 주세요.",
+            });
+        if (formData.password !== formData.passwordChk)
+            return toast.error("비밀번호 불일치", {
+                description: "입력하신 두 비밀번호가 서로 다릅니다.",
+            });
 
         try {
-            const response = await fetch(`/api/proxy/auth/signup`, {
+            const response = await fetch("/api/proxy/auth/signup", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(formData),
             });
             if (response.ok) {
-                alert("회원가입 성공. 서비스를 이용하시려면 로그인해 주세요.");
+                toast.success("회원가입 성공", {
+                    description: "로그인 후 서비스를 이용하실 수 있습니다."
+                });
                 router.push("/");
             } else {
-                alert("실패")
+                toast.error("회원가입 실패", {
+                    description: "정보를 다시 확인하거나 잠시 후 시도해 주세요."
+                });
             }
         } catch (error) {
-            alert("회원가입 실패. 다시 시도해 주세요.");
+            toast.error("회원가입 오류", {
+                description: "일시적인 오류가 발생했습니다. 잠시 후 다시 시도해 주세요."
+            });
         }
     };
 
     const handleDuplicate = async () => {
         if (!formData.username) {
-            alert("아이디를 입력해 주세요.");
+            toast.error("아이디를 먼저 입력해 주세요.");
             return;
         }
 
-        try {
+        const checkUsername = async () => {
             const response = await fetch(`/api/proxy/member/check/${formData.username}`);
-            if (response.ok) {
-                setUsernameChecked(true);
-                setCheckedMsg("✅ 사용 가능한 아이디입니다.")
-            } else {
+
+            if (!response.ok) {
                 setUsernameChecked(false);
-                setCheckedMsg("❌ 이미 사용 중인 아이디입니다.");
+                throw new Error("중복");
             }
-        } catch (error) {
-            alert("아이디 중복 확인 중 오류가 발생했습니다.");
-        }
-    }
+
+            if (usernameRule !== "") {
+                setUsernameChecked(false);
+                throw new Error("유효성"); 
+            }
+
+            setUsernameChecked(true);
+            return response;
+        };
+
+        toast.promise(checkUsername(), {
+            loading: "아이디 확인 중...",
+            success: "사용 가능한 아이디입니다!",
+            error: (err) => {
+                if (err.message === "유효성") return "아이디 형식이 올바르지 않습니다.";
+                return "이미 사용 중인 아이디입니다.";
+            },
+        });
+    };
 
     return (
-        <section className="relative min-h-screen w-full flex items-center justify-center overflow-auto bg-slate-50 py-12 md:py-20">
+        <section className="relative min-h-screen w-full flex items-center justify-center overflow-auto bg-slate-50 py-5">
             {/* 배경 */}
             <Background />
 
@@ -126,9 +151,8 @@ export default function Join() {
                             </button>
                         </div>
                         {usernameRule && (<p className="text-xs text-red-500 ml-2">{usernameRule}</p>)}
-                        {checkedMsg && (<p className={`text-xs ${usernameChecked ? "text-green-600" : "text-red-500"} ml-2`}>{checkedMsg}</p>)}
 
-                        <Input icon={Lock} type="password" placeholder="비밀번호" name="password"  value={formData.password} onChange={handleChange} />
+                        <Input icon={Lock} type="password" placeholder="비밀번호" name="password" value={formData.password} onChange={handleChange} />
                         {passwordRule && (<p className="text-xs text-red-500 ml-2">{passwordRule}</p>)}
 
                         <Input icon={Lock} type="password" placeholder="비밀번호 확인" name="passwordChk" value={formData.passwordChk} onChange={handleChange} />

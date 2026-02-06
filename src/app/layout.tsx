@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import Script from "next/script";
+import { Toaster } from "sonner";
 import Footer from "@/components/Footer";
 
 const geistSans = Geist({
@@ -17,6 +18,7 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "FLOWISE",
   description: "스마트 물 관리 솔루션 - 실시간 배수지 모니터링 및 수위 예측 플랫폼",
+  icons: "/water_drop.svg",
 };
 
 export default function RootLayout({ children, }: Readonly<{ children: React.ReactNode; }>) {
@@ -26,10 +28,25 @@ export default function RootLayout({ children, }: Readonly<{ children: React.Rea
 
   return (
     <html lang="ko">
-      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-        {children}
-        <Script src={`//dapi.kakao.com/v2/maps/sdk.js?appkey=${kakaoKey}&autoload=false`} strategy="beforeInteractive" />
-        <Footer />
+      <body className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen`}>
+        <div className="flex flex-col w-full min-h-screen overflow-x-hidden">
+          <main className="w-full min-h-screen">
+            {children}
+          </main>
+          <Script src={`//dapi.kakao.com/v2/maps/sdk.js?appkey=${kakaoKey}&autoload=false`} strategy="beforeInteractive" />
+          <Toaster
+            position="top-center"
+            richColors
+            visibleToasts={1}
+            toastOptions={{
+              classNames: {
+                toast: "pl-6 pr-4 py-4 rounded-2xl border-sky-100 bg-white/90 backdrop-blur-md shadow-lg",
+                title: "text-slate-900 font-bold ml-3",
+                description: "text-slate-500 text-xs ml-3",
+                icon: "scale-125",
+              }
+            }} />
+        </div>
       </body>
     </html>
   );

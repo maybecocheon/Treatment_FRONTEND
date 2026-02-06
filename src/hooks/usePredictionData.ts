@@ -3,7 +3,7 @@
 import { useMemo, useState, useCallback } from "react";
 import { useAtom, useAtomValue } from "jotai";
 import { selectedRangeAtom, virtualTimeAtom } from "@/atoms/uniAtoms";
-import { myFetch } from "@/app/api/api";
+import { myFetch } from "@/api/api";
 
 export function usePredictionData(id?: string) {
     const [rawChartData, setRawChartData] = useState<any[]>([]);

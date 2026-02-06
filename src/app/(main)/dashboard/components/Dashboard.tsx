@@ -29,10 +29,10 @@ export default function Dashboard() {
     if (!kpi) return null;
 
     return (
-        <div className="flex-1 flex flex-col lg:grid lg:grid-cols-12 gap-2 lg:gap-3 min-h-0 overflow-y-auto lg:overflow-hidden">
+        <div className="flex flex-col lg:grid lg:grid-cols-12 gap-2 h-screen overflow-y-auto lg:overflow-hidden">
 
             {/* 왼쪽 섹션 */}
-            <div className="lg:col-span-8 flex flex-col gap-2 lg:gap-3 min-h-0">
+            <div className="lg:col-span-8 flex flex-col gap-2">
 
                 {/* Row 1: 현재 상태 요약 (KPI Cards) */}
                 <div className="shrink-0">
@@ -40,27 +40,27 @@ export default function Dashboard() {
                 </div>
 
                 {/* Row 3: 예측 */}
-                <div className="flex-1 min-h-75 lg:min-h-0">
+                <div className="flex-1">
                     <PredictionPanel />
                 </div>
 
                 {/* Row 4: 펌프 스케줄링 */}
-                <div className="flex-1 min-h-75 lg:min-h-0">
+                <div className="flex-1">
                     <PumpSchedulePanel schedule={schedule} />
                 </div>
 
             </div>
 
-            {/* Right/Side Column (4/12) */}
-            <div className="flex-1 lg:col-span-4 flex flex-col gap-2 lg:gap-3">
+            {/* 오른쪽 섹션 */}
+            <div className="lg:col-span-4 flex flex-col gap-2">
 
                 {/* Row 4: Risk Events - Flexible height (slightly more priority) */}
-                <div className="flex-[1.4] min-h-87.5 lg:min-h-0">
+                <div className="flex-1">
                     <RiskEventPanel events={events} />
                 </div>
 
                 {/* Row 5: Risk Detailed Score - Flexible height */}
-                <div className="flex-1 min-h-62.5 lg:min-h-0">
+                <div className="flex-1">
                     <RiskDetailPanel factors={riskFactors} totalScore={kpi.riskScore} />
                 </div>
 
