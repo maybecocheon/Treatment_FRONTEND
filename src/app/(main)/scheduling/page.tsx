@@ -4,10 +4,10 @@ import MainTrend from './components/MainTrend';
 
 export default async function SchedulingPage() {
     return (
-        <div className="flex flex-col flex-1 h-full gap-6 md:p-4">
+        <div className="flex flex-col h-full gap-4 md:p-4">
             <Title title="지능형 펌프 운영 스케줄링" subtitle="AI 기반 펌프 운영 및 전기 요금 최적화 분석" />
 
-            <div className="flex-1 flex flex-col gap-6">
+            <div className="flex-1 flex flex-col gap-4 w-full">
                 {/* 1. 에너지 비용 & 최적화 가이드 섹션 */}
                 <GuidePannels />
 

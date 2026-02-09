@@ -3,6 +3,7 @@
 import { useTreatmentData } from "@/hooks/useTreatmentData";
 import { Waves, Gauge, Droplets } from "lucide-react";
 import { useEffect } from "react";
+import PlantStatsBarSkeleton from "./skeletons/PlantStatsBarSkeleton";
 
 const StatCard: React.FC<{
   icon: React.ReactNode;
@@ -11,7 +12,7 @@ const StatCard: React.FC<{
   unit?: React.ReactNode;
   colorClass: string;
 }> = ({ icon, label, value, unit, colorClass }) => (
-  <div className="glass flex-1 w-full p-6 rounded-4xl flex flex-col justify-center items-center gap-4 transition-all duration-300 hover:scale-[1.02] hover:bg-white/40 group">
+  <div className="glass flex-1 w-full p-6 rounded-4xl flex flex-col justify-center items-center transition-all duration-300 hover:scale-[1.02] hover:bg-white/40 group mb-4 md:mb-0">
     <div className={`p-4 rounded-2xl transition-colors shadow-inner ${colorClass}`}>
       {icon}
     </div>
@@ -36,10 +37,10 @@ export default function PlantStatsBar() {
     loadTreatment();
   }, [])
 
-  if (!treatment) return null;
+  if (!treatment) return <PlantStatsBarSkeleton />;
 
   return (
-    <div className="flex flex-col justify-stretch gap-4 animate-in fade-in slide-in-from-bottom-4 duration-700 h-full min-w-55">
+    <div className="flex flex-col gap-0 md:gap-4 animate-in fade-in slide-in-from-bottom-4 duration-700 h-full min-w-55">
       <StatCard
         icon={<Droplets size={28} />}
         label="정수장 송수량"

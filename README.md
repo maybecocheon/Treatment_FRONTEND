@@ -40,3 +40,14 @@
   > 랜딩 페이지로 돌아간 뒤 로그인하면 원래 있던 페이지로 돌아갈 수 있도록 함 (useSearchParams 사용)
 ** api 호출 시 loading 사용
   > api 여러 번 호출되는 것 방지
+
+* 2026/02/09
+** response 에러 시 백엔드로부터 message 받아 옴
+  > response.json()으로 보내 준 message 속성 활용
+** baseUrl 수정
+  > /api/proxy로 호출하던 것에서 .env.local에서 baseUrl 불러와서 api 호출하는 것으로 수정
+  > 백엔드와 프론트엔드는 다른 도메인. 쿠키 잘 주고받을 수 있도록 백엔드 측에서 https로 주소 변경 후 쿠키 옵션 수정함.
+** 모바일 화면으로 전환 시 footer와 main이 달라붙는 문제 해결
+  > 맨 아래 요소에 mb-4 md:mb-0 줌
+** 각 main 페이지 한눈에 보이게 하기
+  > h-screen 아닌 h-full 사용

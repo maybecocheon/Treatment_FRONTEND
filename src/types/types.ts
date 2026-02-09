@@ -41,6 +41,13 @@ export interface FacilityType {
     lng?: number;
 }
 
+// 배수지 수위 타입
+export interface ReservoirLevelType {
+    reservoirName: string;
+    facilityId: number,
+    level: number
+}
+
 // 로그인한 유저 프로필 타입
 export interface UserProfile {
   username: string;

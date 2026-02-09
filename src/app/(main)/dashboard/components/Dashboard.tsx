@@ -29,7 +29,7 @@ export default function Dashboard() {
     if (!kpi) return null;
 
     return (
-        <div className="flex flex-col lg:grid lg:grid-cols-12 gap-2 h-screen overflow-y-auto lg:overflow-hidden">
+        <div className="flex flex-col lg:grid lg:grid-cols-12 gap-2 w-full flex-1">
 
             {/* 왼쪽 섹션 */}
             <div className="lg:col-span-8 flex flex-col gap-2">
@@ -52,10 +52,10 @@ export default function Dashboard() {
             </div>
 
             {/* 오른쪽 섹션 */}
-            <div className="lg:col-span-4 flex flex-col gap-2">
+            <div className="lg:col-span-4 flex flex-col gap-2 mb-2 md:mb-0">
 
                 {/* Row 4: Risk Events - Flexible height (slightly more priority) */}
-                <div className="flex-1">
+                <div className="flex-1 overflow-y-auto">
                     <RiskEventPanel events={events} />
                 </div>
 

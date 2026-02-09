@@ -72,7 +72,7 @@ export default function Menu({ isMobileMenuOpen, setIsMobileMenuOpen }: MenuProp
 
           <div className="mt-6 px-5 py-4 border-t border-slate-100">
             <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em]">
-              FLOWISE Intelligence System
+              FLOWISE System
             </p>
           </div>
         </div>

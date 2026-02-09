@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import Title from '@/components/main/Title';
-import { User, Shield, ArrowLeft, Trash2, Key, Lock, Globe, Clock, ShieldIcon, KeyRound, ShieldCheckIcon, Mail, Save, ShieldAlert } from 'lucide-react';
+import { User, Shield, ArrowLeft, Trash2, Key, Lock, Globe, Clock, ShieldIcon, KeyRound, ShieldCheckIcon, Mail, Save, Building2 } from 'lucide-react';
 import TailInput from '@/components/TailInput';
 import TailSelect from '@/components/TailSelect';
 import TailButton from '@/components/TailButton';
@@ -72,8 +72,8 @@ export default function Setting() {
             toast.error("새 비밀번호가 서로 일치하지 않습니다.");
             return;
         }
-        
-        const success = await updatePassword({password: password, newPassword: newPassword, newPasswordRe: newPasswordRe});
+
+        const success = await updatePassword({ password: password, newPassword: newPassword, newPasswordRe: newPasswordRe });
         if (success) setPassword(newPassword);
     }
 
@@ -96,7 +96,7 @@ export default function Setting() {
     if (!profile) return null;
 
     return (
-        <div className="flex-1 w-full max-w-7xl mx-auto px-4 md:px-0 flex flex-col gap-6" >
+        <div className="flex-1 w-full max-w-7xl mx-auto px-4 md:px-0 flex flex-col gap-6 h-screen overflow-y-auto" >
             {/* 상단 타이틀 영역 */}
             <div className="flex items-center gap-4 w-full" >
                 <button
@@ -194,12 +194,20 @@ export default function Setting() {
                                 <label className="text-[11px] font-black text-blue-900/40 uppercase tracking-widest flex items-center gap-2 ml-1">
                                     소속 부서
                                 </label>
-                                <TailSelect value={formData.department || ""} onChange={handleChange} />
+                                <TailSelect icon={Building2} name="department" value={formData.department} onChange={handleChange}
+                                    option=
+                                    {
+                                        <>
+                                            <option value="" disabled>부서 선택</option>
+                                            <option value="정수운영팀" className="text-slate-800">정수운영팀</option>
+                                            <option value="배수운영팀" className="text-slate-800">배수운영팀</option>
+                                        </>
+                                    } />
                             </div>
                         </div>
 
                         {/* 하단 버튼 */}
-                        <TailButton disabled={ isLoading } text="정보 수정하기" icon={Save} style="bg-sky-500 hover:bg-sky-600" />
+                        <TailButton disabled={isLoading} text="정보 수정하기" icon={Save} style="bg-sky-500 hover:bg-sky-600" />
                     </form>
 
                     {/* 비밀번호 변경 섹션 */}
@@ -260,14 +268,14 @@ export default function Setting() {
                             </div>
                         </div>
 
-                        <TailButton disabled={ isLoading } text="비밀번호 변경하기" icon={Key} style="bg-amber-500 hover:bg-amber-600" onClick={handlPasswordClick} />
+                        <TailButton disabled={isLoading} text="비밀번호 변경하기" icon={Key} style="bg-amber-500 hover:bg-amber-600" onClick={handlPasswordClick} />
                     </div>
                 </div>
             </div>
 
             {/* 회원 탈퇴 */}
-            <div className="mt-8 px-4">
-                <button className="flex items-center gap-4 group transition-all opacity-40 hover:opacity-100" onClick={handleDeleteAccount} disabled={ isLoading }>
+            <div className="px-4">
+                <button className="flex items-center gap-4 group transition-all opacity-40 hover:opacity-100" onClick={handleDeleteAccount} disabled={isLoading}>
                     <div className="p-2 bg-red-100 text-red-600 rounded-xl group-hover:bg-red-600 group-hover:text-white transition-all">
                         <Trash2 size={16} />
                     </div>

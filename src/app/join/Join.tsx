@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react';
-import { Lock, User, Mail, ArrowRight } from 'lucide-react';
+import { Lock, User, Mail, ArrowRight, Building2 } from 'lucide-react';
 import Background from '@/components/loginJoin/Background';
 import Logo from '@/components/loginJoin/Logo';
 import Input from '@/components/TailInput';
@@ -90,7 +90,7 @@ export default function Join() {
 
             if (usernameRule !== "") {
                 setUsernameChecked(false);
-                throw new Error("유효성"); 
+                throw new Error("유효성");
             }
 
             setUsernameChecked(true);
@@ -129,9 +129,18 @@ export default function Join() {
                     {/* 사원 정보 */}
                     <div className="space-y-3">
                         <p className="text-[11px] text-sky-600 font-bold uppercase tracking-wider ml-1">사원 정보</p>
-                        {/* 성명 및 부서 선택 */}
+                        {/* 성명 */}
                         <Input icon={User} placeholder="성함" name="alias" value={formData.alias} onChange={handleChange} />
-                        <TailSelect onChange={handleChange} />
+                        {/* 부서 선택 */}
+                        <TailSelect icon={Building2} name="department" value={formData.department} onChange={handleChange}
+                            option=
+                            {
+                                <>
+                                    <option value="" disabled>부서 선택</option>
+                                    <option value="정수운영팀" className="text-slate-800">정수운영팀</option>
+                                    <option value="배수운영팀" className="text-slate-800">배수운영팀</option>
+                                </>
+                            } />
                     </div>
 
                     {/* 로그인 정보 */}

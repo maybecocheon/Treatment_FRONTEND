@@ -3,7 +3,7 @@
 import { useFacilitiesData } from "@/hooks/useFacilitiesData";
 import { Database, Droplets, Factory } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 
 
 export default function TailCategory({ text, params }: { text: string, params: string }) {

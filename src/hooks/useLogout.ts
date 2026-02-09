@@ -6,6 +6,7 @@ import { useState } from "react";
 import { toast } from "sonner";
 
 export function useLogout() {
+    const baseUrl = process.env.NEXT_PUBLIC_SERVER_URL;
     const router = useRouter();
     const [isLoading, setIsLoading] = useState(false);
 
@@ -14,16 +15,16 @@ export function useLogout() {
         setIsLoading(true);
         const toastId = toast.loading("로그아웃 중...");
         try {
-            const response = await myFetch("/api/proxy/auth/logout", {
+            const response = await myFetch(`${baseUrl}/auth/logout`, {
                 method: "POST"
             });
-
-            if (response && response.ok) {
+            if (response.ok) {
                 toast.success("성공적으로 로그아웃되었습니다.", { id: toastId });
             } else {
-                toast.error("세션 종료 실패", { id: toastId, description: "강제 로그아웃 처리되었습니다." });
+                toast.error("로그아웃 실패", { id: toastId, description: "강제 로그아웃 처리되었습니다." });
             }
         } catch (error) {
+            console.error("로그아웃 오류: ", error);
             toast.error("로그아웃 오류", { id: toastId, description: "강제 로그아웃 처리되었습니다." });
         } finally {
             setIsLoading(false);

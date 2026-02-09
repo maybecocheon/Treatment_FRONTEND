@@ -6,7 +6,7 @@ import { useAtomValue } from "jotai";
 import { mapLevelAtom } from "@/atoms/uniAtoms";
 import { useEffect } from "react";
 import { usePredictionData } from "@/hooks/usePredictionData";
-import { FacilityType } from "@/hooks/useFacilitiesData";
+import { FacilityType } from "@/types/types";
 
 export interface FacilityOverlay {
     facility: FacilityType;

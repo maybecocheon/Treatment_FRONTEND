@@ -8,7 +8,7 @@ import Footer from '@/components/Footer';
 
 export default function LoginPage() {
   return (
-    <div className="flex flex-col min-h-screen bg-slate-50 text-slate-900">
+    <div className="flex flex-col min-h-dvh bg-slate-50 text-slate-900">
 
       {/* 로그인 섹션 */}
       <Suspense fallback={<PageFallback skeleton={<LoginSkeleton />} />}>

@@ -46,11 +46,11 @@ export default function ReservoirDetailsModal({ params }: ParamsType) {
     const isLevelCritical = (minuteData?.currentLevel < minLevelAlert) || (minuteData?.currentLevel > maxLevelAlert);
 
     return (
-        <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-md flex items-center justify-center z-50 p-4 md:p-6 animate-in fade-in duration-300">
+        <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-md flex items-center justify-center z-50 p-4 animate-in fade-in duration-300">
             <div className="bg-white/60 rounded-4xl shadow-2xl w-full max-w-5xl overflow-hidden animate-in fade-in zoom-in duration-300 max-h-[90vh] flex flex-col">
 
                 {/* 헤더 */}
-                <div className="px-6 py-5 md:px-10 md:py-8 flex justify-between items-center transition-colors duration-500 bg-sky-50/50">
+                <div className="px-6 py-4 md:py-8 flex justify-between items-center transition-colors duration-500 bg-sky-50/50">
                     <div className="flex items-center gap-4">
                         <div className={`p-3 rounded-2xl ${isLevelCritical ? "bg-red-400" : "bg-blue-500/20"}`}>
                             <Droplets className={`${isLevelCritical ? "text-red-100" : "text-blue-400"} w-6 h-6 md:w-8 md:h-8`} />
@@ -70,10 +70,10 @@ export default function ReservoirDetailsModal({ params }: ParamsType) {
                 </div>
 
                 {/* 메인 */}
-                <div className="p-6 md:p-10 overflow-y-auto custom-scrollbar bg-slate-50/30">
+                <div className="p-4 md:p-6 overflow-y-auto bg-slate-50/30">
                     {/* 수위 경고 배너 (위험 시에만 노출) */}
                     {isLevelCritical && (
-                        <div className="mb-8 flex items-center gap-4 bg-red-50 border-2 border-red-100 p-6 rounded-3xl animate-pulse">
+                        <div className="mb-4 flex items-center gap-4 bg-red-50 border-2 border-red-100 p-6 rounded-3xl animate-pulse">
                             <div className="bg-red-500 p-3 rounded-2xl shadow-lg shadow-red-200">
                                 <AlertTriangle className="text-white w-6 h-6" />
                             </div>
@@ -92,7 +92,7 @@ export default function ReservoirDetailsModal({ params }: ParamsType) {
                     )}
 
                     {/* 상단 요약 카드 */}
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-10">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
                         <div className={`glass p-6 rounded-3xl transition-colors ${isLevelCritical ? "border-red-200 ring-2 ring-red-50" : "border-slate-100"}`}>
                             <p className="text-xs text-slate-500 font-bold uppercase tracking-wider mb-3 flex items-center gap-2">
                                 <Waves size={14} className={isLevelCritical ? "text-red-500" : "text-blue-500"} /> 현재 수위 현황
@@ -124,8 +124,8 @@ export default function ReservoirDetailsModal({ params }: ParamsType) {
                     </div>
 
                     {/* 메인 차트 영역 */}
-                    <div className="glass rounded-4xl p-8 mb-10">
-                        <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-8 gap-4">
+                    <div className="glass rounded-4xl p-6 mb-4">
+                        <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-4">
                             <h4 className="font-bold text-slate-800 flex items-center gap-2">
                                 <TrendingUp size={20} className="text-emerald-500" />수요량 및 수위 예측 추이
                             </h4>
@@ -146,7 +146,7 @@ export default function ReservoirDetailsModal({ params }: ParamsType) {
                                 </div>
                             </div>
                         </div>
-                        <div className="h-full w-full">
+                        <div className="h-75 w-full">
                             <TailChart
                                 time={filteredChartData.map(d => d.time || 0)}
                                 data={filteredChartData.map(d => d.actualValue || 0)}
@@ -161,26 +161,26 @@ export default function ReservoirDetailsModal({ params }: ParamsType) {
                         </div>
                     </div>
 
-                {/* 하단 페이지 이동 가이드 */}
-                <button
-                    onClick={() => router.push(`/scheduling`)}
-                    className="group bg-sky-100 shadow-2xl relative w-full p-8 overflow-hidden rounded-[2.5rem] text-slate-900 transition-all hover:bg-slate-100 active:scale-[0.99] shadow-slate-200"
-                >
-                    <div className="absolute top-0 right-0 w-64 h-64 bg-sky-500/10 rounded-full -translate-y-1/2 translate-x-1/2 blur-3xl group-hover:bg-sky-500/20 transition-colors" />
-                    <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-6">
-                        <div className="text-center md:text-left">
-                            <h4 className="text-xl font-black flex items-center justify-center md:justify-start gap-3">
-                                <Zap size={24} className="fill-sky-400 text-sky-400" /> AI 펌프 운영 최적화 리포트
-                            </h4>
-                            <p className="text-slate-600 text-sm mt-1 tracking-tight">전력 요금을 최소화하는 최적 가동 스케줄링 데이터 확인</p>
+                    {/* 하단 페이지 이동 가이드 */}
+                    <button
+                        onClick={() => router.push(`/scheduling`)}
+                        className="group bg-sky-100 shadow-2xl relative w-full p-8 overflow-hidden rounded-[2.5rem] text-slate-900 transition-all hover:bg-slate-100 active:scale-[0.99] shadow-slate-200"
+                    >
+                        <div className="absolute top-0 right-0 w-64 h-64 bg-sky-500/10 rounded-full -translate-y-1/2 translate-x-1/2 blur-3xl group-hover:bg-sky-500/20 transition-colors" />
+                        <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-6">
+                            <div className="text-center md:text-left">
+                                <h4 className="text-xl font-black flex items-center justify-center md:justify-start gap-3">
+                                    <Zap size={24} className="fill-sky-400 text-sky-400" /> AI 펌프 운영 최적화 리포트
+                                </h4>
+                                <p className="text-slate-600 text-sm mt-1 tracking-tight">전력 요금을 최소화하는 최적 가동 스케줄링 데이터 확인</p>
+                            </div>
+                            <div className="flex items-center gap-3 bg-sky-500 px-8 py-4 rounded-2xl font-black group-hover:bg-sky-300/50 transition-all">
+                                자세히 보기 <ArrowRight size={20} className="group-hover:translate-x-2 transition-transform" />
+                            </div>
                         </div>
-                        <div className="flex items-center gap-3 bg-sky-500 px-8 py-4 rounded-2xl font-black group-hover:bg-sky-300/50 transition-all">
-                            자세히 보기 <ArrowRight size={20} className="group-hover:translate-x-2 transition-transform" />
-                        </div>
-                    </div>
-                </button>
+                    </button>
+                </div>
             </div>
-        </div>
         </div>
     );
 }

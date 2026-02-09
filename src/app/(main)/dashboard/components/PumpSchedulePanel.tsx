@@ -10,29 +10,17 @@ interface Props {
 
 export const PumpSchedulePanel: React.FC<Props> = () => {
   return (
-    <div className="glass backdrop-blur-xl rounded-3xl p-3 lg:p-4 h-full flex flex-col">
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 mb-2 shrink-0">
+    <div className="glass backdrop-blur-xl rounded-3xl p-4 h-full flex flex-col">
         <h2 className="text-xs lg:text-sm font-black text-slate-800 flex items-center gap-2">
           <div className="p-1.5 bg-sky-100 text-sky-600 rounded-xl border border-sky-200">
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
           </div>
           AI 펌프 스케줄 최적화
         </h2>
-        <div className="flex items-center gap-3 text-[9px] font-bold">
-          <div className="flex items-center gap-1">
-            <span className="w-2 h-2 bg-sky-500 rounded-full"></span>
-            <span className="text-slate-500">ECO</span>
-          </div>
-          <div className="flex items-center gap-1">
-            <span className="w-2 h-2 bg-rose-500 rounded-full"></span>
-            <span className="text-slate-500">PEAK</span>
-          </div>
-        </div>
-      </div>
 
       <div className="flex-1 flex flex-col lg:grid lg:grid-cols-3 gap-4 min-h-0">
         {/* Graph Section */}
-        <div className="lg:col-span-2 min-h-0 relative">
+        <div className="h-70 md:h-full lg:col-span-2 min-h-0 relative py-2">
           <TailChart
             time={["0", "1", "2", "3", "4", "5"]}
             data={[1, 2, 3, 4, 5]}

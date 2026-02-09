@@ -4,7 +4,7 @@ import { Cpu, DollarSign, Moon, Sun, CheckCircle2, AlertTriangle, Activity } fro
 
 export default function GuidePannels() {
     return (
-        <div className="grid grid-cols-1 xl:grid-cols-12 gap-6 items-stretch">
+        <div className="grid grid-cols-1 xl:grid-cols-12 gap-4 items-stretch">
             {/* 1. 심야 정수 계획 패널 */}
             <div className="xl:col-span-3 glass rounded-[2.5rem] p-6 relative overflow-hidden group flex flex-col justify-center">
                 <div className="absolute -top-6 -right-6 opacity-[0.03] group-hover:opacity-[0.08] transition-all duration-1000 rotate-12">

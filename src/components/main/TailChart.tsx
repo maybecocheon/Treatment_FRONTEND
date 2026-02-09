@@ -45,7 +45,7 @@ export default function TailChart({
         <>
             <div className="w-full h-full relative">
                 <ResponsiveContainer width="100%" height="100%" minHeight="100px">
-                    <AreaChart data={chartData} margin={{ top: 5, right: -20, left: -20, bottom: 0 }}>
+                    <AreaChart data={chartData} margin={{ top: 5, right: -30, left: -30, bottom: 0 }}>
                         <defs>
                             {/* 수위용 연한 그라데이션 */}
                             <linearGradient id="colorLevel" x1="0" y1="0" x2="0" y2="1">

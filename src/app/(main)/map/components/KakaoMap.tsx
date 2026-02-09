@@ -83,7 +83,7 @@ export default function KakaoMap() {
                 {facilities && 
                 facilities.map(facility => ((facility.type === "정수장" || facility.type === "배수지") && 
                     <CustomOverlayMap key={facility.facilityId} position={{ lat: facility.lat || 0, lng: facility.lng || 0 }}>
-                        <FacilityOverlay facility={facility} onClick={facility.type === "배수지" ? () => router.push(`/map/${facility.facilityId}`): () => router.push(`/scheduling/${facility.facilityId}`)} />
+                        <FacilityOverlay facility={facility} onClick={facility.type === "배수지" ? () => router.push(`/map/${facility.facilityId}`): () => router.push("/scheduling")} />
                     </CustomOverlayMap>
                 ))}
             </Map>

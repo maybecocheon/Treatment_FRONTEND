@@ -1,7 +1,7 @@
 'use client'
 
 import { Activity, Gauge, WavesIcon } from 'lucide-react';
-import SchedulingChartBox from '../../../../components/main/ChartBox';
+import ChartBox from '@/components/main/ChartBox';
 import { usePredictionData } from '@/hooks/usePredictionData';
 import { useFacilitiesData } from '@/hooks/useFacilitiesData';
 import { useEffect, useMemo, useState } from 'react';
@@ -31,16 +31,16 @@ export default function MainTrend() {
     }, [selectedId]);
 
     return (
-        <div className="flex-1 flex flex-col gap-4">
-            <div className="flex items-center justify-between px-2 mb-2">
-                <h3 className="text-xl font-black text-blue-950 flex items-center gap-2">
+        <div className="flex-1 flex flex-col gap-2 w-full h-full mb-4 md:mb-0">
+            <div className="flex items-center justify-between">
+                <h3 className="text-lg font-black text-blue-950 flex items-center gap-2">
                     <Activity className="text-blue-600" size={24} />
                     배수지 및 정수장 운영 추이 (24h)
                 </h3>
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <SchedulingChartBox
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 w-full h-full">
+                <ChartBox
                     title="수요 및 수위"
                     icon={WavesIcon}
                     headerControl={
@@ -64,8 +64,8 @@ export default function MainTrend() {
                         label3="현재 수위"
                         label4="수위 예측"
                     />
-                </SchedulingChartBox>
-                <SchedulingChartBox
+                </ChartBox>
+                <ChartBox
                     title="펌프 스케줄링 최적화"
                     icon={Gauge}
                     color="text-green-700"
@@ -77,7 +77,7 @@ export default function MainTrend() {
                         label1="현재 송수량"
                         label2="최적화 송수량"
                     />
-                </SchedulingChartBox>
+                </ChartBox>
             </div >
         </div >
     )

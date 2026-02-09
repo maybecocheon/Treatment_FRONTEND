@@ -4,19 +4,25 @@ import { myFetch } from "@/api/api";
 import { FACILITY_COORDS } from "@/data/mockData";
 import { FacilityType } from "@/types/types";
 import { useState, useCallback, useMemo } from "react";
+import { toast } from "sonner";
 
 export function useFacilitiesData() {
+    const baseUrl = process.env.NEXT_PUBLIC_SERVER_URL;
     const [facilities, setFacilities] = useState<FacilityType[]>([]);
 
     // 1. 데이터를 불러오는 함수
     const loadFacilities = useCallback(async () => {
         try {
-            const response = await myFetch("/api/proxy/facility/all");
-            if (!response) return;
+            const response = await myFetch(`${baseUrl}/facility/all`);
             const data = await response.json();
-            setFacilities(data);
+            if (response.ok) {
+                setFacilities(data);
+            } else {
+                toast.error(data.message || "시설 불러오기 실패");
+            }
         } catch (error) {
-            console.error("시설 불러오기 실패", error);
+            console.error("시설 불러오기 오류", error);
+            toast.error("시설 불러오기 오류");
         }
     }, []);
 

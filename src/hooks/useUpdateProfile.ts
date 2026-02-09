@@ -6,6 +6,7 @@ import { useLogout } from "./useLogout";
 import { useRouter } from "next/navigation";
 
 export default function useUpdateProfile() {
+    const baseUrl = process.env.NEXT_PUBLIC_SERVER_URL;
     const router = useRouter();
     const { loadProfile } = useUser();
     const { handleLogout } = useLogout();
@@ -14,20 +15,20 @@ export default function useUpdateProfile() {
     const updateProfile = async (formData: any) => {
         setIsLoading(true);
         try {
-            const response = await myFetch("/api/proxy/member/update/profile", {
+            const response = await myFetch(`${baseUrl}/member/update/profile`, {
                 method: "PATCH",
                 body: JSON.stringify(formData),
             });
-
+            const data = await response.json();
             if (response && response.ok) {
                 toast.success("회원 정보가 성공적으로 수정되었습니다.");
                 loadProfile();
             } else {
-                toast.error("수정 실패", { description: "회원 정보 수정에 실패했습니다." });
+                toast.error(data.message || "회원 정보 수정에 실패했습니다.");
             }
         } catch (error) {
             console.error("회원 정보 수정 오류: ", error);
-            toast.error("수정 오류", { description: "회원 정보 수정에 실패했습니다." });
+            toast.error("수정 오류", { description: "회원 정보 수정 중 오류가 발생했습니다." });
         } finally {
             setIsLoading(false);
         }
@@ -36,11 +37,11 @@ export default function useUpdateProfile() {
     const updatePassword = async (formData: any) => {
         setIsLoading(true);
         try {
-            const response = await myFetch("/api/proxy/member/update/password", {
+            const response = await myFetch(`${baseUrl}/member/update/password`, {
                 method: "PATCH",
                 body: JSON.stringify(formData),
             });
-
+            const data = await response.json();
             if (response.ok) {
                 toast.success("비밀번호 변경 완료", {
                     description: "로그인 페이지로 이동합니다.",
@@ -49,16 +50,12 @@ export default function useUpdateProfile() {
                 // 로그아웃 처리
                 handleLogout();
                 return true;
-            } else if (response.status === 401) {
-                toast.error("인증 실패", {
-                    description: "현재 사용 중인 비밀번호가 일치하지 않습니다."
-                });
             } else {
-                toast.error("변경 실패", { description: "비밀번호 수정 중 오류가 발생했습니다." });
+                toast.error(data.message || "비밀번호 수정에 실패했습니다.");
             }
         } catch (error) {
-            console.error("비밀번호 수정 오류: ", error);
-            toast.error("변경 실패", { description: "비밀번호 수정 중 오류가 발생했습니다." });
+            console.error("비밀번호 변경 오류: ", error);
+            toast.error("변경 오류", { description: "비밀번호 수정 중 오류가 발생했습니다." });
         } finally {
             setIsLoading(false);
         }
@@ -68,26 +65,27 @@ export default function useUpdateProfile() {
         setIsLoading(true);
         toast.error("정말로 탈퇴하시겠습니까?", {
             duration: Infinity,
-            description: "모든 데이터가 삭제되며 되돌릴 수 없습니다.",
+            description: "모든 데이터가 삭제됩니다.",
             action: {
-                label: "로그아웃",
+                label: "탈퇴",
                 onClick: () => async () => {
                     try {
-                        const response = await fetch("/api/proxy/member/delete", {
+                        const response = await myFetch(`${baseUrl}/member/delete`, {
                             method: "DELETE",
                             credentials: "include"
                         });
+                        const data = await response.json();
                         if (response.ok) {
                             toast.success("탈퇴 처리되었습니다.");
                             localStorage.clear();
                             router.push("/");
                             router.refresh();
                         } else {
-                            toast.error("탈퇴 실패", { description: "회원 탈퇴에 실패했습니다. 다시 시도해 주세요." });
+                            toast.error(data.message || "회원 탈퇴에 실패했습니다.");
                         }
                     } catch (error) {
                         console.error("탈퇴 중 오류", error);
-                        toast.error("탈퇴 오류", { description: "회원 탈퇴에 실패했습니다. 다시 시도해 주세요." });
+                        toast.error("탈퇴 오류", { description: "회원 탈퇴 중 오류가 발생했습니다." });
                     } finally {
                         setIsLoading(false);
                     }
@@ -95,7 +93,7 @@ export default function useUpdateProfile() {
             },
             cancel: {
                 label: "취소",
-                onClick: () => toast.dismiss(),
+                onClick: () => { toast.dismiss(); setIsLoading(false); },
             },
         });
     }

@@ -24,10 +24,11 @@ export default function Header() {
   // 프로필
   const [showProfile, setShowProfile] = useState(false);
   const profileRef = useRef<HTMLDivElement>(null);
-  const { profile, setProfile, loadProfile } = useUser();
+  const { profile, setProfile } = useUser();
 
   // 모바일 메뉴
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const menuRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     // 1. 마운트 시 시간 설정
@@ -37,13 +38,15 @@ export default function Header() {
     const cached = localStorage.getItem("user_info");
     if (cached) {
       setProfile(JSON.parse(cached));
-    }
-    loadProfile();
+    } 
 
     // 3. 프로필 외부 클릭 시 닫기
     const handleClickOutside = (e: MouseEvent) => {
       if (profileRef.current && !profileRef.current.contains(e.target as Node)) {
         setShowProfile(false);
+      }
+      if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
+        setIsMobileMenuOpen(false);
       }
     };
     document.addEventListener("mousedown", handleClickOutside);
@@ -62,7 +65,7 @@ export default function Header() {
   if (!profile) return <HeaderSkeleton />
 
   return (
-    <header className="h-16 md:h-20 backdrop-blur-xl sticky top-0 z-50 transition-all">
+    <header className="h-16 backdrop-blur-xl sticky top-0 z-50 transition-all">
       <div className="glass max-w-8xl mx-auto h-full flex items-center justify-between px-4 md:px-8">
 
         {/* 로고 영역 */}
@@ -75,7 +78,7 @@ export default function Header() {
           </Link>
 
           {/* 네비게이션 메뉴 */}
-          <Menu isMobileMenuOpen={isMobileMenuOpen} setIsMobileMenuOpen={setIsMobileMenuOpen} />
+          <div ref={menuRef}><Menu isMobileMenuOpen={isMobileMenuOpen} setIsMobileMenuOpen={setIsMobileMenuOpen} /></div>
         </div>
 
         {/* 우측 유틸리티 영역 */}
@@ -83,7 +86,7 @@ export default function Header() {
           {/* 시간 섹션 */}
           <div className="hidden xl:flex items-center gap-3 text-slate-500 bg-slate-100/50 px-4 py-2 rounded-2xl border border-slate-200/50">
             <Clock className="w-4 h-4 text-sky-500" />
-            <div className="flex flex-col items-start leading-none gap-1">
+            <div className="flex items-center leading-none gap-4">
               {/* 날짜 표시 */}
               <span className="text-[12px] text-slate-400 tabular-nums">
                 {mounted && time ? time.split(" ")[0] : "0000-00-00"}

@@ -28,9 +28,9 @@ export default function RootLayout({ children, }: Readonly<{ children: React.Rea
 
   return (
     <html lang="ko">
-      <body className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen`}>
-        <div className="flex flex-col w-full min-h-screen overflow-x-hidden">
-          <main className="w-full min-h-screen">
+      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+        <div className="flex flex-col w-full min-h-dvh overflow-x-hidden">
+          <main className="w-full min-h-dvh">
             {children}
           </main>
           <Script src={`//dapi.kakao.com/v2/maps/sdk.js?appkey=${kakaoKey}&autoload=false`} strategy="beforeInteractive" />

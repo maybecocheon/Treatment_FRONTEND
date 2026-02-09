@@ -55,7 +55,7 @@ export default function PredictionPanel() {
       </div>
 
       <div className="flex-1 flex flex-col lg:flex-row gap-4">
-        <div className="flex-3 py-5">
+        <div className="h-70 md:h-full md:flex-3 py-2">
             <TailChart
               time={filteredChartData.map(d => d.time || 0)}
               data={filteredChartData.map(d => d.actualValue || 0)}
@@ -69,7 +69,7 @@ export default function PredictionPanel() {
             />
         </div>
 
-        <div className="flex-1 bg-slate-50/50 rounded-2xl p-3 border border-slate-200 flex flex-col justify-center gap-3">
+        <div className="md:flex-1 bg-slate-50/50 rounded-2xl p-3 border border-slate-200 flex flex-col justify-center gap-3">
           <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none">Stability</h3>
 
           <div className="space-y-4">
