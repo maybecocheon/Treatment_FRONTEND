@@ -19,6 +19,7 @@
   }
 }
 
+/* 배수지 수위 모션 */
 @keyframes water-wave {
   0%   { transform: translateX(0); }
   50%  { transform: translateX(-6px); }
@@ -31,10 +32,38 @@
   100% { transform: translateY(0); }
 }
 
+/* 글래스모피즘 */
 @layer components {
   .glass {
     @apply bg-white/60 backdrop-blur-md border border-white shadow-lg shadow-indigo-900/5;
   }
+}
+
+/* 모든 요소에 적용 (Global Scrollbar 커스텀) */
+* {
+  /* Firefox용 */
+  scrollbar-width: thin;
+  scrollbar-color: #cbd5e1 transparent;
+}
+
+/* Chrome, Safari, Edge용 */
+*::-webkit-scrollbar {
+  width: 6px; 
+  height: 6px;
+}
+
+*::-webkit-scrollbar-track {
+  background: transparent; 
+}
+
+*::-webkit-scrollbar-thumb {
+  background-color: #cbd5e1; 
+  border-radius: 40px; 
+  border: 1px solid transparent; 
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background-color: #94a3b8; 
 }
 
 body {

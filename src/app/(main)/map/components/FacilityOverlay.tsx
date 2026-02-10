@@ -5,8 +5,8 @@ import { WaterWave } from "./WaterWave";
 import { useAtomValue } from "jotai";
 import { mapLevelAtom } from "@/atoms/uniAtoms";
 import { useEffect } from "react";
-import { usePredictionData } from "@/hooks/usePredictionData";
 import { FacilityType } from "@/types/types";
+import { useReservoirLevel } from "@/hooks/useReservoirLevel";
 
 export interface FacilityOverlay {
     facility: FacilityType;
@@ -18,13 +18,11 @@ export default function FacilityOverlay({ facility, onClick }: FacilityOverlay) 
     const mapLevel = useAtomValue(mapLevelAtom);
 
     // 수위 레벨 얻기
-    const { minuteData, loadData } = usePredictionData();
+    const { reservoirLevels, loadLevels } = useReservoirLevel();
 
     useEffect(() => {
-        loadData("10");
+        loadLevels();
     }, [])
-
-    if (!minuteData) return null;
 
     // 1. 정수장
     if (facility.type === "정수장") {
@@ -44,8 +42,14 @@ export default function FacilityOverlay({ facility, onClick }: FacilityOverlay) 
     }
 
     // 2. 배수지
-    const isDanger = (minuteData.currentLevel > minuteData.maxLevel * 0.91) || (minuteData.currentLevel < minuteData.maxLevel * 0.4);
-    const levelPercent = (minuteData.currentLevel / minuteData.maxLevel) * 100;
+    if (!reservoirLevels) return null;
+
+    const reservoir = reservoirLevels.find(r => r.facilityId === facility.facilityId);
+
+    if (!reservoir) return null;
+
+    const isDanger = reservoir.level > reservoir.maxLevel * 0.9 || reservoir.level < reservoir.maxLevel * 0.4;
+    const levelPercent = (reservoir.level / reservoir.maxLevel) * 100;
 
     if (facility.type === "배수지") {
         // mapLevel이 9 이상일 때, 위험(isDanger)하지 않은 오버레이는 렌더링하지 않음
@@ -75,14 +79,14 @@ export default function FacilityOverlay({ facility, onClick }: FacilityOverlay) 
                     <div className="relative p-3 flex flex-col items-center justify-center h-full">
                         <div className="flex flex-col items-center">
                             <span className={`font-black uppercase tracking-tighter text-slate-700 leading-none ${mapLevel >= 8 ? "text-[14px]" : "text-[12px] mb-1"}`}>
-                                {mapLevel >= 8 ? minuteData?.currentLevel?.toFixed(1) : facility.name}
+                                {mapLevel >= 8 ? reservoir.level.toFixed(1) : reservoir.reservoirName}
                             </span>
 
                             {/* 8레벨 미만일 때만 상세 수위 표시 */}
                             {mapLevel < 8 && (
                                 <div className="flex items-baseline gap-1">
                                     <span className={`text-xl font-black ${isDanger ? "text-red-600" : "text-slate-700"}`}>
-                                        {minuteData?.currentLevel?.toFixed(1)}
+                                        {reservoir.level.toFixed(1)}
                                     </span>
                                     <span className="text-[10px] text-slate-500 font-bold uppercase">m</span>
                                 </div>
@@ -104,6 +108,4 @@ export default function FacilityOverlay({ facility, onClick }: FacilityOverlay) 
             </div>
         );
     }
-
-    return null;
 }

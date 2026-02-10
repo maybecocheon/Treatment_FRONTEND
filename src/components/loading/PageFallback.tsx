@@ -7,7 +7,7 @@ export interface PageFallbackProps {
 
 export default function PageFallback({ skeleton, message = "화면을 불러오는 중이에요…", }: PageFallbackProps) {
     return (
-        <div className="relative flex-1 w-full h-full min-h-100">
+        <div className="relative flex-1 w-full h-full">
             {skeleton}
 
             {/* 중앙 로딩 오버레이 */}

@@ -36,13 +36,12 @@ export default function History({ params }: { params: { id: string } }) {
 
                 <div className="glass p-2 rounded-3xl flex items-center gap-4 w-full md:w-auto">
                     {/* 카테고리 */}
-                    <select
+                    <TailSelect
+                        name="category"
                         value={selectedCategory}
                         onChange={(e) => setSelectedCategory(e.target.value)}
-                        className="bg-slate-50 border border-slate-200 text-[10px] lg:text-xs rounded-lg px-2 py-1 focus:outline-none focus:ring-2 focus:ring-sky-500/20 text-slate-700 font-bold"
-                    >
-                        {facilities.filter(f => f.type === "배수지" || f.type === "정수장" || f.type === "overview").map(f => <option key={f.facilityId} value={f.facilityId}>{f.name}</option>)}
-                    </select>
+                        option={facilities.filter(f => f.type === "배수지" || f.type === "정수장" || f.type === "overview").map(f => <option key={f.facilityId} value={f.facilityId}>{f.name}</option>)}
+                    />
                     {/* 날짜 */}
                     <div className="relative flex-1 max-w-full xl:max-w-60">
                         <Calendar className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />

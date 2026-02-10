@@ -1,8 +1,11 @@
 'use client'
 
 import { X, Droplets } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 export default function ReservoirDetailsSkeleton() {
+    const router = useRouter();
+
     return (
         <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-md flex items-center justify-center z-50 p-4 md:p-6">
             <div className="bg-white/60 rounded-4xl shadow-2xl w-full max-w-5xl overflow-hidden max-h-[90vh] flex flex-col">
@@ -18,8 +21,8 @@ export default function ReservoirDetailsSkeleton() {
                             <div className="h-4 w-64 bg-slate-200 rounded-md animate-pulse" />
                         </div>
                     </div>
-                    <div className="p-2.5 rounded-xl bg-slate-200 animate-pulse">
-                        <X size={24} className="text-transparent" />
+                    <div className="p-2.5 rounded-xl animate-pulse group hover:bg-slate-300" onClick={() => router.back()}>
+                        <X size={24} className="text-slate-600 hover:text-white" />
                     </div>
                 </div>
 

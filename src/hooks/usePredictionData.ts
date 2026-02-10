@@ -24,9 +24,8 @@ export function usePredictionData(id?: string) {
         try {
             // const formattedTime = time.replace("T", " "); // 가상 시계 시간 사용
             const response = await myFetch(`${baseUrl}/reservoir/chart/minite/${id}?date=2023-01-06 00:00:00`);
-            const data = await response.json();
             if (response.ok) {
-
+                const data = await response.json();
                 setMinuteData(data);
                 const chartList = data.chartData ? data.chartData : [];
                 setRawChartData(chartList.map((item: any, idx: number) => ({
@@ -38,13 +37,13 @@ export function usePredictionData(id?: string) {
                 // 호출 성공 시 마지막 업데이트 시간(분 단위) 기록
                 // lastUpdatedMinute.current = time.split("T")[1]?.substring(0, 5);
             } else {
-                toast.error(data.message || "차트 불러오기 실패");
+                toast.error("차트 불러오기 실패");
             }
         } catch (error) {
             console.error("차트 불러오기 오류:", error);
             toast.error("차트 불러오기 오류");
         }
-    }, []);
+    }, [baseUrl]);
 
     // 1분 단위 자동 갱신 로직
     // useEffect(() => {

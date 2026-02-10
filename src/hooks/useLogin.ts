@@ -28,7 +28,7 @@ export function useLogin() {
 
             if (response.ok) {
                 localStorage.setItem("lastLoginTime", new Date().toLocaleString());
-                //await loadProfile();
+                await loadProfile();
 
                 const redirectTo = searchParams.get("redirect") || "/dashboard";
                 toast.success("로그인 성공!", {

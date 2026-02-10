@@ -1,5 +1,12 @@
 import { LucideIcon } from "lucide-react";
 
+// 랜딩 페이지 팀원 소개
+export interface TeamMemberType {
+  name: string;
+  role: string;
+  description: string;
+}
+
 // params 타입
 export interface ParamsType {
     params: { id: string };
@@ -44,8 +51,10 @@ export interface FacilityType {
 // 배수지 수위 타입
 export interface ReservoirLevelType {
     reservoirName: string;
-    facilityId: number,
-    level: number
+    facilityId: number;
+    level: number;
+    minLevel: number;
+    maxLevel: number;
 }
 
 // 로그인한 유저 프로필 타입

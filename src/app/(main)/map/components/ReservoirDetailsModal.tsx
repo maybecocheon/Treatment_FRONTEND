@@ -8,6 +8,7 @@ import { selectedRangeAtom } from "@/atoms/uniAtoms";
 import { useAtom } from "jotai";
 import TailChart from "@/components/main/TailChart";
 import { ParamsType } from "@/types/types";
+import ReservoirDetailsSkeleton from "./skeletons/ReservoirDetailsSkeleton";
 
 export default function ReservoirDetailsModal({ params }: ParamsType) {
     const { id } = params;
@@ -31,13 +32,13 @@ export default function ReservoirDetailsModal({ params }: ParamsType) {
 
     useEffect(() => {
         const handlePopState = () => {
-            onClose();
+            router.back();
         };
         window.addEventListener("popstate", handlePopState);
         return () => window.removeEventListener("popstate", handlePopState);
     }, [onClose]);
 
-    if (!minuteData) return null;
+    if (!minuteData) return <ReservoirDetailsSkeleton />;
 
     // 고수위 & 저수위
     const maxLevelAlert = minuteData?.maxLevel * 0.8;
@@ -78,10 +79,10 @@ export default function ReservoirDetailsModal({ params }: ParamsType) {
                                 <AlertTriangle className="text-white w-6 h-6" />
                             </div>
                             <div className="flex-1">
-                                <h4 className="text-red-900 font-bold text-lg leading-tight">{minuteData?.currentLevel < minLevelAlert ? "저수위 경보 발생" : "고수위 경보 발생"}</h4>
+                                <h4 className="text-red-900 font-bold text-lg leading-tight">{minuteData.currentLevel < minLevelAlert ? "저수위 경보 발생" : "고수위 경보 발생"}</h4>
                                 <p className="hidden md:block text-red-600 text-sm font-medium">
                                     현재 수위가 설정된
-                                    {minuteData?.currentLevel < minLevelAlert ?
+                                    {minuteData.currentLevel < minLevelAlert ?
                                         ` 최저치(${minLevelAlert.toFixed(2)}m)보다 낮습니다. 공급 부족이 예상됩니다.` : ` 최고치(${maxLevelAlert.toFixed(2)}m)보다 높습니다. 공급 과잉이 예상됩니다.`}
                                 </p>
                             </div>
@@ -100,9 +101,9 @@ export default function ReservoirDetailsModal({ params }: ParamsType) {
                             <div className="flex items-end justify-between">
                                 <div className="flex items-baseline gap-1">
                                     <span className={`text-4xl font-black ${isLevelCritical ? "text-red-600" : "text-slate-900"}`}>
-                                        {minuteData?.currentLevel?.toFixed(1)}
+                                        {minuteData.currentLevel.toFixed(1)}
                                     </span>
-                                    <span className="text-slate-500 font-bold text-lg">/ {minuteData?.maxLevel?.toFixed(1)}m</span>
+                                    <span className="text-slate-500 font-bold text-lg">/ {minuteData.maxLevel.toFixed(1)}m</span>
                                 </div>
                                 <span className={`px-3 py-1 rounded-full text-[12px] font-semibold ${isLevelCritical ? "bg-red-100 text-red-600" : "bg-emerald-100 text-emerald-600"}`}>
                                     {isLevelCritical ? "위험" : "안정"}
@@ -115,9 +116,9 @@ export default function ReservoirDetailsModal({ params }: ParamsType) {
                                 <BarChart3 size={14} className="text-indigo-500" /> 알고리즘 예측 신뢰도
                             </p>
                             <div className="flex items-center justify-between gap-4">
-                                <span className="text-4xl font-black text-slate-900">{minuteData?.predictionAccuracy?.toFixed(1)}%</span>
+                                <span className="text-4xl font-black text-slate-900">{minuteData.predictionAccuracy.toFixed(1)}%</span>
                                 <div className="flex-1 h-3 bg-slate-300 rounded-full overflow-hidden">
-                                    <div className="bg-indigo-500 h-full rounded-full transition-all duration-1000" style={{ width: `${minuteData?.predictionAccuracy?.toFixed(1)}%` }} />
+                                    <div className="bg-indigo-500 h-full rounded-full transition-all duration-1000" style={{ width: `${minuteData.predictionAccuracy.toFixed(1)}%` }} />
                                 </div>
                             </div>
                         </div>
@@ -125,7 +126,7 @@ export default function ReservoirDetailsModal({ params }: ParamsType) {
 
                     {/* 메인 차트 영역 */}
                     <div className="glass rounded-4xl p-6 mb-4">
-                        <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-4">
+                        <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-4 gap-2">
                             <h4 className="font-bold text-slate-800 flex items-center gap-2">
                                 <TrendingUp size={20} className="text-emerald-500" />수요량 및 수위 예측 추이
                             </h4>

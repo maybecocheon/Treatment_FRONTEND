@@ -15,18 +15,17 @@ export function useTreatmentData() {
     const loadTreatment = useCallback(async () => {
         try {
             const response = await myFetch(`${baseUrl}/treatment/now?date=2023-01-06 00:00:01`);
-
-            const data = await response.json();
             if (response.ok) {
+                const data = await response.json();
                 setTreatment(data);
             } else {
-                toast.error(data.message || "정수장 정보 불러오기 실패");
+                toast.error("정수장 불러오기 실패");
             }
         } catch (error) {
-            console.error("정수장 정보 불러오기 오류", error);
-            toast.error("정수장 정보 불러오기 오류");
+            console.error("정수장 불러오기 오류", error);
+            toast.error("정수장 불러오기 오류");
         }
-    }, []);
+    }, [baseUrl]);
 
     return { treatment, loadTreatment };
 }

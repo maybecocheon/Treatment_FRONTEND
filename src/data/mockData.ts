@@ -1,77 +1,24 @@
 
-import { WaterSystemData, PlantStats, User, HistoryPoint, TeamMember, KPIData, RiskEvent, PredictionPoint, RiskFactor, PumpScheduleItem } from '@/data/types';
-
-
-export const currentUser: User = {
-  id: 'admin_flowwise',
-  name: '관리자_홍길동',
-  password: 'abcd1234!',
-  profileImage: 'https://picsum.photos/seed/user1/200/200',
-  role: 'Administrator',
-  department: '정수운영팀',
-};
-
-const DEMAND_SAMPLE = {
-  predictedDemand: [45, 48, 52, 58, 62, 55, 48, 42, 40, 45, 50, 55],
-  actualDemand: [44, 49, 50, 57, 65, 53, 47, 43, 41, 44, 51, 56],
-};
-
-const SAVINGS_SAMPLE = {
-  hourlyCostBaseline: [120, 130, 140, 150, 160, 155, 145, 135, 125, 130, 140, 150],
-  hourlyCostOptimized: [100, 110, 115, 120, 125, 123, 118, 112, 108, 110, 115, 120],
-  expectedSavingsPercent: 18.5,
-};
-
-const ALGORITHM_PROCESS_SAMPLE = {
-  // 단계별 예측 필드
-  dailyForecast: [460, 430, 410, 390, 420, 470, 560, 630, 660, 640, 610, 590, 570, 560, 580, 610, 650, 690, 710, 660, 590, 530, 490, 470], // 전일실적 비교 (당일 예측)
-  recalculation: [465, 425, 405, 385, 425, 475, 565, 635, 665, 645, 615, 595, 575, 565, 585, 615, 655, 695, 715, 665, 595, 535, 495, 475], // 15분 주기 실시간 재산출
-};
+import { HistoryPoint, KPIData, RiskEvent, RiskFactor, PumpScheduleItem } from '@/data/types';
+import { TeamMemberType } from '@/types/types';
 
 export const FACILITY_COORDS: Record<string, { lat: number; lng: number }> = {
-  "1": { lat: 35.2800, lng: 129.0800 }, // 중앙 정수장
-  "2": { lat: 35.2200, lng: 129.0400 }, // AA 가압장
-  "3": { lat: 35.1300, lng: 129.1000 }, // AB 가압장
-  "4": { lat: 35.1900, lng: 129.0100 }, // A 배수지
-  "5": { lat: 35.1700, lng: 129.0000 }, // B 배수지
-  "6": { lat: 35.1800, lng: 129.0200 }, // C 배수지
-  "7": { lat: 35.1500, lng: 129.0300 }, // D 배수지
-  "8": { lat: 35.1300, lng: 129.0100 }, // E 배수지
-  "9": { lat: 35.1000, lng: 129.0000 }, // F 배수지
-  "10": { lat: 35.1700, lng: 129.0900 }, // G 배수지
-  "11": { lat: 35.1900, lng: 129.1500 }, // H 배수지
-  "12": { lat: 35.1500, lng: 129.1200 }, // I 배수지
-  "13": { lat: 35.2200, lng: 129.1300 }, // J 배수지
-  "14": { lat: 35.1300, lng: 129.1400 }, // K 배수지
-  "15": { lat: 35.0900, lng: 129.1100 }, // L 배수지
+  "1": { lat: 35.2850, lng: 129.0850 }, // 중앙 정수장 
+  "2": { lat: 35.2150, lng: 128.9650 }, // AA 가압장 
+  "3": { lat: 35.3250, lng: 129.1950 }, // AB 가압장
+  "4": { lat: 35.1950, lng: 129.0250 }, // A 배수지 
+  "5": { lat: 35.1550, lng: 128.9950 }, // B 배수지 
+  "6": { lat: 35.2350, lng: 129.0350 }, // C 배수지 
+  "7": { lat: 35.1050, lng: 128.9550 }, // D 배수지 
+  "8": { lat: 35.0750, lng: 128.9850 }, // E 배수지 
+  "9": { lat: 35.1050, lng: 129.0450 }, // F 배수지 
+  "10": { lat: 35.1750, lng: 129.1150 }, // G 배수지
+  "11": { lat: 35.2150, lng: 129.2050 }, // H 배수지
+  "12": { lat: 35.1650, lng: 129.1750 }, // I 배수지 
+  "13": { lat: 35.2450, lng: 129.1450 }, // J 배수지
+  "14": { lat: 35.1250, lng: 129.1150 }, // K 배수지
+  "15": { lat: 35.0750, lng: 129.0750 }, // L 배수지 
 };
-
-export const waterSystemDatas: WaterSystemData[] = [
-  { id: 'overview', name: '전체', type: 'overview' },
-
-  // 1. 중심부 (정수장)
-  { id: '1', name: '중앙 정수장', lat: 35.2800, lng: 129.0800, type: 'plant' },
-
-  // 2. 서측 계통 (AA가압장 라인)
-  { id: '2', name: 'AA 가압장', lat: 35.2200, lng: 129.0400, type: 'booster', spec: 'Q=14,400m³/day' },
-  { id: '4', name: 'A 배수지', lat: 35.1900, lng: 129.0100, type: 'reservoir', v: '2,500m³', currentLevel: 2.1, maxLevel: 5.0, minLevel: 1.5, accuracy: 97.5, ...DEMAND_SAMPLE, ...SAVINGS_SAMPLE, ...ALGORITHM_PROCESS_SAMPLE },
-  { id: '5', name: 'B 배수지', lat: 35.1700, lng: 129.0000, type: 'reservoir', v: '1,000m³', currentLevel: 3.2, maxLevel: 5.0, minLevel: 1.5, accuracy: 97.5, ...DEMAND_SAMPLE, ...SAVINGS_SAMPLE, ...ALGORITHM_PROCESS_SAMPLE },
-  { id: '6', name: 'C 배수지', lat: 35.1800, lng: 129.0200, type: 'reservoir', v: '1,500m³', currentLevel: 2.8, maxLevel: 5.0, minLevel: 1.5, accuracy: 97.5, ...DEMAND_SAMPLE, ...SAVINGS_SAMPLE, ...ALGORITHM_PROCESS_SAMPLE },
-  { id: '7', name: 'D 배수지', lat: 35.1500, lng: 129.0300, type: 'reservoir', v: '1,000m³', currentLevel: 2.5, maxLevel: 5.0, minLevel: 1.5, accuracy: 97.5, ...DEMAND_SAMPLE, ...SAVINGS_SAMPLE, ...ALGORITHM_PROCESS_SAMPLE },
-  { id: '8', name: 'E 배수지', lat: 35.1300, lng: 129.0100, type: 'reservoir', v: '2,000m³', currentLevel: 4.1, maxLevel: 5.0, minLevel: 1.5, accuracy: 97.5, ...DEMAND_SAMPLE, ...SAVINGS_SAMPLE, ...ALGORITHM_PROCESS_SAMPLE },
-  { id: '9', name: 'F 배수지', lat: 35.1000, lng: 129.0000, type: 'reservoir', v: '1,000m³', currentLevel: 2.8, maxLevel: 5.0, minLevel: 1.5, accuracy: 97.5, ...DEMAND_SAMPLE, ...SAVINGS_SAMPLE, ...ALGORITHM_PROCESS_SAMPLE },
-
-  // 3. 동측 및 기타 계통 (AB가압장 라인)
-  { id: '10', name: 'G 배수지', lat: 35.1700, lng: 129.0900, type: 'reservoir', v: '300m³', currentLevel: 1.8, maxLevel: 3.0, minLevel: 0.8, accuracy: 97.5, ...DEMAND_SAMPLE, ...SAVINGS_SAMPLE, ...ALGORITHM_PROCESS_SAMPLE },
-  { id: '11', name: 'H 배수지', lat: 35.1900, lng: 129.1500, type: 'reservoir', v: '100m³', currentLevel: 0.5, maxLevel: 2.0, minLevel: 0.7, accuracy: 97.5, ...DEMAND_SAMPLE, ...SAVINGS_SAMPLE, ...ALGORITHM_PROCESS_SAMPLE },
-  { id: '12', name: 'I 배수지', lat: 35.1500, lng: 129.1200, type: 'reservoir', v: '300m³', currentLevel: 1.5, maxLevel: 3.0, minLevel: 0.8, accuracy: 97.5, ...DEMAND_SAMPLE, ...SAVINGS_SAMPLE, ...ALGORITHM_PROCESS_SAMPLE },
-  { id: '13', name: 'J 배수지', lat: 35.2200, lng: 129.1300, type: 'reservoir', v: '2,000m³', currentLevel: 3.5, maxLevel: 5.0, minLevel: 1.5, accuracy: 97.5, ...DEMAND_SAMPLE, ...SAVINGS_SAMPLE, ...ALGORITHM_PROCESS_SAMPLE },
-
-
-  { id: '3', name: 'AB 가압장', lat: 35.1300, lng: 129.1000, type: 'booster', spec: 'Q=1,000m³/day' },
-  { id: '14', name: 'K 배수지', lat: 35.1300, lng: 129.1400, type: 'reservoir', v: '3,456m³', currentLevel: 4.2, maxLevel: 6.0, minLevel: 2.0, accuracy: 97.5, ...DEMAND_SAMPLE, ...SAVINGS_SAMPLE, ...ALGORITHM_PROCESS_SAMPLE },
-  { id: '15', name: 'L 배수지', lat: 35.0900, lng: 129.1100, type: 'reservoir', v: '1,200m³', currentLevel: 2.9, maxLevel: 4.0, minLevel: 1.0, accuracy: 97.5, ...DEMAND_SAMPLE, ...SAVINGS_SAMPLE, ...ALGORITHM_PROCESS_SAMPLE },
-]
 
 // Mock History Data
 const generateHistory = (count: number): HistoryPoint[] => {
@@ -104,26 +51,26 @@ export const MOCK_HISTORY_DATA: Record<string, HistoryPoint[]> = {
   '15': generateHistory(24),
 };
 
-export const TEAM_MEMBERS: TeamMember[] = [
+export const TEAM_MEMBERS: TeamMemberType[] = [
   {
     name: "이현지",
     role: "Front-end Developer",
-    description: "LSTM 및 Transformer 모델을 활용한 시계열 수요 예측 알고리즘 설계 및 고도화 담당"
+    description: "Next.js 기반의 컴포넌트 설계 및 UI 라이브러리를 활용한 사용자 친화적 반응형 인터페이스 구현"
   },
   {
     name: "최윤영",
     role: "Data Scientist",
-    description: "실시간 수압 및 유량 제어 시스템 아키텍처 설계와 하드웨어 인터페이스 연동 최적화"
+    description: "LSTM 기반 슬라이딩 윈도우 기법과 공공 기상 데이터를 연계하여 단기 수요 예측 모델 및 자동화 파이프라인 구축"
   },
   {
     name: "박진하",
     role: "Back-end Developer",
-    description: "강화학습 기반 정수장 펌프 스케줄링 최적화 및 에너지 절감 시나리오 분석"
+    description: "Spring Boot 중심의 아키텍처 설계와 JWT 기반 보안 인증 및 핵심 비즈니스 로직 개발"
   },
   {
     name: "석동찬",
     role: "Back-end Developer",
-    description: "강화학습 기반 정수장 펌프 스케줄링 최적화 및 에너지 절감 시나리오 분석"
+    description: "MySQL 데이터베이스 스키마 설계 및 쿼리 최적화와 효율적인 데이터 관리를 위한 보조 API 구현"
   }
 ];
 
@@ -186,21 +133,6 @@ export const generateRiskEvents = (): RiskEvent[] => [
   }
 ];
 
-export const generatePredictionData = (): PredictionPoint[] => {
-  const data: PredictionPoint[] = [];
-  const hours = ['08', '10', '12', '14', '16', '18', '20', '22', '00', '02', '04', '06'];
-
-  hours.forEach((h, i) => {
-    data.push({
-      time: `${h}:00`,
-      demand: 8000 + Math.random() * 5000,
-      level: 60 - (i * 3) + Math.random() * 10,
-      isPrediction: i > 6
-    });
-  });
-  return data;
-};
-
 export const generateRiskFactors = (): RiskFactor[] => [
   { name: '수위 위험도', value: 35, color: '#ef4444' },
   { name: '관압 위험도', value: 25, color: '#f59e0b' },
@@ -230,16 +162,4 @@ export const generatePumpSchedule = (): PumpScheduleItem[] => {
     });
   });
   return data;
-};
-
-export const COLORS = {
-  night: '#06b6d4', // cyan-500 (cool, watery)
-  offPeak: '#10b981', // emerald-500
-  midPeak: '#f59e0b', // amber-500
-  peak: '#f43f5e', // rose-500 (urgent but modern)
-  demand: '#fb7185', // rose-400 (soft glow)
-  level: '#38bdf8', // sky-400 (bright water)
-  safe: '#2dd4bf', // teal-400
-  warning: '#fb923c', // orange-400
-  danger: '#ff4b4b' // bright red
 };

@@ -14,10 +14,10 @@ export default function TailCard({ label, value, unit, subLabel, color }: TailCa
     const isLoading = value === "---" || value === "";
 
     return (
-        <div className="glass backdrop-blur-lg rounded-2xl p-4 flex flex-col justify-between transition-shadow h-full min-h-20">
+        <div className="glass backdrop-blur-lg rounded-2xl px-4 py-3 flex flex-col justify-between transition-shadow h-full min-h-20">
             <p className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">{label}</p>
             
-            <div className="flex items-baseline gap-1 my-1 min-h-7">
+            <div className="flex items-baseline gap-1 my-0.5 min-h-7">
                 {isLoading ? (
                     <div className="flex items-center justify-center py-1">
                         <Loader2 className="w-5 h-5 text-slate-300 animate-spin" />

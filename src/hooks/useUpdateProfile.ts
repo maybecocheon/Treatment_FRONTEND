@@ -68,20 +68,16 @@ export default function useUpdateProfile() {
             description: "모든 데이터가 삭제됩니다.",
             action: {
                 label: "탈퇴",
-                onClick: () => async () => {
+                onClick: async () => {
                     try {
-                        const response = await myFetch(`${baseUrl}/member/delete`, {
-                            method: "DELETE",
-                            credentials: "include"
-                        });
-                        const data = await response.json();
+                        const response = await myFetch(`${baseUrl}/member/delete`, { method: "DELETE" });
                         if (response.ok) {
                             toast.success("탈퇴 처리되었습니다.");
                             localStorage.clear();
-                            router.push("/");
                             router.refresh();
+                            router.push("/");
                         } else {
-                            toast.error(data.message || "회원 탈퇴에 실패했습니다.");
+                            toast.error("회원 탈퇴에 실패했습니다.");
                         }
                     } catch (error) {
                         console.error("탈퇴 중 오류", error);
