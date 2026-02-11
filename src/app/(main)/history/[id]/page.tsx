@@ -1,6 +1,6 @@
 import { Suspense } from "react";
 import History from "../History";
-import PageFallback from "@/components/loading/PageFallback";
+import PageFallback from "@/components/skeletons/PageFallback";
 import HistorySkeleton from "../HistorySkeleton";
 
 export default async function HistoryPage({ params }: { params: Promise<{ id: string }> }) {

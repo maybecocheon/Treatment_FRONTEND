@@ -39,7 +39,7 @@
   }
 }
 
-/* 모든 요소에 적용 (Global Scrollbar 커스텀) */
+/* 스크롤바 커스텀) */
 * {
   /* Firefox용 */
   scrollbar-width: thin;

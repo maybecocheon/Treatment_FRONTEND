@@ -3,7 +3,7 @@ import Introduce from '@/components/loginJoin/Introduce';
 import Login from '@/components/loginJoin/Login';
 import LoginSkeleton from '@/components/loginJoin/skeletons/LoginSkeleton';
 import IntroduceSkeleton from '@/components/loginJoin/skeletons/IntroduceSkeleton';
-import PageFallback from '@/components/loading/PageFallback';
+import PageFallback from '@/components/skeletons/PageFallback';
 import Footer from '@/components/Footer';
 
 export default function LoginPage() {

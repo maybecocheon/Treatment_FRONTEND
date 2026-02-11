@@ -1,6 +1,6 @@
 import { Suspense } from "react";
 import Setting from "./Setting";
-import PageFallback from "@/components/loading/PageFallback";
+import PageFallback from "@/components/skeletons/PageFallback";
 import SettingSkeleton from "./SettingSkeleton";
 
 export default function ProfilePage() {

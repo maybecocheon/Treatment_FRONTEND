@@ -1,6 +1,6 @@
 'use client'
 
-import { X, Droplets } from "lucide-react";
+import { X, Droplets, Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 export default function ReservoirDetailsSkeleton() {
@@ -9,7 +9,7 @@ export default function ReservoirDetailsSkeleton() {
     return (
         <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-md flex items-center justify-center z-50 p-4 md:p-6">
             <div className="bg-white/60 rounded-4xl shadow-2xl w-full max-w-5xl overflow-hidden max-h-[90vh] flex flex-col">
-                
+
                 {/* 헤더 스켈레톤 */}
                 <div className="px-6 py-5 md:px-10 md:py-8 flex justify-between items-center bg-sky-50/50">
                     <div className="flex items-center gap-4">
@@ -28,7 +28,7 @@ export default function ReservoirDetailsSkeleton() {
 
                 {/* 컨텐츠 영역 스켈레톤 */}
                 <div className="p-6 md:p-10 overflow-y-auto bg-slate-50/30 space-y-10">
-                    
+
                     {/* 상단 요약 카드 2개 */}
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                         <div className="h-32 bg-white/40 border border-slate-100 rounded-3xl animate-pulse p-6 space-y-4">
@@ -60,8 +60,16 @@ export default function ReservoirDetailsSkeleton() {
                         </div>
                     </div>
 
+                    {/* 중앙 로딩 오버레이 */}
+                    <div className="absolute inset-0 z-100 flex items-center justify-center backdrop-blur-[1px]">
+                        <div className="flex items-center gap-3 bg-black/40 px-5 py-3 rounded-2xl text-slate-200 backdrop-blur">
+                            <Loader2 className="w-5 h-5 animate-spin text-blue-400" />
+                            <span className="text-sm font-medium">데이터를 불러오는 중이에요…</span>
+                        </div>
+                    </div>
+
                     {/* 하단 버튼 가이드 스켈레톤 */}
-                    <div className="h-32 w-full bg-slate-200/50 rounded-[2.5rem] animate-pulse" />
+                    {/* <div className="h-32 w-full bg-slate-200/50 rounded-[2.5rem] animate-pulse" /> */}
                 </div>
             </div>
         </div>

@@ -2,7 +2,7 @@ import Background from "@/components/loginJoin/Background";
 import Logo from "@/components/loginJoin/Logo";
 import { Suspense } from "react";
 import JoinForm from "./JoinForm";
-import PageFallback from "@/components/loading/PageFallback";
+import PageFallback from "@/components/skeletons/PageFallback";
 import JoinFormSkeleton from "./JoinFormSkeleton";
 
 export default function JoinPage() {

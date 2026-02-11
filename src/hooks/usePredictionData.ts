@@ -4,11 +4,12 @@ import { useMemo, useState, useCallback } from "react";
 import { useAtom, useAtomValue } from "jotai";
 import { selectedRangeAtom, virtualTimeAtom } from "@/atoms/uniAtoms";
 import { myFetch } from "@/api/api";
-import { toast } from "sonner";
 
 export function usePredictionData(id?: string) {
     const baseUrl = process.env.NEXT_PUBLIC_SERVER_URL;
+    const [error, setError] = useState<Error | null>(null);
 
+    const [isLoading, setIsLoading] = useState(false);
     const [rawChartData, setRawChartData] = useState<any[]>([]);
     const [minuteData, setMinuteData] = useState<any | null>(null);
     const [selectedRange, setSelectedRange] = useAtom(selectedRangeAtom);
@@ -20,28 +21,27 @@ export function usePredictionData(id?: string) {
 
     const loadData = useCallback(async (id: string) => {
         if (!id) return;
+        setIsLoading(true);
+        setError(null);
 
         try {
             // const formattedTime = time.replace("T", " "); // 가상 시계 시간 사용
-            const response = await myFetch(`${baseUrl}/reservoir/chart/minite/${id}?date=2023-01-06 00:00:00`);
-            if (response.ok) {
-                const data = await response.json();
-                setMinuteData(data);
-                const chartList = data.chartData ? data.chartData : [];
-                setRawChartData(chartList.map((item: any, idx: number) => ({
-                    time: item.time.split("T")[1]?.substring(0, 5) || "",
-                    actualValue: idx < 1000 ? item.actualValue : null,
-                    predictedValue: item.predictedValue || 0,
-                })));
+            const data = await myFetch(`${baseUrl}/reservoir/chart/minite/${id}?date=2023-01-06 00:00:00`);
+            // throw new Error("앙");
+            setMinuteData(data);
+            const chartList = data.chartData ? data.chartData : [];
+            setRawChartData(chartList.map((item: any, idx: number) => ({
+                time: item.time.split("T")[1]?.substring(0, 5) || "",
+                actualValue: idx < 1000 ? item.actualValue : null,
+                predictedValue: item.predictedValue || 0,
+            })));
 
-                // 호출 성공 시 마지막 업데이트 시간(분 단위) 기록
-                // lastUpdatedMinute.current = time.split("T")[1]?.substring(0, 5);
-            } else {
-                toast.error("차트 불러오기 실패");
-            }
-        } catch (error) {
-            console.error("차트 불러오기 오류:", error);
-            toast.error("차트 불러오기 오류");
+            // 호출 성공 시 마지막 업데이트 시간(분 단위) 기록
+            // lastUpdatedMinute.current = time.split("T")[1]?.substring(0, 5);
+        } catch (error: any) {
+            setError(error);
+        } finally {
+            setIsLoading(false);
         }
     }, [baseUrl]);
 
@@ -66,5 +66,5 @@ export function usePredictionData(id?: string) {
 
     const resetRange = () => setSelectedRange("24h");
 
-    return { filteredChartData, minuteData, loadData, resetRange };
+    return { filteredChartData, minuteData, loadData, resetRange, isLoading, error };
 }

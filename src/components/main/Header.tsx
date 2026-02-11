@@ -8,7 +8,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { useVirtualClock } from "@/hooks/useVirtualClock";
 import { useUser } from "@/hooks/useUser";
 import { useLogout } from "@/hooks/useLogout";
-import HeaderSkeleton from "../skeletons/HeaderSkeleton";
+import ProfileSkeleton from "./skeletons/ProfileSkeleton";
 
 export default function Header() {
   const router = useRouter();
@@ -38,7 +38,7 @@ export default function Header() {
     const cached = localStorage.getItem("user_info");
     if (cached) {
       setProfile(JSON.parse(cached));
-    } 
+    }
 
     // 3. 프로필 외부 클릭 시 닫기
     const handleClickOutside = (e: MouseEvent) => {
@@ -61,8 +61,6 @@ export default function Header() {
   const handleClick = () => {
     handleLogout(true);
   };
-
-  if (!profile) return <HeaderSkeleton />
 
   return (
     <header className="h-16 backdrop-blur-xl sticky top-0 z-50 transition-all">
@@ -99,40 +97,44 @@ export default function Header() {
           </div>
 
           {/* 프로필 섹션 */}
-          <div className="relative" ref={profileRef}>
-            <button
-              onClick={() => setShowProfile(!showProfile)}
-              className="flex items-center gap-3 hover:bg-slate-100/80 p-1.5 md:pl-2 md:pr-4 rounded-2xl transition-all group"
-            >
-              <div className="w-9 h-9 rounded-xl bg-linear-to-tr from-sky-400 to-blue-500 flex items-center justify-center text-white shadow-md group-hover:scale-105 transition-transform">
-                <User size={18} />
-              </div>
-              <div className="text-left hidden sm:block leading-tight">
-                <p className="text-[10px] text-sky-600 font-black uppercase tracking-widest">{profile.department}</p>
-                <p className="text-sm font-black text-slate-800">{profile.alias}</p>
-              </div>
-              <ChevronDown size={14} className={`text-slate-400 transition-transform ${showProfile ? "rotate-180" : ""}`} />
-            </button>
+          {
+            profile ? (
+                <div className="relative" ref={profileRef}>
+                  <button
+                    onClick={() => setShowProfile(!showProfile)}
+                    className="flex items-center gap-3 hover:bg-slate-100/80 p-1.5 md:pl-2 md:pr-4 rounded-2xl transition-all group"
+                  >
+                    <div className="w-9 h-9 rounded-xl bg-linear-to-tr from-sky-400 to-blue-500 flex items-center justify-center text-white shadow-md group-hover:scale-105 transition-transform">
+                      <User size={18} />
+                    </div>
+                    <div className="text-left hidden sm:block leading-tight">
+                      <p className="text-[10px] text-sky-600 font-black uppercase tracking-widest">{profile.department}</p>
+                      <p className="text-sm font-black text-slate-800">{profile.alias}</p>
+                    </div>
+                    <ChevronDown size={14} className={`text-slate-400 transition-transform ${showProfile ? "rotate-180" : ""}`} />
+                  </button>
 
-            {/* 프로필 드롭다운 */}
-            {showProfile && (
-              <div className="absolute right-0 mt-3 w-60 bg-white border border-slate-100 rounded-3xl shadow-2xl shadow-slate-200/60 p-2 z-50 animate-in fade-in slide-in-from-top-2">
-                <div className="p-1 space-y-1">
-                  <button className="w-full flex items-center space-x-3 px-4 py-3 text-sm font-bold text-slate-600 hover:bg-sky-50 hover:text-sky-600 rounded-xl transition-colors"
-                    onClick={() => router.push("/setting")}>
-                    <User size={16} />
-                    <span>프로필 설정</span>
-                  </button>
-                  <button className="w-full flex items-center space-x-3 px-4 py-3 text-sm font-bold text-red-500 hover:bg-red-50 rounded-xl transition-colors"
-                    onClick={handleClick}
-                    disabled={isLoading}>
-                    <LogOut size={16} />
-                    <span>로그아웃</span>
-                  </button>
+                  {/* 프로필 드롭다운 */}
+                  {showProfile && (
+                    <div className="absolute right-0 mt-3 w-60 bg-white border border-slate-100 rounded-3xl shadow-2xl shadow-slate-200/60 p-2 z-50 animate-in fade-in slide-in-from-top-2">
+                      <div className="p-1 space-y-1">
+                        <button className="w-full flex items-center space-x-3 px-4 py-3 text-sm font-bold text-slate-600 hover:bg-sky-50 hover:text-sky-600 rounded-xl transition-colors"
+                          onClick={() => router.push("/setting")}>
+                          <User size={16} />
+                          <span>프로필 설정</span>
+                        </button>
+                        <button className="w-full flex items-center space-x-3 px-4 py-3 text-sm font-bold text-red-500 hover:bg-red-50 rounded-xl transition-colors"
+                          onClick={handleClick}
+                          disabled={isLoading}>
+                          <LogOut size={16} />
+                          <span>로그아웃</span>
+                        </button>
+                      </div>
+                    </div>
+                  )}
                 </div>
-              </div>
-            )}
-          </div>
+              ) : (<ProfileSkeleton />)
+          }
 
           {/* 모바일 메뉴 토글 버튼 */}
           <button
@@ -141,8 +143,8 @@ export default function Header() {
           >
             {isMobileMenuOpen ? <X size={24} /> : <MenuIcon size={24} />}
           </button>
-        </div>
-      </div>
-    </header>
+        </div >
+      </div >
+    </header >
   );
 }

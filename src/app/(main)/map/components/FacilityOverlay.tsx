@@ -79,14 +79,14 @@ export default function FacilityOverlay({ facility, onClick }: FacilityOverlay) 
                     <div className="relative p-3 flex flex-col items-center justify-center h-full">
                         <div className="flex flex-col items-center">
                             <span className={`font-black uppercase tracking-tighter text-slate-700 leading-none ${mapLevel >= 8 ? "text-[14px]" : "text-[12px] mb-1"}`}>
-                                {mapLevel >= 8 ? reservoir.level.toFixed(1) : reservoir.reservoirName}
+                                {mapLevel >= 8 ? reservoir.level.toFixed(2) : reservoir.reservoirName}
                             </span>
 
                             {/* 8레벨 미만일 때만 상세 수위 표시 */}
                             {mapLevel < 8 && (
                                 <div className="flex items-baseline gap-1">
                                     <span className={`text-xl font-black ${isDanger ? "text-red-600" : "text-slate-700"}`}>
-                                        {reservoir.level.toFixed(1)}
+                                        {reservoir.level.toFixed(2)}
                                     </span>
                                     <span className="text-[10px] text-slate-500 font-bold uppercase">m</span>
                                 </div>

@@ -1,4 +1,4 @@
-import { UserProfile } from "@/types/types";
+import { FacilityType, UserProfile } from "@/types/types";
 import { atom } from "jotai";
 
 // 로그인 페이지에서 스크롤 위치 제어
@@ -16,3 +16,6 @@ export const virtualTimeAtom = atom("");
 // api 관련
 // 차트 시간 선택
 export const selectedRangeAtom = atom<string>("24h");
+
+// 차트 배수지 선택
+export const selectedReservoirAtom = atom<FacilityType["facilityId"]>("4");

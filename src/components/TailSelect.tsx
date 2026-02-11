@@ -10,8 +10,6 @@ interface TailSelectProps {
     option: React.ReactNode;
 }
 export default function TailSelect({ icon: Icon, name, value, onChange, option}: TailSelectProps) {
-    
-
     return (
         <div className={`relative group ${name === "department" ? "w-full" : "w-26"}`}>
             {Icon && <Icon className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-500 group-focus-within:text-sky-500 transition-colors z-10 pointer-events-none" />}

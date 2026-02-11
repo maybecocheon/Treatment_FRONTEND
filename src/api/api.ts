@@ -46,10 +46,11 @@ export const myFetch = async (url: string, options: RequestInit = {}) => {
             credentials: "include"
         });
 
+        // 성공 시 바로 데이터 반환
+        if (response.ok) return response.json().catch(() => ({}));
+
         // 401(Unauthorized) 발생 시 갱신 시도
         if (response.status === 401) {
-
-            // CSR에서만 갱신 시도
             const refreshed = await refreshToken();
             if (refreshed) {
                 continue; // 갱신 성공 => 루프를 돌아 재요청 (새 쿠키 자동 사용)
@@ -61,15 +62,18 @@ export const myFetch = async (url: string, options: RequestInit = {}) => {
                         window.location.href = "/"; // redirect 대신 사용
                     }
                 }
-                return response;
+                const error = new Error("세션이 만료되었습니다. 다시 로그인해 주세요.");
+                (error as any).status = 401;
+                throw error;
             }
         }
+        
+        // 401이 아닌 다른 에러(404, 500 등)는 재시도 없이 즉시 에러 처리
+        const errorData = await response.json().catch(() => ({}));
+        const error = new Error(errorData.message || "데이터를 불러오는 중 문제가 발생했습니다.");
+        (error as any).status = response.status;
 
-        return response; // 성공(200)이거나 401 아닌 다른 에러면 바로 반환
+        throw error;
     }
-
-    return new Response(JSON.stringify({ message: "최대 재시도 횟수 초과" }), {
-        status: 500,
-        statusText: "Internal Server Error",
-    }); // 더미 응답
+    throw new Error("요청 재시도 횟수를 초과했습니다.");
 };

@@ -1,6 +1,5 @@
 import { myFetch } from "@/api/api";
 import { useCallback, useState } from "react";
-import { toast } from "sonner";
 
 export interface TreatmentType {
     pressOutAvg: number;
@@ -10,22 +9,23 @@ export interface TreatmentType {
 
 export function useTreatmentData() {
     const baseUrl = process.env.NEXT_PUBLIC_SERVER_URL;
+    const [error, setError] = useState<Error | null>(null);
+
+    const [isLoading, setIsLoading] = useState(false);
     const [treatment, setTreatment] = useState<TreatmentType | null>(null);
 
     const loadTreatment = useCallback(async () => {
+        setIsLoading(true);
         try {
-            const response = await myFetch(`${baseUrl}/treatment/now?date=2023-01-06 00:00:01`);
-            if (response.ok) {
-                const data = await response.json();
-                setTreatment(data);
-            } else {
-                toast.error("정수장 불러오기 실패");
-            }
-        } catch (error) {
-            console.error("정수장 불러오기 오류", error);
-            toast.error("정수장 불러오기 오류");
+            const data = await myFetch(`${baseUrl}/treatment/now?date=2023-01-06 00:00:01`);
+            // throw new Error("dkd")
+            setTreatment(data);
+        } catch (error: any) {
+            setError(error);
+        } finally {
+            setIsLoading(false);
         }
     }, [baseUrl]);
 
-    return { treatment, loadTreatment };
+    return { treatment, loadTreatment, isLoading, error };
 }

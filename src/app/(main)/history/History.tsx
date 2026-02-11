@@ -9,12 +9,13 @@ import { Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxi
 import TailSelect from "@/components/TailSelect";
 import { useFacilitiesData } from "@/hooks/useFacilitiesData";
 import { useRouter } from "next/navigation";
+import TailSelectSkeleton from "@/components/skeletons/TailSelectSkeleton";
 
 export default function History({ params }: { params: { id: string } }) {
     const { id } = params;
     const router = useRouter();
 
-    const { facilities, loadFacilities } = useFacilitiesData();
+    const { facilities, loadFacilities, isLoading: facilitiesLoading } = useFacilitiesData();
 
     const [selectedDate, setSelectedDate] = useState<string>("2023-01-06");
     const [selectedCategory, setSelectedCategory] = useState<string>(id);
@@ -40,8 +41,12 @@ export default function History({ params }: { params: { id: string } }) {
                         name="category"
                         value={selectedCategory}
                         onChange={(e) => setSelectedCategory(e.target.value)}
-                        option={facilities.filter(f => f.type === "배수지" || f.type === "정수장" || f.type === "overview").map(f => <option key={f.facilityId} value={f.facilityId}>{f.name}</option>)}
-                    />
+                        option=
+                        {facilitiesLoading ? (
+                            <option disabled>로딩중...</option>
+                        ) : (
+                            facilities.filter(f => f.type === "배수지" || f.type === "정수장" || f.type === "overview").map(f => <option key={f.facilityId} value={f.facilityId}>{f.name}</option>)
+                        )} />
                     {/* 날짜 */}
                     <div className="relative flex-1 max-w-full xl:max-w-60">
                         <Calendar className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
