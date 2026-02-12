@@ -7,7 +7,7 @@ export interface TreatmentType {
     reservoirCnt: number
 }
 
-export function useTreatmentData() {
+export function useTreatment() {
     const baseUrl = process.env.NEXT_PUBLIC_SERVER_URL;
     const [error, setError] = useState<Error | null>(null);
 

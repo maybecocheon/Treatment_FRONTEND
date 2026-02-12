@@ -1,45 +1,52 @@
 'use client'
 
 import { useReservoirLevel } from "@/hooks/useReservoirLevel";
-import { AlertTriangle, Factory } from "lucide-react";
+import { Factory } from "lucide-react";
 import { useEffect } from "react";
-import { WaterWave } from "../../map/components/WaterWave";
 import WaterLevelPanelSkeleton from "../skeletons/WaterLevelPanelSkeleton";
 import ErrorFallback from "@/components/skeletons/ErrorFallback";
-import { useTreatmentData } from "@/hooks/useTreatmentData";
+import { useTreatment } from "@/hooks/useTreatment";
+import { useAtom } from "jotai";
+import { selectedReservoirAtom } from "@/atoms/uniAtoms";
+import WaterLevelCard from "@/components/main/skeletons/WaterLevelCard";
 
 export default function WaterLevelPanel() {
+  const [selectedReservoir, setSelectedReservoir] = useAtom(selectedReservoirAtom);
+
   const { reservoirLevels, loadLevels, error } = useReservoirLevel();
-  const { treatment, loadTreatment } = useTreatmentData();
+  const { treatment, loadTreatment } = useTreatment();
 
   useEffect(() => {
     loadLevels();
     loadTreatment();
+    setSelectedReservoir(reservoirLevels[0]);
   }, []);
 
   if (error) return (
-    <div className="glass rounded-4xl flex items-center justify-center h-full w-full">
+    <div className="glass rounded-2xl flex items-center justify-center h-full w-full">
       <ErrorFallback error={error} onClick={() => { loadLevels(); loadTreatment(); }} />
     </div>
   );
 
-  if (!reservoirLevels) return <WaterLevelPanelSkeleton />;
+  if (!reservoirLevels || !treatment) return <WaterLevelPanelSkeleton />;
 
   // 데스크톱용 행 분할
   const midpoint = Math.ceil(reservoirLevels.length / 2);
   const firstRow = reservoirLevels.slice(0, midpoint);
   const secondRow = reservoirLevels.slice(midpoint);
+  // const thirdRow = reservoirLevels.slice(2 * midpoint, reservoirLevels.length);
+
 
   return (
-    <div className="glass rounded-3xl lg:rounded-4xl p-4 lg:p-6 h-full flex flex-col min-h-0 overflow-hidden">
-      <h2 className="text-xs lg:text-sm font-black text-slate-800 shrink-0">수위 현황</h2>
+    <div className="glass rounded-2xl p-4 lg:p-6 h-full flex flex-col min-h-0 overflow-hidden">
+      <h2 className="text-md font-black text-slate-800 shrink-0">수위 현황</h2>
 
       {/* 내부 컨테이너 */}
       <div className="flex-1 relative flex flex-col justify-start items-center pt-2 gap-4">
-        
+
         {/* 1. 정수장 섹션 */}
         <div className="relative z-10 mb-2 lg:mb-6 flex flex-col items-center group shrink-0">
-          <div className="relative bg-white/90 border-2 border-slate-700 p-3 lg:p-4 rounded-2xl lg:rounded-3xl shadow-xl backdrop-blur-md flex items-center gap-3 lg:gap-4 min-w-[140px] lg:min-w-40">
+          <div className="relative bg-white/90 border-2 border-slate-700 p-3 lg:p-4 rounded-2xl lg:rounded-3xl shadow-xl backdrop-blur-md flex items-center gap-3 lg:gap-4 min-w-35 lg:min-w-40">
             <div className="bg-slate-700 p-2 lg:p-2.5 rounded-xl lg:rounded-2xl shadow-inner">
               <Factory className="w-5 h-5 lg:w-6 lg:h-6 text-white" />
             </div>
@@ -61,55 +68,24 @@ export default function WaterLevelPanel() {
         {/* 2. 배수지 섹션 */}
         <div className="w-full">
           {/* 모바일 뷰 */}
-          <div className="grid grid-cols-2 gap-3 lg:hidden pb-4">
-            {reservoirLevels.map((res, i) => renderCard(res, i))}
+          <div className="grid grid-cols-2 gap-2 lg:hidden pb-4">
+            {reservoirLevels.map((res, i) => <WaterLevelCard key={i} res={res} mapLevel={-1} onClick={() => setSelectedReservoir(res)} />)}
           </div>
 
           {/* 데스크톱 뷰 */}
-          <div className="hidden lg:flex lg:flex-col lg:gap-4">
-            <div className="flex justify-center gap-3 w-full">
-              {firstRow.map((res, i) => renderCard(res, i))}
+          <div className="hidden lg:flex lg:flex-col lg:gap-2">
+            <div className="flex justify-center gap-2 w-full">
+              {firstRow.map((res, i) => <WaterLevelCard key={i} res={res} mapLevel={-1} onClick={() => setSelectedReservoir(res)} />)}
             </div>
-            <div className="flex justify-center gap-3 w-full">
-              {secondRow.map((res, i) => renderCard(res, i))}
+            <div className="flex justify-center gap-2 w-full">
+              {secondRow.map((res, i) => <WaterLevelCard key={i} res={res} mapLevel={-1} onClick={() => setSelectedReservoir(res)} />)}
             </div>
+            {/* <div className="flex justify-center gap-2 w-full">
+              {thirdRow.map((res, i) => <WaterLevelCard key={i} res={res} mapLevel={-1} onClick={() => setSelectedReservoir(res)} />)}
+            </div> */}
           </div>
         </div>
       </div>
     </div>
   );
-
-  // 카드 렌더링 함수 분리
-  function renderCard(res: any, i: number) {
-    const isDanger = res.level > res.maxLevel * 0.9 || res.level < res.maxLevel * 0.4;
-    const levelPercent = (res.level / res.maxLevel) * 100;
-
-    return (
-      <div key={res.facilityId || i} className="flex-1 lg:max-w-30 group cursor-pointer transition-all duration-300 hover:-translate-y-1 lg:hover:-translate-y-2">
-        <div className={`relative w-full h-16 lg:h-20 rounded-xl lg:rounded-2xl overflow-hidden border-2 shadow-md backdrop-blur-md bg-white/40 transition-colors
-          ${isDanger ? "border-red-500 shadow-red-100" : "border-blue-400 shadow-blue-50"}`}>
-
-          <WaterWave levelPercent={levelPercent} danger={isDanger} />
-
-          {isDanger && (
-            <div className="absolute top-1 right-1 z-10">
-              <AlertTriangle size={10} className="text-red-500 animate-bounce" />
-            </div>
-          )}
-
-          <div className="relative inset-0 flex flex-col items-center justify-center h-full p-2">
-            <span className="text-[10px] lg:text-[12px] font-black text-slate-700 truncate w-full text-center leading-tight mb-0.5 lg:mb-1">
-              {res.reservoirName}
-            </span>
-            <div className="flex items-baseline gap-0.5">
-              <span className={`text-base lg:text-lg font-black ${isDanger ? "text-red-600" : "text-slate-800"}`}>
-                {levelPercent.toFixed(0)}
-              </span>
-              <span className="text-[6px] lg:text-[7px] text-slate-500 font-bold">%</span>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  }
 }

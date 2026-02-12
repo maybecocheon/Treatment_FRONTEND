@@ -4,7 +4,7 @@ import { useAtom } from "jotai";
 import { useEffect, useMemo } from "react";
 
 // 현재 데이터 없으므로 시뮬레이션 시 임의 시간 지정
-export function useVirtualClock(baseDate = "2023-01-06T00:00:00") {
+export function useVirtualClock(baseDate = "2024-01-01T00:00:00") {
   const [time, setTime] = useAtom(virtualTimeAtom);
 
   // 컴포넌트가 처음 마운트될 때 딱 한 번만 오프셋을 계산

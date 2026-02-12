@@ -12,7 +12,7 @@ export function usePredictionData(id?: string) {
     const [isLoading, setIsLoading] = useState(false);
     const [rawChartData, setRawChartData] = useState<any[]>([]);
     const [minuteData, setMinuteData] = useState<any | null>(null);
-    const [selectedRange, setSelectedRange] = useAtom(selectedRangeAtom);
+    const [selectedRange, setSelectedRange] = useState("24h");
 
     // const time = useAtomValue(virtualTimeAtom);
 
@@ -27,7 +27,6 @@ export function usePredictionData(id?: string) {
         try {
             // const formattedTime = time.replace("T", " "); // 가상 시계 시간 사용
             const data = await myFetch(`${baseUrl}/reservoir/chart/minite/${id}?date=2023-01-06 00:00:00`);
-            // throw new Error("앙");
             setMinuteData(data);
             const chartList = data.chartData ? data.chartData : [];
             setRawChartData(chartList.map((item: any, idx: number) => ({
@@ -64,7 +63,5 @@ export function usePredictionData(id?: string) {
         return rawChartData.slice(-limit);
     }, [rawChartData, selectedRange]);
 
-    const resetRange = () => setSelectedRange("24h");
-
-    return { filteredChartData, minuteData, loadData, resetRange, isLoading, error };
+    return { filteredChartData, minuteData, loadData, isLoading, error, selectedRange, setSelectedRange };
 }

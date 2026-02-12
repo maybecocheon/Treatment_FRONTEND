@@ -5,7 +5,7 @@ import { FACILITY_COORDS } from "@/data/mockData";
 import { FacilityType } from "@/types/types";
 import { useState, useCallback, useMemo } from "react";
 
-export function useFacilitiesData() {
+export function useFacilities() {
     const baseUrl = process.env.NEXT_PUBLIC_SERVER_URL;
     const [error, setError] = useState<Error | null>(null);
 

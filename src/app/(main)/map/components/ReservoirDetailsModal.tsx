@@ -16,14 +16,13 @@ export default function ReservoirDetailsModal({ params }: ParamsType) {
     const router = useRouter();
 
     // 차트 데이터
-    const { minuteData, loadData, filteredChartData, resetRange, error } = usePredictionData();
-    const [selectedRange, setSelectedRange] = useAtom(selectedRangeAtom);
+    const { minuteData, loadData, filteredChartData, error, selectedRange, setSelectedRange } = usePredictionData();
 
     // 모달이 마운트(열림)될 때 스크롤 방지 & fetch 차트데이터
     useEffect(() => {
         document.body.style.overflow = "hidden";
         loadData(id);
-        return () => { { document.body.style.overflow = "auto" }; resetRange(); }
+        return () => { { document.body.style.overflow = "auto" }; }
     }, []);
 
     // 브라우저 "뒤로가기" 클릭 시 모달 닫기
@@ -78,9 +77,7 @@ export default function ReservoirDetailsModal({ params }: ParamsType) {
             </div>
 
             {/* 메인 */}
-            <div className="p-4 md:p-6 overflow-y-auto bg-slate-50/30" style={{ msOverflowStyle: 'none',  /* IE, Edge */ scrollbarWidth: 'none',   /* Firefox */ }}>
-                {/* 크롬, 사파리용 no scrollbar */}
-                <style jsx>{`div::-webkit-scrollbar {display: none;}`}</style>
+            <div className="p-4 md:p-6 overflow-y-auto bg-slate-50/30">
                 {/* 수위 경고 배너 (위험 시에만 노출) */}
                 {isLevelCritical && (
                     <div className="mb-4 flex items-center gap-4 bg-red-50 border-2 border-red-100 p-6 rounded-3xl animate-pulse">

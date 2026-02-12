@@ -7,8 +7,8 @@ export default function PumpSchedulePanel() {
   return (
     <div className="flex-1">
       <div className="glass backdrop-blur-xl rounded-3xl p-4 h-full flex flex-col">
-        <h2 className="text-xs lg:text-sm font-black text-slate-800 flex items-center gap-2">
-          AI 펌프 스케줄 최적화
+        <h2 className="text-xs lg:text-sm font-bold text-slate-800 flex items-center gap-2">
+          최적화 스케줄링
         </h2>
 
         <div className="flex-1 flex flex-col gap-4 min-h-0">

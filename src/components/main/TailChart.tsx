@@ -64,7 +64,7 @@ export default function TailChart({
                             if (minute === 0) {
                                 // 3. 현재 화면 크기에 따른 간격(hourStep)으로 나누어 떨어지는지 확인
                                 if (hour % hourStep === 0) {
-                                    return `${hour}시`;
+                                    return `${hour}`;
                                 }
                             }
 

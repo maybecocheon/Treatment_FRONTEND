@@ -12,6 +12,13 @@ export interface ParamsType {
     params: { id: string };
 }
 
+// 로그인한 유저 프로필 타입
+export interface UserProfile {
+  username: string;
+  alias: string;
+  department: string;
+}
+
 // 차트 박스 타입
 export interface ChartBoxType {
     title: string;
@@ -22,7 +29,7 @@ export interface ChartBoxType {
     headerControl?: React.ReactNode;
 }
 
-// 진짜 차트 타입
+// 차트 타입
 export interface TailChartType {
     time: string[];
     data: number[];
@@ -41,7 +48,7 @@ export interface TailChartType {
 
 // 시설 타입
 export interface FacilityType {
-    facilityId: number | string;
+    facilityId: number;
     name: string;
     type: string;
     lat?: number;
@@ -57,9 +64,20 @@ export interface ReservoirLevelType {
     maxLevel: number;
 }
 
-// 로그인한 유저 프로필 타입
-export interface UserProfile {
-  username: string;
-  alias: string;
-  department: string;
+// 정수장 히스토리 타입
+export interface TreatmentHistoryType {
+    facilityId: number;
+    avgPress: number;
+    maxFlowOut: number;
+    powerConsumption: number;
+    detectionCnt: number;
+}
+
+// 배수지 히스토리 타입
+export interface ReservoirHistoryType {
+    facilityId: number;
+    avgLevel: number;
+    maxFlowOut: number;
+    powerConsumption: number;
+    detectionCnt: number;
 }

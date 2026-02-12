@@ -8,7 +8,7 @@ import MapSkeleton from "./skeletons/MapSkeleton";
 import { useRouter } from "next/navigation";
 import { useAtom } from "jotai";
 import { mapLevelAtom } from "@/atoms/uniAtoms";
-import { useFacilitiesData } from "@/hooks/useFacilitiesData";
+import { useFacilities } from "@/hooks/useFacilities";
 
 
 export default function KakaoMap() {
@@ -18,7 +18,7 @@ export default function KakaoMap() {
     const [formattedPath, setFormattedPath] = useState<{ lat: number, lng: number }[]>([]);
     const [mapLevel, setMapLevel] = useAtom(mapLevelAtom);
 
-    const { loadFacilities, facilities } = useFacilitiesData();
+    const { loadFacilities, facilities } = useFacilities();
 
     // 부산 시청 좌표를 중심으로 설정
     const center = { lat: 35.1996, lng: 129.0756 };
