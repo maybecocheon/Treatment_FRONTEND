@@ -16,6 +16,7 @@ export function useTreatment() {
 
     const loadTreatment = useCallback(async () => {
         setIsLoading(true);
+        setError(null);
         try {
             const data = await myFetch(`${baseUrl}/treatment/now?date=2023-01-06 00:00:01`);
             // throw new Error("dkd")

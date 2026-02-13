@@ -10,6 +10,7 @@ export function useReservoirLevel() {
     const [reservoirLevels, setReservoirLevels] = useState<ReservoirLevelType[]>([]);
 
     const loadLevels = useCallback(async () => {
+        setError(null);
         setIsLoading(true);
         try {
             const data = await myFetch(`${baseUrl}/reservoir/levels?date=2023-01-06 00:00:01`);

@@ -4,7 +4,7 @@ import { PieChart, Pie, Cell, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, 
 
 export default function RiskDetailPanel() {
   return (
-    <div className="flex-1 h-full">
+    <div className="flex-1">
       <div className="bg-white backdrop-blur-sm border border-slate-200/50 rounded-2xl p-3 lg:p-4 h-full flex flex-col transition-all">
         
         <div className="flex items-center gap-2 mb-3 shrink-0">
@@ -12,10 +12,10 @@ export default function RiskDetailPanel() {
           <h2 className="text-xs lg:text-sm font-bold text-slate-700">운영 리스크 가중치</h2>
         </div>
 
-        <div className="flex-1 flex flex-col sm:flex-row min-h-0 gap-4">
+        <div className="flex-1 flex flex-col min-h-0 gap-4">
           {/* Pie Chart Section */}
           <div className="flex-1 flex flex-col items-center justify-center relative min-h-25">
-            <ResponsiveContainer width="100%" height="100%">
+            <ResponsiveContainer width="100%" height="100%" minHeight={100}>
               <PieChart>
                 <Pie
                   data={[{value: 79}, {value: 21}]}
@@ -41,7 +41,7 @@ export default function RiskDetailPanel() {
 
           {/* Bar Chart Section */}
           <div className="flex-[1.5] flex flex-col justify-center min-h-25">
-            <ResponsiveContainer width="100%" height="100%">
+            <ResponsiveContainer width="100%" height="100%" minHeight={100}>
               <BarChart layout="vertical" data={[{name: '수위', value: 80}, {name: '수질', value: 45}, {name: '펌프', value: 60}]} margin={{ left: -20, right: 10 }}>
                 <XAxis type="number" hide />
                 <YAxis

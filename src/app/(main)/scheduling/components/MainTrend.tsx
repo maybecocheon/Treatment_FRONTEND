@@ -5,7 +5,7 @@ import ChartBox from '@/components/main/ChartBox';
 import { usePredictionData } from '@/hooks/usePredictionData';
 import { useFacilities } from '@/hooks/useFacilities';
 import { useEffect, useState } from 'react';
-import TailChart from '@/components/main/TailChart';
+import TailChart from '@/components/main/TailAreaChart';
 import TailCategory from '@/components/main/TailCategory';
 import { selectedReservoirAtom } from '@/atoms/uniAtoms';
 import { useAtomValue } from 'jotai';

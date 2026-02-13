@@ -1,6 +1,6 @@
 'use client'
 
-import TailChart from '@/components/main/TailChart';
+import TailChart from '@/components/main/TailAreaChart';
 
 
 export default function PumpSchedulePanel() {

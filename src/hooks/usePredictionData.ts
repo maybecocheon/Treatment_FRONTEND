@@ -2,10 +2,10 @@
 
 import { useMemo, useState, useCallback } from "react";
 import { useAtom, useAtomValue } from "jotai";
-import { selectedRangeAtom, virtualTimeAtom } from "@/atoms/uniAtoms";
+import { virtualTimeAtom } from "@/atoms/uniAtoms";
 import { myFetch } from "@/api/api";
 
-export function usePredictionData(id?: string) {
+export function usePredictionData() {
     const baseUrl = process.env.NEXT_PUBLIC_SERVER_URL;
     const [error, setError] = useState<Error | null>(null);
 
@@ -19,7 +19,7 @@ export function usePredictionData(id?: string) {
     // 마지막으로 데이터를 불러온 '분(Minute)'을 저장
     // const lastUpdatedMinute = useRef<string>("");
 
-    const loadData = useCallback(async (id: string) => {
+    const loadData = useCallback(async (id: number) => {
         if (!id) return;
         setIsLoading(true);
         setError(null);
@@ -63,5 +63,5 @@ export function usePredictionData(id?: string) {
         return rawChartData.slice(-limit);
     }, [rawChartData, selectedRange]);
 
-    return { filteredChartData, minuteData, loadData, isLoading, error, selectedRange, setSelectedRange };
+    return { filteredChartData, minuteData, setMinuteData, loadData, isLoading, error, selectedRange, setSelectedRange };
 }

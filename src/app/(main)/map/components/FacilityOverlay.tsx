@@ -27,7 +27,7 @@ export default function FacilityOverlay({ facility, onClick }: FacilityOverlay) 
     // 1. 정수장
     if (facility.type === "정수장") {
         return (
-            <div className="flex flex-col items-center group cursor-pointer transition-all duration-300 hover:-translate-y-2" onClick={onClick}>
+            <div className="flex flex-col items-center group transition-all duration-300 hover:-translate-y-2">
                 <div className="relative">
                     <div className="absolute inset-0 blur-xl opacity-40 animate-pulse" />
                     <div className="relative bg-white/50 border-2 border-slate-700 p-4 rounded-full shadow-2xl backdrop-blur-md">

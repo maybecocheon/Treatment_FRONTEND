@@ -1,12 +1,9 @@
-import { Suspense } from "react";
 import History from "./History";
-import PageFallback from "@/components/skeletons/PageFallback";
-import HistorySkeleton from "./HistorySkeleton";
 
 export default async function HistoryPage() {
   return (
-    <Suspense fallback={<PageFallback skeleton={<HistorySkeleton />} />}>
+    <div className="flex flex-col h-full gap-3 md:p-4">
       <History />
-    </Suspense>
+    </div>
   );
 }

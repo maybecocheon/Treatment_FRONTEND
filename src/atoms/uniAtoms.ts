@@ -13,10 +13,10 @@ export const userProfileAtom = atom<UserProfile | null>(null);
 // header 및 전역에서 공유될 시간 상태
 export const virtualTimeAtom = atom("");
 
+// 모달창 관리
+export const isModalOpenAtom = atom(false);
+export const selectedFacilityIdAtom = atom<number | null>(null);
+
 // api 관련
-
-// 차트 배수지 선택
+// 메인보드 차트 배수지 선택
 export const selectedReservoirAtom = atom<ReservoirLevelType | null>(null);
-
-// 시설 선택
-// export const selectedFacilityAtom = atom<FacilityType | null>(null);

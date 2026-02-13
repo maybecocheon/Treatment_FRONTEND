@@ -2,7 +2,6 @@
 
 export default function RiskEventPanel() {
   return (
-    <div className="flex-1 h-full min-h-0">
       <div className="bg-white backdrop-blur-sm border border-slate-200/50 rounded-2xl p-3 lg:p-4 flex flex-col h-full transition-all">
         
         {/* 헤더 섹션 */}
@@ -14,7 +13,6 @@ export default function RiskEventPanel() {
             </span>
             배수지 위험 탐지
           </h2>
-          <span className="text-[9px] text-slate-400 font-medium">최근 24시간</span>
         </div>
 
         {/* 로그 리스트 영역 */}
@@ -37,16 +35,10 @@ export default function RiskEventPanel() {
                     <span className="text-[10px] text-rose-600 font-semibold">{event.detail}</span>
                   </div>
                 </div>
-                
-                <div className="flex flex-col items-end">
-                  <span className="text-xs font-black text-slate-700">{event.score}</span>
-                  <span className="text-[8px] text-slate-400 font-bold uppercase tracking-wider">Score</span>
-                </div>
               </div>
             </div>
           ))}
         </div>
       </div>
-    </div>
   )
 }

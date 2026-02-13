@@ -2,9 +2,9 @@ import { LucideIcon } from "lucide-react";
 
 // 랜딩 페이지 팀원 소개
 export interface TeamMemberType {
-  name: string;
-  role: string;
-  description: string;
+    name: string;
+    role: string;
+    description: string;
 }
 
 // params 타입
@@ -14,9 +14,9 @@ export interface ParamsType {
 
 // 로그인한 유저 프로필 타입
 export interface UserProfile {
-  username: string;
-  alias: string;
-  department: string;
+    username: string;
+    alias: string;
+    department: string;
 }
 
 // 차트 박스 타입
@@ -32,18 +32,14 @@ export interface ChartBoxType {
 // 차트 타입
 export interface TailChartType {
     time: string[];
-    data: number[];
+    data1?: number[];
     data2?: number[];
     data3?: number[];
     data4?: number[];
-    color?: string;
-    color2?: string;
-    color3?: string;
-    color4?: string;
-    label1?: string;
-    label2?: string;
-    label3?: string;
-    label4?: string;
+    labels: [string?, string?, string?, string?];
+    colors?: [string, string, string, string];
+    units?: [string?, string?, string?, string?];
+    fills?: [boolean?, boolean?, boolean?, boolean?];
 }
 
 // 시설 타입
@@ -64,6 +60,12 @@ export interface ReservoirLevelType {
     maxLevel: number;
 }
 
+// 대시보드 물 흐르는 효과
+export interface Point {
+    x: number;
+    y: number;
+}
+
 // 정수장 히스토리 타입
 export interface TreatmentHistoryType {
     facilityId: number;
@@ -80,4 +82,18 @@ export interface ReservoirHistoryType {
     maxFlowOut: number;
     powerConsumption: number;
     detectionCnt: number;
+}
+
+// 정수장 히스토리 차트 타입
+export interface TreatmentHistoryChartType {
+    time: string;
+    pressPipe: number;
+    flowOut: number;
+}
+
+// 배수지 히스토리 차트 타입
+export interface ReservoirHistoryChartType {
+    time: string;
+    level: number;
+    flowOut: number;
 }

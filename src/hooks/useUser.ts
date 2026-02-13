@@ -11,6 +11,7 @@ export function useUser() {
   const [profile, setProfile] = useAtom(userProfileAtom);
 
   const loadProfile = async () => {
+    setError(null);
     try {
       const data = await myFetch(`${baseUrl}/member/profile`);
       const userInfo = {
@@ -31,7 +32,5 @@ export function useUser() {
     }
   };
 
-  if (error) throw error;
-
-  return { profile, setProfile, loadProfile };
+  return { profile, setProfile, loadProfile, error };
 }

@@ -12,11 +12,11 @@ export function useHistory() {
     const [treatmentHistory, setTreatmentHistory] = useState<TreatmentHistoryType>();
     const [reservoirHistory, setReservoirHistory] = useState<ReservoirHistoryType>();
 
-    const loadTreatmentHistory = useCallback(async () => {
+    const loadTreatmentHistory = useCallback(async (date: string) => {
         setIsLoading(true);
         setError(null);
         try {
-            const data = await myFetch(`${baseUrl}/treatment/history?date=2023-01-06 00:00:00`);
+            const data = await myFetch(`${baseUrl}/treatment/history/info?date=${date} 00:00:00`);
             setTreatmentHistory(data);
         } catch (error: any) {
             setError(error);
@@ -25,11 +25,11 @@ export function useHistory() {
         }
     }, [baseUrl]);
 
-    const loadReservoirHistory = useCallback(async (id: number) => {
+    const loadReservoirHistory = useCallback(async (id: number, date: string) => {
         setIsLoading(true);
         setError(null);
         try {
-            const data = await myFetch(`${baseUrl}/reservoir/history/${id}?date=2023-01-06 00:00:00`);
+            const data = await myFetch(`${baseUrl}/reservoir/history/info/${id}?date=${date} 00:00:00`);
             setReservoirHistory(data);
         } catch (error: any) {
             setError(error);

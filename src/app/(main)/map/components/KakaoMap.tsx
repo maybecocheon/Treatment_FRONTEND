@@ -5,14 +5,15 @@ import { CustomOverlayMap, Map, Polygon } from "react-kakao-maps-sdk";
 import sidoData from "@/data/sido.json"
 import FacilityOverlay from "./FacilityOverlay";
 import MapSkeleton from "./skeletons/MapSkeleton";
-import { useRouter } from "next/navigation";
-import { useAtom } from "jotai";
-import { mapLevelAtom } from "@/atoms/uniAtoms";
+import { useAtom, useSetAtom } from "jotai";
+import { isModalOpenAtom, mapLevelAtom, selectedFacilityIdAtom } from "@/atoms/uniAtoms";
 import { useFacilities } from "@/hooks/useFacilities";
+import ReservoirDetailsModal from "./ReservoirDetailsModal";
 
 
 export default function KakaoMap() {
-    const router = useRouter();
+    const setIsModalOpen = useSetAtom(isModalOpenAtom);
+    const [selectedFacilityId, setSelectedFacilityId] = useAtom(selectedFacilityIdAtom);
 
     const [isClient, setIsClient] = useState(false);
     const [formattedPath, setFormattedPath] = useState<{ lat: number, lng: number }[]>([]);
@@ -83,10 +84,11 @@ export default function KakaoMap() {
                 {facilities && 
                 facilities.map(facility => ((facility.type === "정수장" || facility.type === "배수지") && 
                     <CustomOverlayMap key={facility.facilityId} position={{ lat: facility.lat || 0, lng: facility.lng || 0 }}>
-                        <FacilityOverlay facility={facility} onClick={facility.type === "배수지" ? () => router.push(`/map/${facility.facilityId}`): () => router.push("/scheduling")} />
+                        <FacilityOverlay facility={facility} onClick={() => { setSelectedFacilityId(facility.facilityId); setIsModalOpen(true); }} />
                     </CustomOverlayMap>
                 ))}
             </Map>
+            {selectedFacilityId && <ReservoirDetailsModal />}
         </div>
     );
 }
