@@ -1,3 +1,5 @@
+'use client'
+
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -9,6 +11,7 @@ export function useJoin() {
     // 아이디 중복 확인
     const [usernameChecked, setUsernameChecked] = useState<boolean>(false);
 
+    // 회원가입
     const handleJoin = async (formData: any) => {
         try {
             const response = await fetch(`${baseUrl}/auth/signup`, {
@@ -34,6 +37,7 @@ export function useJoin() {
         }
     }
 
+    // 중복 체크
     const handleDuplicate = async (formData: any) => {
         const response = await fetch(`${baseUrl}/member/check/${formData.username}`);
 

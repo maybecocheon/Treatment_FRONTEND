@@ -19,6 +19,18 @@ export interface UserProfile {
     department: string;
 }
 
+// 스탯 카드 타입
+export interface StatCardType {
+  icon: React.ReactNode;
+  label: string;
+  value: number | string;
+  unit?: string;
+  colorClass: string;
+  loading?: boolean;
+  error?: Error | null;
+  onClick?: () => void;
+}
+
 // 차트 박스 타입
 export interface ChartBoxType {
     title: string;
@@ -37,7 +49,7 @@ export interface TailChartType {
     data3?: number[];
     data4?: number[];
     labels: [string?, string?, string?, string?];
-    colors?: [string, string, string, string];
+    colors?: [string?, string?, string?, string?];
     units?: [string?, string?, string?, string?];
     fills?: [boolean?, boolean?, boolean?, boolean?];
 }

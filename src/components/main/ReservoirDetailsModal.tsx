@@ -1,31 +1,31 @@
 'use client'
 
 import { BarChart3, Droplets, Waves, X, AlertTriangle, TrendingUp } from "lucide-react";
-import { useCallback, useEffect } from "react";
+import { useEffect } from "react";
 import { usePredictionData } from "@/hooks/usePredictionData";
 import TailAreaChart from "@/components/main/TailAreaChart";
 import ReservoirDetailsSkeleton from "./skeletons/ReservoirDetailsSkeleton";
 import ErrorFallback from "@/components/skeletons/ErrorFallback";
 import { isModalOpenAtom, selectedFacilityIdAtom } from "@/atoms/uniAtoms";
 import { useAtom } from "jotai";
+import { createPortal } from "react-dom";
 
 export default function ReservoirDetailsModal() {
     const [isModalOpen, setIsModalOpen] = useAtom(isModalOpenAtom);
     const [selectedFacilityId, setSelectedFacilityId] = useAtom(selectedFacilityIdAtom);
 
     // 차트 데이터
-    const { minuteData, loadData, filteredChartData, error, selectedRange, setSelectedRange } = usePredictionData();
+    const { minuteData, loadPredictionData, filteredChartData, error, selectedRange, setSelectedRange, isLoading } = usePredictionData(selectedFacilityId, "2023-01-01 00:00:00");
     
     // 모달이 마운트(열림)될 때 스크롤 방지 & fetch 차트데이터
     useEffect(() => {
         document.body.style.overflow = "hidden";
-        if (selectedFacilityId) loadData(selectedFacilityId);
         return () => { { document.body.style.overflow = "auto" }; }
-    }, [isModalOpen, selectedFacilityId, loadData]);
+    }, [isModalOpen, selectedFacilityId]);
 
     const onClose = () => {
         setIsModalOpen(false);
-        setSelectedFacilityId(null);
+        setSelectedFacilityId(0);
     }
 
     // 브라우저 "뒤로가기" 클릭 시 모달 닫기
@@ -46,14 +46,14 @@ export default function ReservoirDetailsModal() {
     // 에러 발생 시 처리
     if (error) return (
         <div className="flex items-center justify-center h-screen w-full">
-            <ErrorFallback error={error} onClick={() => selectedFacilityId &&loadData(selectedFacilityId)} />
+            <ErrorFallback error={error} onClick={() => loadPredictionData()} />
         </div>
     );
 
     // 데이터가 로드되었지만 비어있는 경우
-    if (!minuteData) return null;
+    if (isLoading || !minuteData) return <ReservoirDetailsSkeleton />;
 
-    return (
+    return createPortal(
         <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-md flex items-center justify-center z-50 p-4 animate-in fade-in duration-300">
             <div className="bg-white/60 rounded-4xl shadow-2xl w-full max-w-5xl overflow-hidden animate-in fade-in zoom-in duration-300 max-h-[90vh] flex flex-col">
                 {/* 헤더 */}
@@ -158,34 +158,14 @@ export default function ReservoirDetailsModal() {
                                 time={filteredChartData.map(d => d.time || 0)}
                                 data1={filteredChartData.map(d => d.actualValue || 0)}
                                 data2={filteredChartData.map(d => d.predictedValue || 0)}
-                                data3={[1, 2, 3, 4, 5, 6]}
-                                data4={[6, 1, 2, 5, 4, 5]}
-                                labels={["현재 수요", "수요 예측", "현재 수위", "수위 예측"]}
-                                units={[" m³/h", " m³/h", " m", " m"]}
+                                labels={["실 수요", "예측 수요"]}
+                                units={[" m³/h", " m³/h"]}
                             />
                         </div>
                     </div>
-
-                    {/* 하단 페이지 이동 가이드 */}
-                    {/* <button
-                    onClick={() => router.push(`/scheduling`)}
-                    className="group bg-sky-100 shadow-2xl relative w-full p-8 overflow-hidden rounded-[2.5rem] text-slate-900 transition-all hover:bg-slate-100 active:scale-[0.99] shadow-slate-200"
-                >
-                    <div className="absolute top-0 right-0 w-64 h-64 bg-sky-500/10 rounded-full -translate-y-1/2 translate-x-1/2 blur-3xl group-hover:bg-sky-500/20 transition-colors" />
-                    <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-6">
-                        <div className="text-center md:text-left">
-                            <h4 className="text-xl font-black flex items-center justify-center md:justify-start gap-3">
-                                <Zap size={24} className="fill-sky-400 text-sky-400" /> AI 펌프 운영 최적화 리포트
-                            </h4>
-                            <p className="text-slate-600 text-sm mt-1 tracking-tight">전력 요금을 최소화하는 최적 가동 스케줄링 데이터 확인</p>
-                        </div>
-                        <div className="flex items-center gap-3 bg-sky-500 px-8 py-4 rounded-2xl font-black group-hover:bg-sky-300/50 transition-all">
-                            자세히 보기 <ArrowRight size={20} className="group-hover:translate-x-2 transition-transform" />
-                        </div>
-                    </div>
-                </button> */}
                 </div>
             </div>
-        </div>
+        </div>,
+        document.body
     )
 }

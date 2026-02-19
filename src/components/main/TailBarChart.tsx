@@ -6,7 +6,7 @@ import { BarChart, Bar, CartesianGrid, Tooltip, ResponsiveContainer, XAxis, YAxi
 
 export default function TailBarChart({
     time, data1, data2, data3, data4,
-    labels = [],
+    labels = ["", "", "", ""],
     colors = ["#3b82f6", "#818cf8", "#36bad1", "#f59e0b"],
     units = ["", "", "", ""],
 }: TailChartType) {

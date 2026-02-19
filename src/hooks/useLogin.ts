@@ -14,6 +14,7 @@ export function useLogin() {
     const searchParams = useSearchParams();
     const [isLoading, setIsLoading] = useState(false);
 
+    // 로그인 함수
     const handleLogin = async (formData: any) => {
         setIsLoading(true);
         try {

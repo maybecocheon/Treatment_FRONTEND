@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { ArrowRight, ChevronDown, Lock, User, UserPlus } from "lucide-react";
 import { useSetAtom } from "jotai";
-import { scrollToContentAtom } from "@/atoms/uniAtoms";
+import { scrollAtom } from "@/atoms/uniAtoms";
 import Logo from "@/components/loginJoin/Logo";
 import Background from "./Background";
 import Input from "../TailInput";
@@ -12,14 +12,14 @@ import TailButton from "../TailButton";
 import { useLogin } from "@/hooks/useLogin";
 
 export default function Login() {
-    const triggerScroll = useSetAtom(scrollToContentAtom);
+    const setScroll = useSetAtom(scrollAtom);
     const router = useRouter();
     const [formData, setFormData] = useState({ username: "", password: "" });
     const { handleLogin, isLoading } = useLogin();
 
     useEffect(() => {
-        triggerScroll(0);
-        return () => triggerScroll(0);
+        setScroll(0);
+        return () => setScroll(0);
     }, []);
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -74,7 +74,7 @@ export default function Login() {
             </div>
 
             <button
-                onClick={() => triggerScroll(v => v + 1)}
+                onClick={() => setScroll(v => v + 1)}
                 className="mt-12 text-slate-400 hover:text-sky-600 transition-colors animate-bounce flex flex-col items-center gap-2"
             >
                 <span className="text-[10px] font-bold uppercase tracking-[0.2em]">About Project</span>

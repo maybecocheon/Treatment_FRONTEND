@@ -3,20 +3,15 @@
 import { StatCard } from "@/components/main/StatCard";
 import { useTreatment } from "@/hooks/useTreatment";
 import { Waves, Gauge, Droplets } from "lucide-react";
-import { useEffect } from "react";
 
 export default function PlantStatsBar() {
-  const { treatment, loadTreatment, isLoading, error } = useTreatment();
-
-  useEffect(() => {
-    loadTreatment();
-  }, [])
+  const { treatment, loadTreatment, isLoading, error } = useTreatment("2023-01-01 00:00:01");
 
   return (
     <div className="flex flex-col gap-0 md:gap-4 animate-in fade-in slide-in-from-bottom-4 duration-700 h-full min-w-55">
       <StatCard
         icon={<Droplets size={28} />}
-        label="정수장 송수량"
+        label="정수장 일일 송수량"
         value={treatment ? treatment.flowOutAmt.toLocaleString(undefined, { maximumFractionDigits: 0 }) : "---"}
         unit="m³/h"
         colorClass="bg-blue-100/60 text-blue-700"
@@ -26,8 +21,8 @@ export default function PlantStatsBar() {
       />
       <StatCard
         icon={<Gauge size={28} />}
-        label="평균 압력"
-        value={treatment ? treatment.pressOutAvg.toLocaleString() : "---"}
+        label="정수장 일일 평균 압력"
+        value={treatment ? treatment.pressOutAvg.toFixed(2): "---"}
         unit="kgf/㎠"
         colorClass="bg-emerald-100/60 text-emerald-700"
         loading={isLoading}

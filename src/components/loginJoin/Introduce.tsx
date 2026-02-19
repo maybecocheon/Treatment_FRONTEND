@@ -2,23 +2,24 @@
 
 import { useEffect, useRef } from "react";
 import { useAtomValue } from "jotai";
-import { scrollToContentAtom } from "@/atoms/uniAtoms";
+import { scrollAtom } from "@/atoms/uniAtoms";
 import { Droplets, ShieldCheck, Target, Zap } from "lucide-react";
 import { TEAM_MEMBERS } from "@/data/mockData";
 
 export default function Introduce() {
     const contentRef = useRef<HTMLDivElement>(null);
-    const scrollSignal = useAtomValue(scrollToContentAtom);
+    const scroll = useAtomValue(scrollAtom);
 
     useEffect(() => {
-        if (scrollSignal > 0) {
+        if (scroll > 0) {
             contentRef.current?.scrollIntoView({ behavior: "smooth" });
         }
-    }, [scrollSignal]);
+    }, [scroll]);
 
     return (
         <section ref={contentRef} className="relative py-24 md:py-32 bg-white overflow-hidden px-6 md:px-8 text-slate-900">
-            {/* 배경 장식: 상단 섹션과 이어지는 부드러운 빛 */}
+
+            {/* 배경 장식 */}
             <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full pointer-events-none">
                 <div className="absolute top-[-10%] right-[-10%] w-[40%] h-[40%] bg-sky-50 blur-[120px] rounded-full opacity-60" />
                 <div className="absolute bottom-[-5%] left-[-5%] w-[30%] h-[30%] bg-blue-50 blur-[100px] rounded-full opacity-60" />
@@ -43,7 +44,7 @@ export default function Introduce() {
                                 { icon: <ShieldCheck className="w-5 h-5 text-emerald-500" />, label: "실시간 수압 이상 탐지" },
                                 { icon: <Droplets className="w-5 h-5 text-blue-500" />, label: "자동화된 제어 시나리오" }
                             ].map((item, i) => (
-                                <div key={i} className="flex items-center gap-4 font-bold text-slate-700 bg-slate-50/50 p-4 rounded-2xl border border-slate-100/50 transition-hover hover:bg-white hover:shadow-md hover:border-sky-100">
+                                <div key={i} className="flex items-center gap-4 font-bold text-slate-700 p-4">
                                     <div className="p-2.5 bg-white rounded-xl shadow-sm border border-slate-100">{item.icon}</div>
                                     <span className="text-sm md:text-base">{item.label}</span>
                                 </div>

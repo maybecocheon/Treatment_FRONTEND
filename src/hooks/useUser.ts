@@ -2,16 +2,17 @@ import { myFetch } from '@/api/api';
 import { userProfileAtom } from '@/atoms/uniAtoms';
 import { useAtom } from 'jotai';
 import { useState } from 'react';
-import { toast } from 'sonner';
 
 export function useUser() {
   const baseUrl = process.env.NEXT_PUBLIC_SERVER_URL;
-  const [error, setError] = useState<Error | null>(null);
 
+  const [error, setError] = useState<Error | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
   const [profile, setProfile] = useAtom(userProfileAtom);
 
   const loadProfile = async () => {
     setError(null);
+    setIsLoading(true);
     try {
       const data = await myFetch(`${baseUrl}/member/profile`);
       const userInfo = {
@@ -29,8 +30,10 @@ export function useUser() {
       setProfile(null);
       setError(error);
       localStorage.removeItem("user_info");
+    } finally {
+      setIsLoading(false);
     }
   };
 
-  return { profile, setProfile, loadProfile, error };
+  return { profile, setProfile, loadProfile, error, isLoading };
 }

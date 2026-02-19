@@ -126,6 +126,7 @@ export default function MainTrend() {
                     </div>
                 </div>
             </div>
+            <hr className="block lg:hidden border-sky-50" />
         </div>
     )
 }

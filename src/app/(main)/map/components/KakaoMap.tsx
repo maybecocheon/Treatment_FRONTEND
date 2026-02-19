@@ -8,18 +8,20 @@ import MapSkeleton from "./skeletons/MapSkeleton";
 import { useAtom, useSetAtom } from "jotai";
 import { isModalOpenAtom, mapLevelAtom, selectedFacilityIdAtom } from "@/atoms/uniAtoms";
 import { useFacilities } from "@/hooks/useFacilities";
-import ReservoirDetailsModal from "./ReservoirDetailsModal";
+import ReservoirDetailsModal from "../../../../components/main/ReservoirDetailsModal";
+import PageFallback from "@/components/skeletons/PageFallback";
+import ErrorFallback from "@/components/skeletons/ErrorFallback";
 
 
 export default function KakaoMap() {
     const setIsModalOpen = useSetAtom(isModalOpenAtom);
     const [selectedFacilityId, setSelectedFacilityId] = useAtom(selectedFacilityIdAtom);
+    const [mapLevel, setMapLevel] = useAtom(mapLevelAtom);
 
     const [isClient, setIsClient] = useState(false);
     const [formattedPath, setFormattedPath] = useState<{ lat: number, lng: number }[]>([]);
-    const [mapLevel, setMapLevel] = useAtom(mapLevelAtom);
 
-    const { loadFacilities, facilities } = useFacilities();
+    const { loadFacilities, facilities, isLoading, error } = useFacilities();
 
     // 부산 시청 좌표를 중심으로 설정
     const center = { lat: 35.1996, lng: 129.0756 };
@@ -49,11 +51,12 @@ export default function KakaoMap() {
         }
         // 브라우저 준비 시까지 렌더링 미룸
         setIsClient(true);
-        loadFacilities();
+
+        return () => setMapLevel(9);
     }, []);
 
-    if (!isClient)
-        return <MapSkeleton />;
+    if (!isClient || isLoading) return <PageFallback skeleton={<MapSkeleton />} />;
+    if (error) return <ErrorFallback error={error} onClick={() => loadFacilities()} />;
 
     return (
         <div style={{ width: "100%", height: "100%" }}>
@@ -64,6 +67,7 @@ export default function KakaoMap() {
                 zoomable={true} // 줌인, 줌아웃
                 draggable={true} // 드래그
                 minLevel={9}
+                maxLevel={7}
                 onZoomChanged={map => setMapLevel(map.getLevel())}
             >
                 {/* 폴리곤 */}
@@ -81,12 +85,12 @@ export default function KakaoMap() {
                 }
 
                 {/* 정수장과 배수지 */}
-                {facilities && 
-                facilities.map(facility => ((facility.type === "정수장" || facility.type === "배수지") && 
-                    <CustomOverlayMap key={facility.facilityId} position={{ lat: facility.lat || 0, lng: facility.lng || 0 }}>
-                        <FacilityOverlay facility={facility} onClick={() => { setSelectedFacilityId(facility.facilityId); setIsModalOpen(true); }} />
-                    </CustomOverlayMap>
-                ))}
+                {facilities &&
+                    facilities.map(facility => ((facility.type === "정수장" || facility.type === "배수지") &&
+                        <CustomOverlayMap key={facility.facilityId} position={{ lat: facility.lat || 0, lng: facility.lng || 0 }}>
+                            <FacilityOverlay facility={facility} onClick={() => { setSelectedFacilityId(facility.facilityId); setIsModalOpen(true); }} />
+                        </CustomOverlayMap>
+                    ))}
             </Map>
             {selectedFacilityId && <ReservoirDetailsModal />}
         </div>

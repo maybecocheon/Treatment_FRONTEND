@@ -3,7 +3,6 @@
 import { Factory } from "lucide-react";
 import { useAtomValue } from "jotai";
 import { mapLevelAtom } from "@/atoms/uniAtoms";
-import { useEffect } from "react";
 import { FacilityType } from "@/types/types";
 import { useReservoirLevel } from "@/hooks/useReservoirLevel";
 import WaterLevelCard from "@/components/main/skeletons/WaterLevelCard";
@@ -18,11 +17,7 @@ export default function FacilityOverlay({ facility, onClick }: FacilityOverlay) 
     const mapLevel = useAtomValue(mapLevelAtom);
 
     // 수위 레벨 얻기
-    const { reservoirLevels, loadLevels } = useReservoirLevel();
-
-    useEffect(() => {
-        loadLevels();
-    }, [])
+    const { reservoirLevels } = useReservoirLevel("2023-01-01 00:00:01");
 
     // 1. 정수장
     if (facility.type === "정수장") {

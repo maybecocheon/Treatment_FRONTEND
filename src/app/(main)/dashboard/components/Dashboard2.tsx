@@ -97,6 +97,7 @@ export default function Dashboard2() {
                 {/* 지능형 운영 가이드 */}
                 <GuidePanels />
             </div>
+            <hr className="block lg:hidden border-sky-50" />
         </div>
     );
 }

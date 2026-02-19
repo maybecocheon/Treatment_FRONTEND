@@ -1,17 +1,7 @@
+import { StatCardType } from "@/types/types";
 import { Loader2, RefreshCcw } from "lucide-react";
 
-interface StatCardProps {
-  icon: React.ReactNode;
-  label: string;
-  value: number | string;
-  unit?: React.ReactNode;
-  colorClass: string;
-  loading?: boolean;
-  error?: Error | null;
-  onClick?: () => void;
-}
-
-export function StatCard({ icon, label, value, unit, colorClass, loading, error, onClick }: StatCardProps) {
+export function StatCard({ icon, label, value, unit, colorClass, loading, error, onClick }: StatCardType) {
   return (
     <div className="glass flex-1 w-full p-6 rounded-4xl flex flex-col justify-center items-center transition-all duration-300 hover:scale-[1.02] hover:bg-white/40 group mb-4 md:mb-0 overflow-hidden">
       <div className={`p-4 rounded-2xl transition-colors shadow-inner mb-2 ${colorClass}`}>

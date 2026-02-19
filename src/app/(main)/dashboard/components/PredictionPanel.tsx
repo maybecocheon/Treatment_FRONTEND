@@ -8,32 +8,33 @@ import TailChart from '@/components/main/TailAreaChart';
 import TailChartSkeleton from '@/components/main/skeletons/TailChartSkeleton';
 import PageFallback from '@/components/skeletons/PageFallback';
 import ErrorFallback from '@/components/skeletons/ErrorFallback';
-import ReservoirDetailsModal from '../../map/components/ReservoirDetailsModal';
+
+import { ArrowUpRight } from 'lucide-react';
+import ReservoirDetailsModal from '@/components/main/ReservoirDetailsModal';
 
 export default function PredictionPanel() {
   const selectedReservoir = useAtomValue(selectedReservoirAtom);
   const setSelectedFacilityId = useSetAtom(selectedFacilityIdAtom);
   const setIsModalOpen = useSetAtom(isModalOpenAtom);
 
-  const { loadData, filteredChartData, isLoading, error, selectedRange, setSelectedRange } = usePredictionData();
+  const { loadPredictionData, filteredChartData,
+    isLoading, error, selectedRange, setSelectedRange } = usePredictionData(selectedReservoir?.facilityId ?? 0, "2023-01-01 00:00:00");
 
   useEffect(() => {
     if (selectedReservoir?.facilityId) {
-      loadData(selectedReservoir.facilityId);
       setSelectedFacilityId(selectedReservoir.facilityId);
     }
-  }, [selectedReservoir, loadData]);
+  }, [selectedReservoir?.facilityId, setSelectedFacilityId]);
 
   return (
     <>
-      <div 
-        className="flex-1 cursor-pointer" 
-        onClick={() => setIsModalOpen(true)}
-      >
+      <div className="flex-1">
         <div className="glass backdrop-blur-xl rounded-3xl p-4 h-full flex flex-col overflow-hidden">
           <div className="flex justify-between items-start gap-2 mb-1 shrink-0">
-            <h2 className="text-xs lg:text-sm font-bold text-slate-800">예측 대시보드</h2>
-            
+            <div className="flex gap-2 items-center">
+              <h2 className="text-xs lg:text-sm font-bold text-slate-800">수요 예측</h2>
+            </div>
+
             {/* 버튼 영역 */}
             <div className="flex gap-1">
               {["3h", "6h", "24h"].map(t => (
@@ -43,9 +44,8 @@ export default function PredictionPanel() {
                     e.stopPropagation();
                     setSelectedRange(t);
                   }}
-                  className={`z-10 text-[12px] px-4 py-1 rounded-2xl transition-colors ${
-                    selectedRange === t ? "bg-sky-500 text-white shadow-md" : "bg-slate-200 text-slate-500 hover:bg-slate-100"
-                  }`}
+                  className={`z-10 text-[12px] px-4 py-1 rounded-2xl transition-colors ${selectedRange === t ? "bg-sky-500 text-white shadow-md" : "bg-slate-200 text-slate-500 hover:bg-slate-100"
+                    }`}
                 >
                   {t}
                 </button>
@@ -53,21 +53,36 @@ export default function PredictionPanel() {
             </div>
           </div>
 
-          <div className="flex-1 flex flex-col lg:flex-row gap-4 pointer-events-none"> 
-            <div className="h-70 md:h-full md:flex-3 flex flex-col mt-1">
+          <div
+            className={`relative flex-1 flex flex-col lg:flex-row gap-4 group ${!error ? "hover:cursor-pointer" : "cursor-default"}`}
+            onClick={!error ? () => setIsModalOpen(true) : undefined}
+          >
+            {!error && !isLoading && (
+              <div className="absolute top-2 lg:-top-5 left-1/2 -translate-x-1/2 z-20 
+                    opacity-100 lg:opacity-0 lg:group-hover:opacity-100 
+                    transition-all duration-300 lg:translate-y-2 lg:group-hover:translate-y-0">
+                <div className="flex items-center gap-2 px-3 py-1.5 bg-slate-800/80 backdrop-blur-sm text-white rounded-full shadow-lg">
+                  <ArrowUpRight className="w-3 h-3 text-sky-400" />
+                  <span className="text-[10px] lg:text-[11px] font-medium whitespace-nowrap">
+                    <span className="lg:hidden">터치하여 상세 보기</span>
+                    <span className="hidden lg:inline">클릭하여 상세 데이터 확인</span>
+                  </span>
+                </div>
+              </div>
+            )}
+
+            <div className={`h-70 md:h-full md:flex-3 flex flex-col mt-1 w-full transition-opacity ${!error ? "group-hover:opacity-80" : ""}`}>
               {isLoading ? (
                 <PageFallback skeleton={<TailChartSkeleton />} />
               ) : error ? (
-                <ErrorFallback error={error} onClick={() => selectedReservoir?.facilityId && loadData(selectedReservoir?.facilityId)} />
+                <ErrorFallback error={error} onClick={() => loadPredictionData()} />
               ) : (
                 <TailChart
                   time={filteredChartData.map(d => d.time || 0)}
                   data1={filteredChartData.map(d => d.actualValue || 0)}
                   data2={filteredChartData.map(d => d.predictedValue || 0)}
-                  data3={[1, 2, 3, 4, 5, 6]}
-                  data4={[6, 1, 2, 5, 4, 5]}
-                  labels={["현재 수요", "수요 예측", "현재 수위", "수위 예측"]}
-                  units={[" m³/h", " m³/h", " m", " m"]}
+                  labels={["실 수요", "예측 수요"]}
+                  units={[" m³/h", " m³/h"]}
                 />
               )}
             </div>

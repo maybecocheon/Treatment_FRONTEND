@@ -1,15 +1,16 @@
 'use client'
 
-import { useMemo, useState, useCallback } from "react";
+import { useMemo, useState, useCallback, useEffect } from "react";
 import { useAtom, useAtomValue } from "jotai";
 import { virtualTimeAtom } from "@/atoms/uniAtoms";
 import { myFetch } from "@/api/api";
 
-export function usePredictionData() {
+export function usePredictionData(id: number, date: string) {
     const baseUrl = process.env.NEXT_PUBLIC_SERVER_URL;
-    const [error, setError] = useState<Error | null>(null);
 
+    const [error, setError] = useState<Error | null>(null);
     const [isLoading, setIsLoading] = useState(false);
+
     const [rawChartData, setRawChartData] = useState<any[]>([]);
     const [minuteData, setMinuteData] = useState<any | null>(null);
     const [selectedRange, setSelectedRange] = useState("24h");
@@ -19,15 +20,17 @@ export function usePredictionData() {
     // 마지막으로 데이터를 불러온 '분(Minute)'을 저장
     // const lastUpdatedMinute = useRef<string>("");
 
-    const loadData = useCallback(async (id: number) => {
-        if (!id) return;
+    const loadPredictionData = useCallback(async () => {
+        if (!id || id === 0) return;
+
         setIsLoading(true);
         setError(null);
 
         try {
             // const formattedTime = time.replace("T", " "); // 가상 시계 시간 사용
-            const data = await myFetch(`${baseUrl}/reservoir/chart/minite/${id}?date=2023-01-06 00:00:00`);
+            const data = await myFetch(`${baseUrl}/reservoir/chart/minite/${id}?date=${date}`);
             setMinuteData(data);
+
             const chartList = data.chartData ? data.chartData : [];
             setRawChartData(chartList.map((item: any, idx: number) => ({
                 time: item.time.split("T")[1]?.substring(0, 5) || "",
@@ -42,7 +45,7 @@ export function usePredictionData() {
         } finally {
             setIsLoading(false);
         }
-    }, [baseUrl]);
+    }, [baseUrl, id, date]);
 
     // 1분 단위 자동 갱신 로직
     // useEffect(() => {
@@ -63,5 +66,10 @@ export function usePredictionData() {
         return rawChartData.slice(-limit);
     }, [rawChartData, selectedRange]);
 
-    return { filteredChartData, minuteData, setMinuteData, loadData, isLoading, error, selectedRange, setSelectedRange };
+    // 의존성 변경 시 데이터 자동 로드
+    useEffect(() => {
+        if (id !== 0) loadPredictionData();
+    }, [loadPredictionData])
+
+    return { filteredChartData, minuteData, setMinuteData, loadPredictionData, isLoading, error, selectedRange, setSelectedRange };
 }

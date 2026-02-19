@@ -1,5 +1,5 @@
 import { myFetch } from "@/api/api";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 export interface TreatmentType {
     pressOutAvg: number;
@@ -7,7 +7,7 @@ export interface TreatmentType {
     reservoirCnt: number
 }
 
-export function useTreatment() {
+export function useTreatment(date: string) {
     const baseUrl = process.env.NEXT_PUBLIC_SERVER_URL;
     const [error, setError] = useState<Error | null>(null);
 
@@ -18,15 +18,19 @@ export function useTreatment() {
         setIsLoading(true);
         setError(null);
         try {
-            const data = await myFetch(`${baseUrl}/treatment/now?date=2023-01-06 00:00:01`);
-            // throw new Error("dkd")
+            const data = await myFetch(`${baseUrl}/treatment/now?date=${date}`);
             setTreatment(data);
         } catch (error: any) {
             setError(error);
         } finally {
             setIsLoading(false);
         }
-    }, [baseUrl]);
+    }, [baseUrl, date]);
+
+    // 의존성 변경 시 데이터 자동 로드
+    useEffect(() => {
+        loadTreatment();
+    }, [loadTreatment])
 
     return { treatment, loadTreatment, isLoading, error };
 }

@@ -7,7 +7,7 @@ import { AreaChart, Area, CartesianGrid, Tooltip, ResponsiveContainer, XAxis, YA
 
 export default function TailAreaChart({
     time, data1, data2, data3, data4,
-    labels = [],
+    labels = ["", "", "", ""],
     colors = ["#3b82f6", "#818cf8", "#10b981", "#f59e0b"],
     units = ["", "", "", ""],
     fills = [false, false, true, false]
@@ -42,7 +42,7 @@ export default function TailAreaChart({
         <div className="w-full h-full flex flex-col gap-1">
             <div className="flex-1 relative">
                 <ResponsiveContainer width="100%" height="100%" minHeight={100}>
-                    <AreaChart data={chartData} margin={{ top: 10, right: -20, left: -20, bottom: 0 }}>
+                    <AreaChart data={chartData} margin={{ top: 10, right: 0, left: -30, bottom: 0 }}>
                         <defs>
                             {colors.map((color, i) => (
                                 <linearGradient key={`grad-${i}`} id={`gradientV${i + 1}`} x1="0" y1="0" x2="0" y2="1">

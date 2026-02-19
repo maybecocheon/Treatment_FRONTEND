@@ -3,12 +3,12 @@
 export default function MapSkeleton() {
     return (
         <div className="w-full h-full min-h-125 relative glass rounded-2xl overflow-hidden animate-pulse">
-            {/* 지도 배경 패턴 (지도의 격자나 지형 느낌 유도) */}
+            {/* 지도 배경 패턴 */}
             <div className="absolute inset-0 opacity-20"
                 style={{ backgroundImage: "radial-gradient(#94a3b8 1px, transparent 1px)", backgroundSize: "40px 40px" }}
             />
 
-            {/* 중심부 폴리곤 스켈레톤 (부산 지역 외곽선 느낌) */}
+            {/* 중심부 폴리곤 스켈레톤 */}
             <div className="absolute inset-0 flex items-center justify-center">
                 <div className="w-2/3 h-2/3 bg-slate-200 rounded-[30% 70% 70% 30% / 30% 30% 70% 70%] rotate-12 blur-2xl opacity-50" />
             </div>
@@ -28,31 +28,6 @@ export default function MapSkeleton() {
                 <div className="w-10 h-10 bg-white/80 rounded-full shadow-sm flex items-center justify-center">
                     <div className="w-6 h-6 bg-slate-200 rounded-lg" />
                 </div>
-            </div>
-
-            {/* 우측 하단 Floating 범례 스켈레톤 */}
-            <div className="absolute bottom-6 right-6 w-48 h-32 bg-white/90 backdrop-blur-md rounded-3xl p-4 shadow-xl border border-white flex flex-col gap-3">
-                <div className="h-3 w-16 bg-slate-200 rounded-md" />
-                <div className="space-y-2">
-                    <div className="flex items-center gap-2">
-                        <div className="w-3 h-3 bg-blue-200 rounded-full" />
-                        <div className="h-2 w-20 bg-slate-100 rounded" />
-                    </div>
-                    <div className="flex items-center gap-2">
-                        <div className="w-3 h-3 bg-emerald-200 rounded-full" />
-                        <div className="h-2 w-24 bg-slate-100 rounded" />
-                    </div>
-                    <div className="flex items-center gap-2">
-                        <div className="w-3 h-3 bg-rose-200 rounded-full" />
-                        <div className="h-2 w-16 bg-slate-100 rounded" />
-                    </div>
-                </div>
-            </div>
-
-            {/* 지도 컨트롤 버튼 스켈레톤 (우측 상단 등) */}
-            <div className="absolute top-6 right-6 flex flex-col gap-2">
-                <div className="w-10 h-10 bg-white rounded-xl shadow-sm border border-slate-100" />
-                <div className="w-10 h-10 bg-white rounded-xl shadow-sm border border-slate-100" />
             </div>
         </div>
     );

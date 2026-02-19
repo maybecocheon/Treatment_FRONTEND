@@ -6,8 +6,8 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import WaterLevelPanelSkeleton from "../skeletons/WaterLevelPanelSkeleton";
 import ErrorFallback from "@/components/skeletons/ErrorFallback";
 import { useTreatment } from "@/hooks/useTreatment";
-import { useAtom } from "jotai";
-import { selectedReservoirAtom } from "@/atoms/uniAtoms";
+import { useAtom, useSetAtom } from "jotai";
+import { selectedFacilityIdAtom, selectedReservoirAtom } from "@/atoms/uniAtoms";
 import WaterLevelCard from "@/components/main/skeletons/WaterLevelCard";
 import { Point } from "@/types/types";
 import FlowingLine from "./FlowingLine";
@@ -15,8 +15,9 @@ import FlowingLine from "./FlowingLine";
 export default function WaterLevelPanel() {
   // 데이터
   const [selectedReservoir, setSelectedReservoir] = useAtom(selectedReservoirAtom);
-  const { reservoirLevels, loadLevels, error } = useReservoirLevel();
-  const { treatment, loadTreatment } = useTreatment();
+  const setSelectedFacilityId = useSetAtom(selectedFacilityIdAtom);
+  const { reservoirLevels, loadLevels, error } = useReservoirLevel("2023-01-01 00:00:01");
+  const { treatment, loadTreatment } = useTreatment("2023-01-01 00:00:01");
 
   // 물 흐르는 모션
   const containerRef = useRef<HTMLDivElement>(null);
@@ -25,14 +26,12 @@ export default function WaterLevelPanel() {
   const [connections, setConnections] = useState<{ start: Point; end: Point }[]>([]);
 
   useEffect(() => {
-    loadLevels();
-    loadTreatment();
-    // 데이터가 로드된 후 첫 번째 배수지 선택
-    if (reservoirLevels.length > 0 && !selectedReservoir) {
+    if (reservoirLevels.length > 0) {
       setSelectedReservoir(reservoirLevels[0]);
+      setSelectedFacilityId(reservoirLevels[0].facilityId);
     }
-    return () => setSelectedReservoir(reservoirLevels[0]);
-  }, [reservoirLevels.length]);
+    return () => { setSelectedReservoir(null); setSelectedFacilityId(0); }
+  }, []);
 
 
   // 좌표 및 물 흐름 업데이트
