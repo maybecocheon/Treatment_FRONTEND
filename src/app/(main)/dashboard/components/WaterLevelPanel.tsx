@@ -1,18 +1,21 @@
 'use client'
 
 import { useReservoirLevel } from "@/hooks/useReservoirLevel";
-import { Factory } from "lucide-react";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { Droplet, Droplets, Factory, Waves } from "lucide-react";
+import { use, useCallback, useEffect, useRef, useState } from "react";
 import WaterLevelPanelSkeleton from "../skeletons/WaterLevelPanelSkeleton";
 import ErrorFallback from "@/components/skeletons/ErrorFallback";
 import { useTreatment } from "@/hooks/useTreatment";
 import { useAtom, useSetAtom } from "jotai";
 import { selectedFacilityIdAtom, selectedReservoirAtom } from "@/atoms/uniAtoms";
-import WaterLevelCard from "@/components/main/skeletons/WaterLevelCard";
+import WaterLevelCard from "@/components/main/WaterLevelCard";
 import { Point } from "@/types/types";
 import FlowingLine from "./FlowingLine";
 
 export default function WaterLevelPanel() {
+  // 수위 혹은 유입량 토글
+  const [isLevel, setIsLevel] = useState(true);
+
   // 데이터
   const [selectedReservoir, setSelectedReservoir] = useAtom(selectedReservoirAtom);
   const setSelectedFacilityId = useSetAtom(selectedFacilityIdAtom);
@@ -32,7 +35,6 @@ export default function WaterLevelPanel() {
     }
     return () => { setSelectedReservoir(null); setSelectedFacilityId(0); }
   }, []);
-
 
   // 좌표 및 물 흐름 업데이트
   const updateConnections = useCallback(() => {
@@ -65,12 +67,16 @@ export default function WaterLevelPanel() {
     });
   }, [reservoirLevels]);
 
+  const toggle = () => {
+    setIsLevel(!isLevel);
+  };
+
   // 실시간 위치 추적
   useEffect(() => {
     // 부모 컨테이너(containerRef)의 크기가 변할 때를 감지
     const observer = new ResizeObserver(updateConnections);
     if (containerRef.current) observer.observe(containerRef.current);
-    
+
     const timer = setTimeout(updateConnections, 200);
 
     return () => {
@@ -88,10 +94,27 @@ export default function WaterLevelPanel() {
   if (!reservoirLevels || !treatment) return <WaterLevelPanelSkeleton />;
 
   return (
-    <div ref={containerRef} className="glass rounded-2xl p-4 lg:p-6 flex flex-col relative">
-      <h2 className="text-md font-black text-slate-800 shrink-0 mb-2">수위 현황</h2>
+    <div ref={containerRef} className="h-full glass rounded-2xl p-4 lg:p-6 flex flex-col relative">
+      <div className="flex gap-2 mb-3">
+        <h2 className="text-md font-black text-slate-600 px-1 flex items-center gap-1">
+          {isLevel ? (
+            <>
+              <Droplets size={18} className="text-blue-500" />
+              <span>수위 현황</span>
+            </>
+          ) : (
+            <>
+              <Waves size={18} className="text-sky-500" />
+              <span>유입량 현황</span>
+            </>
+          )}
+        </h2>
+        <button onClick={toggle} className={`w-10 h-6 flex items-center rounded-full p-1 duration-300 ease-in-out ${isLevel ? "bg-blue-600" : "bg-gray-300"}`}>
+          <div className={`bg-white w-4 h-4 rounded-full shadow-md transform duration-300 ease-in-out ${isLevel ? "translate-x-4" : "translate-x-0"}`} />
+        </button>
+      </div>
 
-      <svg className="absolute inset-0 pointer-events-none z-0" style={{ width: '100%', height: '100%' }}>
+      <svg className="absolute inset-0 pointer-events-none z-0" style={{ width: "100%", height: "100%" }}>
         {connections.map((conn, idx) => (
           <FlowingLine key={idx} start={conn.start} end={conn.end} />
         ))}
@@ -125,7 +148,8 @@ export default function WaterLevelPanel() {
                 res={res}
                 mapLevel={-1}
                 isSelected={selectedReservoir?.facilityId === res.facilityId}
-                onClick={() => setSelectedReservoir(res)}
+                onClick={() => { setSelectedReservoir(res); setSelectedFacilityId(res.facilityId); }}
+                isLevel={isLevel}
               />
             </div>
           ))}

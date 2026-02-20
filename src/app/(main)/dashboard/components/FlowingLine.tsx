@@ -7,7 +7,13 @@ interface FlowingLineProps {
 
 export default function FlowingLine({ start, end }: FlowingLineProps) {
   const midY = start.y + 40;
-  const pathData = `M ${start.x} ${start.y} L ${start.x} ${midY} L ${end.x} ${midY} L ${end.x} ${end.y}`;
+  // const pathData = `M ${start.x} ${start.y} L ${start.x} ${midY} L ${end.x} ${midY} L ${end.x} ${end.y}`;
+
+  const deltaY = Math.abs(end.y - start.y);
+  const pathData = `M ${start.x} ${start.y} 
+                    C ${start.x} ${start.y + deltaY * 0.4}, 
+                      ${end.x} ${end.y - deltaY * 0.4}, 
+                      ${end.x} ${end.y}`;
 
   return (
     <g>

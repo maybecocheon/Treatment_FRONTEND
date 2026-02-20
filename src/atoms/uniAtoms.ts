@@ -7,6 +7,9 @@ export const scrollAtom = atom(0);
 // 맵 줌 레벨 상태
 export const mapLevelAtom = atom<number>(9);
 
+// 맵 상세 정보 관리
+export const mapDetailOpenAtom = atom(false);
+
 // 사용자 정보 상태
 export const userProfileAtom = atom<UserProfile | null>(null);
 

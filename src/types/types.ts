@@ -70,6 +70,7 @@ export interface ReservoirLevelType {
     level: number;
     minLevel: number;
     maxLevel: number;
+    flowIn: number;
 }
 
 // 대시보드 물 흐르는 효과

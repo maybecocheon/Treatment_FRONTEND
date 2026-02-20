@@ -1,33 +1,33 @@
 'use client'
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { CustomOverlayMap, Map, Polygon } from "react-kakao-maps-sdk";
 import sidoData from "@/data/sido.json"
 import FacilityOverlay from "./FacilityOverlay";
 import MapSkeleton from "./skeletons/MapSkeleton";
 import { useAtom, useSetAtom } from "jotai";
-import { isModalOpenAtom, mapLevelAtom, selectedFacilityIdAtom } from "@/atoms/uniAtoms";
+import { isModalOpenAtom, mapDetailOpenAtom, mapLevelAtom, selectedFacilityIdAtom } from "@/atoms/uniAtoms";
 import { useFacilities } from "@/hooks/useFacilities";
-import ReservoirDetailsModal from "../../../../components/main/ReservoirDetailsModal";
+import ReservoirDetailsModal from "@/components/main/OpenDetail";
 import PageFallback from "@/components/skeletons/PageFallback";
 import ErrorFallback from "@/components/skeletons/ErrorFallback";
 
 
 export default function KakaoMap() {
+    const [mapDetailOpen, setMapDetailOpen] = useAtom(mapDetailOpenAtom);
     const setIsModalOpen = useSetAtom(isModalOpenAtom);
     const [selectedFacilityId, setSelectedFacilityId] = useAtom(selectedFacilityIdAtom);
     const [mapLevel, setMapLevel] = useAtom(mapLevelAtom);
 
     const [isClient, setIsClient] = useState(false);
     const [formattedPath, setFormattedPath] = useState<{ lat: number, lng: number }[]>([]);
+    // 부산 시청 좌표를 중심으로 설정
+    const center = { lat: 35.1996, lng: 129.0756 };
+    const mapRef = useRef<kakao.maps.Map>(null);
 
     const { loadFacilities, facilities, isLoading, error } = useFacilities();
 
-    // 부산 시청 좌표를 중심으로 설정
-    const center = { lat: 35.1996, lng: 129.0756 };
-
     useEffect(() => {
-
         // 카카오맵 형식(lat, lng)으로 변경
         if (sidoData && sidoData.features) {
             try {
@@ -55,6 +55,37 @@ export default function KakaoMap() {
         return () => setMapLevel(9);
     }, []);
 
+    useEffect(() => {
+        const handleResize = () => {
+            const map = mapRef.current;
+            if (map) {
+                map.relayout();
+                map.setCenter(new kakao.maps.LatLng(center.lat, center.lng));
+            }
+        };
+        if (mapDetailOpen || !mapDetailOpen) handleResize();
+        window.addEventListener("resize", handleResize);
+
+        return () => {
+            window.removeEventListener("resize", handleResize);
+        };
+    }, [mapDetailOpen]);
+
+    // 클릭 핸들러 함수 분리
+    const handleFacilityClick = (facilityId: number) => {
+        setSelectedFacilityId(facilityId);
+
+        const isMobile = window.innerWidth < 1028;
+
+        if (isMobile) {
+            setIsModalOpen(true);
+            setMapDetailOpen(false);
+        } else {
+            setMapDetailOpen(true);
+            setIsModalOpen(false); 
+        }
+    };
+
     if (!isClient || isLoading) return <PageFallback skeleton={<MapSkeleton />} />;
     if (error) return <ErrorFallback error={error} onClick={() => loadFacilities()} />;
 
@@ -66,9 +97,10 @@ export default function KakaoMap() {
                 style={{ width: "100%", height: "100%" }}
                 zoomable={true} // 줌인, 줌아웃
                 draggable={true} // 드래그
-                minLevel={9}
+                minLevel={8}
                 maxLevel={7}
                 onZoomChanged={map => setMapLevel(map.getLevel())}
+                ref={mapRef}
             >
                 {/* 폴리곤 */}
                 {
@@ -88,7 +120,7 @@ export default function KakaoMap() {
                 {facilities &&
                     facilities.map(facility => ((facility.type === "정수장" || facility.type === "배수지") &&
                         <CustomOverlayMap key={facility.facilityId} position={{ lat: facility.lat || 0, lng: facility.lng || 0 }}>
-                            <FacilityOverlay facility={facility} onClick={() => { setSelectedFacilityId(facility.facilityId); setIsModalOpen(true); }} />
+                            <FacilityOverlay facility={facility} onClick={() => { handleFacilityClick(facility.facilityId); }} />
                         </CustomOverlayMap>
                     ))}
             </Map>

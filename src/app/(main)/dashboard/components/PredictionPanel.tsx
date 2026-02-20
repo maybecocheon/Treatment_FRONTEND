@@ -3,19 +3,18 @@
 import { useEffect } from 'react';
 import { usePredictionData } from '@/hooks/usePredictionData';
 import { isModalOpenAtom, selectedFacilityIdAtom, selectedReservoirAtom } from '@/atoms/uniAtoms';
-import { useAtomValue, useSetAtom } from 'jotai';
+import { useAtomValue, useAtom, useSetAtom } from 'jotai';
 import TailChart from '@/components/main/TailAreaChart';
 import TailChartSkeleton from '@/components/main/skeletons/TailChartSkeleton';
 import PageFallback from '@/components/skeletons/PageFallback';
 import ErrorFallback from '@/components/skeletons/ErrorFallback';
-
 import { ArrowUpRight } from 'lucide-react';
-import ReservoirDetailsModal from '@/components/main/ReservoirDetailsModal';
+import ReservoirDetails from '@/components/main/OpenDetail';
 
 export default function PredictionPanel() {
   const selectedReservoir = useAtomValue(selectedReservoirAtom);
   const setSelectedFacilityId = useSetAtom(selectedFacilityIdAtom);
-  const setIsModalOpen = useSetAtom(isModalOpenAtom);
+  const [isModalOpen, setIsModalOpen] = useAtom(isModalOpenAtom);
 
   const { loadPredictionData, filteredChartData,
     isLoading, error, selectedRange, setSelectedRange } = usePredictionData(selectedReservoir?.facilityId ?? 0, "2023-01-01 00:00:00");
@@ -90,7 +89,7 @@ export default function PredictionPanel() {
         </div>
       </div>
 
-      {selectedReservoir?.facilityId && <ReservoirDetailsModal />}
+      {isModalOpen && <ReservoirDetails />}
     </>
   );
 };

@@ -1,66 +1,60 @@
 'use client'
 
-import { createPortal } from "react-dom";
+export default function ReservoirDetailSkeleton() {
+  return (
+    <div className="flex-1 p-6 overflow-hidden">
+      <div className="h-full flex flex-col gap-6">
 
-export default function ReservoirDetailsSkeleton() {
-  return createPortal(
-    <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-md flex items-center justify-center z-50 p-4">
-      <div className="bg-white/60 rounded-4xl shadow-2xl w-full max-w-5xl overflow-hidden max-h-[90vh] flex flex-col">
-        
-        {/* 헤더 영역 */}
-        <div className="px-6 py-4 md:py-8 flex justify-between items-center bg-sky-50/50">
-          <div className="flex items-center gap-4">
-            <div className="w-12 h-12 md:w-14 md:h-14 bg-slate-200 rounded-2xl animate-pulse" />
-            <div className="flex flex-col gap-2">
-              <div className="h-7 w-48 bg-slate-200 rounded-lg animate-pulse" />
-              <div className="h-4 w-64 bg-slate-200/70 rounded-md animate-pulse" />
-            </div>
+        {/* 요약 정보 카드 */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="glass p-5 rounded-4xl border-slate-100 h-28 flex flex-col justify-between">
+            <div className="h-3 w-20 bg-slate-200 rounded" />
+            <div className="h-8 w-24 bg-slate-300 rounded-xl" />
           </div>
-          <div className="w-10 h-10 bg-slate-200 rounded-xl animate-pulse" />
+          <div className="glass p-5 rounded-4xl border-slate-100 h-28 flex flex-col justify-between">
+            <div className="h-3 w-24 bg-slate-200 rounded" />
+            <div className="h-8 w-full bg-slate-200 rounded-xl max-w-30" />
+          </div>
         </div>
 
-        {/* 메인 영역 */}
-        <div className="p-4 md:p-6 bg-slate-50/30 space-y-4">
-          
-          {/* 요약 영역 */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            {[1, 2].map((i) => (
-              <div key={i} className="bg-white/80 p-6 rounded-3xl border border-slate-100 h-32 flex flex-col justify-between">
-                <div className="h-3 w-24 bg-slate-200 rounded animate-pulse" />
-                <div className="flex items-end justify-between">
-                  <div className="h-10 w-32 bg-slate-200 rounded-lg animate-pulse" />
-                  <div className="h-6 w-12 bg-slate-200 rounded-full animate-pulse" />
-                </div>
-              </div>
+        {/* 메인 차트 영역 스켈레톤 */}
+        <div className="flex-1 glass rounded-4xl p-6 flex flex-col min-h-75">
+          <div className="flex justify-between items-center mb-10">
+            <div className="h-5 w-36 bg-slate-200 rounded-lg" />
+            <div className="flex gap-1.5">
+              {[1, 2, 3].map((i) => (
+                <div key={i} className="h-7 w-10 bg-slate-200 rounded-xl" />
+              ))}
+            </div>
+          </div>
+
+          {/* 차트 가상 가이드라인 */}
+          <div className="flex-1 flex flex-col justify-between relative">
+            {[...Array(5)].map((_, i) => (
+              <div key={i} className="w-full h-px bg-slate-100/80" />
+            ))}
+
+            {/* 하단 데이터 바 시뮬레이션 */}
+            <div className="absolute inset-0 flex items-end px-2 gap-2 pb-6">
+              {[...Array(12)].map((_, i) => (
+                <div
+                  key={i}
+                  className="flex-1 bg-slate-100 rounded-t-md transition-all duration-1000"
+                  style={{ height: `${20 + (i * 5) % 50}%` }}
+                />
+              ))}
+            </div>
+          </div>
+
+          {/* 차트 하단 라벨 가상 */}
+          <div className="flex justify-between mt-2 px-2">
+            {[...Array(5)].map((_, i) => (
+              <div key={i} className="h-2 w-6 bg-slate-100 rounded" />
             ))}
           </div>
-
-          {/* 차트 영역 */}
-          <div className="bg-white/80 rounded-4xl p-6 h-100 flex flex-col">
-            <div className="flex justify-between items-center mb-8">
-              <div className="h-6 w-40 bg-slate-200 rounded animate-pulse" />
-              <div className="flex gap-2">
-                {[1, 2, 3].map((j) => (
-                  <div key={j} className="h-7 w-12 bg-slate-200 rounded-2xl animate-pulse" />
-                ))}
-              </div>
-            </div>
-            {/* 차트 그래픽 */}
-            <div className="flex-1 w-full bg-slate-100/50 rounded-2xl relative overflow-hidden">
-               <div className="absolute inset-0 flex items-center justify-around px-4">
-                  {[...Array(6)].map((_, idx) => (
-                    <div 
-                      key={idx} 
-                      className="w-12 bg-slate-200/50 rounded-t-lg animate-pulse" 
-                      style={{ height: `${20 + Math.random() * 60}%` }} 
-                    />
-                  ))}
-               </div>
-            </div>
-          </div>
         </div>
+
       </div>
-    </div>,
-    document.body
+    </div>
   );
 }

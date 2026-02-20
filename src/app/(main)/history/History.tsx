@@ -26,7 +26,7 @@ export default function History() {
         <>
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 {/* 헤더 영역 */}
-                <Title title="히스토리 뷰어" subtitle="과거 운영 데이터 분석 및 리포트 조회" />
+                <Title title="히스토리 뷰어" subtitle="과거 운영 데이터 분석" />
                 <div className="glass p-3 rounded-2xl flex items-center gap-3 md:w-auto">
                     <button className="p-3 text-slate-500">
                         <Filter className="w-4 h-4" />

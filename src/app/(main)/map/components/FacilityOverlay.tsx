@@ -1,11 +1,11 @@
 'use client'
 
 import { Factory } from "lucide-react";
-import { useAtomValue } from "jotai";
-import { mapLevelAtom } from "@/atoms/uniAtoms";
+import { useAtomValue, useSetAtom } from "jotai";
+import { mapLevelAtom, selectedReservoirAtom } from "@/atoms/uniAtoms";
 import { FacilityType } from "@/types/types";
 import { useReservoirLevel } from "@/hooks/useReservoirLevel";
-import WaterLevelCard from "@/components/main/skeletons/WaterLevelCard";
+import WaterLevelCard from "@/components/main/WaterLevelCard";
 
 export interface FacilityOverlay {
     facility: FacilityType;
@@ -13,8 +13,8 @@ export interface FacilityOverlay {
 }
 
 export default function FacilityOverlay({ facility, onClick }: FacilityOverlay) {
-    // 지도 레벨
     const mapLevel = useAtomValue(mapLevelAtom);
+    const setSelectedReservoir = useSetAtom(selectedReservoirAtom);
 
     // 수위 레벨 얻기
     const { reservoirLevels } = useReservoirLevel("2023-01-01 00:00:01");
@@ -22,7 +22,7 @@ export default function FacilityOverlay({ facility, onClick }: FacilityOverlay) 
     // 1. 정수장
     if (facility.type === "정수장") {
         return (
-            <div className="flex flex-col items-center group transition-all duration-300 hover:-translate-y-2">
+            <div className="flex flex-col items-center group transition-all duration-300 hover:-translate-y-2" onClick={onClick}>
                 <div className="relative">
                     <div className="absolute inset-0 blur-xl opacity-40 animate-pulse" />
                     <div className="relative bg-white/50 border-2 border-slate-700 p-4 rounded-full shadow-2xl backdrop-blur-md">
@@ -44,16 +44,11 @@ export default function FacilityOverlay({ facility, onClick }: FacilityOverlay) 
     if (!reservoir) return null;
 
     if (facility.type === "배수지") {
-        // mapLevel이 9 이상일 때, 위험하지 않은 오버레이는 렌더링하지 않음
-        if (mapLevel >= 9 && !(reservoir.level > reservoir.maxLevel * 0.9 || reservoir.level < reservoir.maxLevel * 0.4)) {
-            return null;
-        }
-
         return (
             <WaterLevelCard
                 res={reservoir}
                 mapLevel={mapLevel}
-                onClick={onClick}
+                onClick={() => {onClick(); setSelectedReservoir(reservoir);}}
             />
         );
     }
