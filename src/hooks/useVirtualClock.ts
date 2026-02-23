@@ -4,33 +4,34 @@ import { useAtom } from "jotai";
 import { useEffect, useMemo, useState } from "react";
 
 // 현재 데이터 없으므로 시뮬레이션 시 임의 시간 지정
-export function useVirtualClock(baseDate = "2024-01-01T00:00:00") {
+export function useVirtualClock(baseDate = "2024-01-02T00:00:00") {
   const [time, setTime] = useAtom(virtualTimeAtom);
-  const [extraMs, setExtraMs] = useState(0); // 추가된 밀리초 저장
+  const [extraMs, setExtraMs] = useState(0);
 
-  // 컴포넌트가 처음 마운트될 때 딱 한 번만 오프셋을 계산
   const timeOffset = useMemo(() => {
     const basePastTime = new Date(baseDate).getTime();
     return Date.now() - basePastTime;
   }, [baseDate]);
 
+  // 시간을 계산하는 로직을 별도 함수로 분리
+  const getSimulatedTime = (currentExtra: number) => {
+    return dayjs(Date.now() - timeOffset + currentExtra).format("YYYY-MM-DD HH:mm:ss");
+  };
+
   useEffect(() => {
-    // 1. 즉시 한 번 실행해서 초기 빈 문자열 지연 방지
-    const updateTime = () => {
-      const simulatedTime = dayjs(Date.now() - timeOffset + extraMs).format("YYYY-MM-DD HH:mm:ss");
-      setTime(simulatedTime);
-    };
+    // 1초마다 업데이트
+    const timer = setInterval(() => {
+      setTime(getSimulatedTime(extraMs));
+    }, 1000);
 
-    updateTime();
-
-    // 2. 인터벌 설정
-    const timer = setInterval(updateTime, 1000);
-    
     return () => clearInterval(timer);
   }, [timeOffset, extraMs, setTime]);
 
-  // 1시간(3600000ms)을 더하는 함수
-  const addOneHour = () => setExtraMs(prev => prev + 3600000);
+  const addOneHour = () => {
+    const newExtra = extraMs + 3600000;
+    setExtraMs(newExtra);
+    setTime(getSimulatedTime(newExtra));
+  };
 
   return { time, addOneHour };
 }

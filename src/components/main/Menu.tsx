@@ -14,7 +14,7 @@ export default function Menu({ isMobileMenuOpen, setIsMobileMenuOpen }: MenuProp
   const isActive = (path: string) => pathname.includes(path.split("/")[1]);
 
   const menuItems = [
-    { name: "대시보드", path: "/dashboard", icon: <LayoutDashboard size={18} /> },
+    { name: "실시간 대시보드", path: "/dashboard", icon: <LayoutDashboard size={18} /> },
     { name: "지도", path: "/map", icon: <Map size={18} /> },
     { name: "스케줄링", path: "/scheduling", icon: <Factory size={18} /> },
     { name: "히스토리", path: "/history", icon: <History size={18} /> },

@@ -116,7 +116,7 @@ export default function OptimizationStrategy() {
                 </div>
 
                 {/* Step 3: 안전장치 */}
-                <div className="group bg-slate-900 rounded-2xl p-6 shadow-xl flex flex-col h-full">
+                <div className="group bg-slate-900 rounded-2xl p-6 shadow-xs flex flex-col h-full">
                     <div className="flex items-start gap-3">
                         <div className="shrink-0 w-10 h-10 rounded-lg bg-blue-600 flex items-center justify-center text-white">
                             <ShieldAlert size={20} />

@@ -1,11 +1,12 @@
 'use client'
 
-import { useMemo, useState, useCallback, useEffect } from "react";
-import { useAtom, useAtomValue } from "jotai";
+import { useMemo, useState, useCallback, useEffect, useRef } from "react";
+import { useAtomValue } from "jotai";
 import { virtualTimeAtom } from "@/atoms/uniAtoms";
 import { myFetch } from "@/api/api";
+import dayjs from "dayjs";
 
-export function usePredictionData(id: number, date: string) {
+export function usePredictionData(id: number) {
     const baseUrl = process.env.NEXT_PUBLIC_SERVER_URL;
 
     const [error, setError] = useState<Error | null>(null);
@@ -13,58 +14,103 @@ export function usePredictionData(id: number, date: string) {
 
     const [rawChartData, setRawChartData] = useState<any[]>([]);
     const [minuteData, setMinuteData] = useState<any | null>(null);
-    const [selectedRange, setSelectedRange] = useState("24h");
+    const [selectedRange, setSelectedRange] = useState("12h");
 
-    // const time = useAtomValue(virtualTimeAtom);
+    const time = useAtomValue(virtualTimeAtom);
+    const timeRef = useRef(time);
+    useEffect(() => {
+        timeRef.current = time;
+    }, [time]);
 
-    // 마지막으로 데이터를 불러온 '분(Minute)'을 저장
-    // const lastUpdatedMinute = useRef<string>("");
+    const lastUpdatedMinute = useRef<string>("");
 
     const loadPredictionData = useCallback(async () => {
         if (!id || id === 0) return;
 
+        // 함수가 호출되는 시점의 최신 date 생성
+        const m = dayjs(timeRef.current);
+        const roundedMinutes = Math.floor(m.minute() / 15) * 15;
+
+        const currentDate = m
+            .minute(roundedMinutes)
+            .second(0)
+            .format("YYYY-MM-DD HH:mm:ss");
+
         setIsLoading(true);
         setError(null);
 
-        try {
-            // const formattedTime = time.replace("T", " "); // 가상 시계 시간 사용
-            const data = await myFetch(`${baseUrl}/reservoir/chart/minite/${id}?date=${date}`);
-            setMinuteData(data);
+        const fetchData = async (targetDate: string, retriesRemaining: number): Promise<any> => {
+            const data = await myFetch(`${baseUrl}/reservoir/chart/${id}?date=${targetDate}`);
+            if (data.isProcessing && retriesRemaining > 0) {
+                await new Promise(resolve => setTimeout(resolve, 2000));
+                return fetchData(targetDate, retriesRemaining - 1);
+            }
+            return data;
+        };
 
+        try {
+            const data = await fetchData(currentDate, 5);
+
+            if (data.isProcessing) throw new Error("시간 초과");
+
+            // 성공 시점에 '분' 기록
+            lastUpdatedMinute.current = timeRef.current.split("T")[1]?.substring(0, 5);
+
+            setMinuteData(data);
             const chartList = data.chartData ? data.chartData : [];
             setRawChartData(chartList.map((item: any, idx: number) => ({
                 time: item.time.split("T")[1]?.substring(0, 5) || "",
-                actualValue: idx < 1000 ? item.actualValue : null,
-                predictedValue: item.predictedValue || 0,
+                actualValue: item.actualValue,
+                predictedValue: item.predictedValue,
             })));
-
-            // 호출 성공 시 마지막 업데이트 시간(분 단위) 기록
-            // lastUpdatedMinute.current = time.split("T")[1]?.substring(0, 5);
         } catch (error: any) {
             setError(error);
         } finally {
             setIsLoading(false);
         }
-    }, [baseUrl, id, date]);
+    }, [baseUrl, id]);
 
-    // 1분 단위 자동 갱신 로직
-    // useEffect(() => {
-    //     if (!id) return;
+    // 15분 단위 자동 갱신 로직
+    useEffect(() => {
+        if (!id) return;
 
-    //     const currentMinute = time.split("T")[1]?.substring(0, 5);
+        const timePart = time.split("T")[1];
+        if (!timePart) return;
 
-    //     if (currentMinute && currentMinute !== lastUpdatedMinute.current) {
-    //         console.log(`${currentMinute}분 데이터 갱신 중...`);
-    //         loadData(id);
-    //     }
-    // }, [time, id, loadData]);
+        const currentMinute = timePart.substring(0, 5);
+        const minuteOnly = parseInt(currentMinute.substring(3, 5)); // 15 (숫자)
+
+        if (minuteOnly % 15 === 0 && currentMinute !== lastUpdatedMinute.current) {
+            loadPredictionData();
+        }
+    }, [time, id, loadPredictionData]);
 
     // 데이터 필터링 로직
     const filteredChartData = useMemo(() => {
-        const rangeMap: Record<string, number> = { "3h": 180, "6h": 360, "24h": 1440 };
-        const limit = rangeMap[selectedRange] || rawChartData.length;
-        return rawChartData.slice(-limit);
-    }, [rawChartData, selectedRange]);
+        // 1. 선택한 범위에 따른 데이터 개수
+        const rangeMap: Record<string, number> = { "3h": 180, "6h": 360, "12h": 720 };
+        const limit = rangeMap[selectedRange] || 720;
+
+        // 2. 현재 시간 'HH:mm' 형식 추출
+        if (!time) return [];
+        const currentTimeStr = time.split(" ")[1]?.substring(0, 5);
+
+        // 3. 현재 시간과 일치하는 인덱스 찾기
+        const currentIndex = rawChartData.findIndex(d => d.time === currentTimeStr);
+
+        if (currentIndex === -1) return [];
+
+        // 4. 데이터 가공
+        return rawChartData.slice(0, currentIndex + limit).map((d, index) => {
+            return {
+                ...d,
+                actualValue: index <= currentIndex ? d.actualValue : null,
+                predictedValue: (index >= currentIndex && index < currentIndex + limit)
+                    ? d.predictedValue
+                    : null,
+            };
+        });
+    }, [rawChartData, selectedRange, time]);
 
     // 의존성 변경 시 데이터 자동 로드
     useEffect(() => {

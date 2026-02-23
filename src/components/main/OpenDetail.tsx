@@ -39,14 +39,15 @@ export default function OpenDetail() {
     const isLevelCritical = selectedFacilityId === 1 ? false : !!(selectedReservoir && (selectedReservoir.level < minLevelAlert || selectedReservoir.level > maxLevelAlert));
 
     return (
-        <div className={`${isModalOpen ? "fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center z-50 p-4"
+        <div className={`${isModalOpen ? "fixed inset-0 bg-[#0f172a]/80 backdrop-blur-md flex items-center justify-center z-50 p-4"
             : mapOpenDetail ? "relative w-full h-full" : "hidden"
             }`}>
-            <div className={`flex flex-col glass transition-all duration-500 ease-out h-full
-                ${isModalOpen ? "rounded-4xl w-full max-w-5xl shadow-2xl overflow-hidden max-h-[90vh] animate-in zoom-in-95"
-                    : mapOpenDetail ? "w-full h-full animate-in slide-in-from-right rounded-4xl" : "hidden"}`}>
+            <div className={`flex flex-col transition-all duration-500 ease-out h-full rounded-4xl bg-white
+                ${isModalOpen ? "w-full max-w-5xl shadow-2xl overflow-hidden max-h-[90vh] animate-in zoom-in-95"
+                    : mapOpenDetail ? "w-full h-full animate-in slide-in-from-right " : "hidden"}`}>
                 {/* 헤더 */}
-                <div className="px-6 py-4 md:py-6 flex justify-between items-center transition-colors duration-500 bg-sky-50/50">
+                <div className={`px-6 py-4 md:py-6 flex justify-between items-center transition-colors duration-500 rounded-t-4xl
+                ${isLevelCritical ? "bg-red-200/50" : "bg-sky-200/50"}`}>
                     <div className="flex items-center gap-4">
                         <div className={`p-3 rounded-2xl ${isLevelCritical ? "bg-red-400" : "bg-blue-500/20"}`}>
                             <Droplets className={`${isLevelCritical ? "text-red-100" : "text-blue-400"} w-6 h-6 md:w-8 md:h-8`} />

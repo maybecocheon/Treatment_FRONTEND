@@ -63,6 +63,12 @@ export interface FacilityType {
     lng?: number;
 }
 
+export interface TreatmentType {
+    pressOutAvg: number;
+    flowOutAmt: number;
+    reservoirCnt: number
+}
+
 // 배수지 수위 타입
 export interface ReservoirLevelType {
     reservoirName: string;
@@ -71,6 +77,7 @@ export interface ReservoirLevelType {
     minLevel: number;
     maxLevel: number;
     flowIn: number;
+    area: number;
 }
 
 // 대시보드 물 흐르는 효과

@@ -1,11 +1,6 @@
 import { myFetch } from "@/api/api";
+import { TreatmentType } from "@/types/types";
 import { useCallback, useEffect, useState } from "react";
-
-export interface TreatmentType {
-    pressOutAvg: number;
-    flowOutAmt: number;
-    reservoirCnt: number
-}
 
 export function useTreatment(date: string) {
     const baseUrl = process.env.NEXT_PUBLIC_SERVER_URL;

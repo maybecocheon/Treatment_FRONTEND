@@ -1,26 +1,25 @@
 'use client'
 
 import { useEffect, useState } from "react";
-import { Calendar, Droplets, Filter, Gauge, Waves, Zap } from "lucide-react";
+import { Calendar, CalendarDays, Clock, Droplets, Filter } from "lucide-react";
 import Title from "@/components/main/Title";
-import TailAreaChart from "@/components/main/TailAreaChart";
 import ChartBox from "@/components/main/ChartBox";
 import { useHistory } from "@/hooks/useHistory";
 import { StatCard } from "@/components/main/StatCard";
 import { FacilityType } from "@/types/types";
 import { useFacilities } from "@/hooks/useFacilities";
-import TailBarChart from "@/components/main/TailBarChart";
 import PageFallback from "@/components/skeletons/PageFallback";
 import TailChartSkeleton from "@/components/main/skeletons/TailChartSkeleton";
 import ErrorFallback from "@/components/skeletons/ErrorFallback";
+import TailChart from "@/components/main/TailChart";
 
 export default function History() {
     const [selectedDate, setSelectedDate] = useState<string>("2023-12-31");
     const [selectedFacility, setSelectedFacility] = useState<FacilityType["facilityId"]>(1);
-    
+
     const { facilities, isLoading } = useFacilities();
-    const { stats, chart, labels, titles, isLoading: isHistoryLoading, error: historyError,
-            chartError, isChartLoading, loadHistoryChartData, loadHistoryData } = useHistory(selectedFacility, selectedDate);
+    const { stats, chartData, monthData, labels, titles, isLoading: isHistoryLoading, error: historyError,
+        chartError, isChartLoading, loadHistoryChartData, loadHistoryData } = useHistory(selectedFacility, selectedDate);
 
     return (
         <>
@@ -67,49 +66,50 @@ export default function History() {
                 </div>
             </div>
 
-            {/* 요약 카드 영역 */}
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-0 md:gap-3">
-                {stats.map((stat, idx) => (
-                    <StatCard
-                        key={idx}
-                        icon={stat.icon}
-                        label={stat.label}
-                        value={stat.value}
-                        unit={stat.unit}
-                        colorClass={stat.colorClass}
-                        loading={isHistoryLoading}
-                        error={historyError}
-                        onClick={() => loadHistoryData()}
-                    />
-                ))}
-            </div>
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 h-full">
+                {/* 메인 대시보드 */}
+                {/* 월 차트 */}
+                <ChartBox
+                    title={titles[0]}
+                    icon={CalendarDays}
+                    textSize="text-[20px]"
+                >
+                    {isChartLoading ? (
+                        <PageFallback skeleton={<TailChartSkeleton />} />
+                    ) : chartError ? (
+                        <ErrorFallback error={chartError} onClick={() => loadHistoryChartData()} />
+                    ) : (
+                        <TailChart
+                            data={monthData}
+                            isTreatment={selectedFacility === 1 ? true : false}
+                            isMonthly={true}
+                            labels={labels}
+                        />
+                    )}
+                </ChartBox>
 
-            {/* 메인 대시보드 */}
-            <div className="flex-1 flex flex-col gap-4 w-full">
-                <div className="grid grid-cols-1 xl:grid-cols-2 gap-3 flex-1 mb-4 md:mb-0">
-                    <ChartBox
-                        title={titles.chart1}
-                        icon={selectedFacility === 1 ? Waves : Droplets}
-                        textSize="text-[20px]"
-                    >
-                        {isChartLoading ? (
-                            <PageFallback skeleton={<TailChartSkeleton />} />
-                        ) : chartError ? (
-                            <ErrorFallback error={chartError} onClick={() => loadHistoryChartData()} />
-                        ) : (
-                            <TailAreaChart
-                                time={chart.time}
-                                data1={chart.flow}
-                                labels={[labels.chart1]}
-                                fills={[true]}
-                                units={[" m³/h"]}
+                <div className="flex flex-col gap-3 w-full border-t border-slate-200 pt-4 xl:border-l xl:border-t-0 xl:pt-0 xl:pl-4">
+                    {/* 요약 카드 영역 */}
+                    <div className="grid grid-cols-1 md:grid-cols-4 gap-0 md:gap-3">
+                        {stats.map((stat, idx) => (
+                            <StatCard
+                                key={idx}
+                                icon={stat.icon}
+                                label={stat.label}
+                                value={stat.value}
+                                unit={stat.unit}
+                                colorClass={stat.colorClass}
+                                loading={isHistoryLoading}
+                                error={historyError}
+                                onClick={() => loadHistoryData()}
                             />
-                        )}
-                    </ChartBox>
+                        ))}
+                    </div>
+                    {/* 일 차트 */}
                     <ChartBox
-                        title={titles.chart2}
-                        icon={Gauge}
-                        color={selectedFacility === 1 ? "text-green-700" : "text-cyan-700"}
+                        title={titles[1]}
+                        icon={Clock}
+                        color="text-green-700"
                         textSize="text-[20px]"
                     >
                         {isChartLoading ? (
@@ -117,12 +117,11 @@ export default function History() {
                         ) : chartError ? (
                             <ErrorFallback error={chartError} onClick={() => loadHistoryChartData()} />
                         ) : (
-                            <TailBarChart
-                                time={chart.time}
-                                data3={chart.secondary}
-                                colors={["", "", selectedFacility === 1 ? "#10b981" : "#36bad1"]}
-                                labels={["", "", labels.chart2]}
-                                units={[selectedFacility === 1 ? " kgf/㎠" : " m"]}
+                            <TailChart
+                                data={chartData}
+                                isTreatment={selectedFacility === 1 ? true : false}
+                                isMonthly={false}
+                                labels={labels}
                             />
                         )}
                     </ChartBox>

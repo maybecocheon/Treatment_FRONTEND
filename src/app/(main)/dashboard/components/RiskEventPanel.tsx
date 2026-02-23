@@ -1,44 +1,43 @@
 'use client'
 
-export default function RiskEventPanel() {
-  return (
-      <div className="bg-white backdrop-blur-sm border border-slate-200/50 rounded-2xl p-3 lg:p-4 flex flex-col h-full transition-all">
-        
-        {/* 헤더 섹션 */}
-        <div className="flex justify-between items-center mb-3 shrink-0 px-1">
-          <h2 className="text-xs lg:text-sm font-bold text-slate-700 flex items-center gap-2">
-            <span className="relative flex h-2 w-2">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-rose-500"></span>
-            </span>
-            배수지 위험 탐지
-          </h2>
-        </div>
+import { ReservoirLevelType } from "@/types/types";
 
-        {/* 로그 리스트 영역 */}
-        <div className="flex-1 overflow-y-auto space-y-2 pr-1 min-h-0 scrollbar-hide">
-          {[{ id: 1, status: "Critical", reservoir: "B배수지", type: "저수위", score: 79, detail: "저수위 경고 발생" }].map((event) => (
-            <div 
-              key={event.id} 
-              className="bg-white/60 hover:bg-white border border-slate-200/60 rounded-xl p-3 transition-all duration-200 cursor-pointer group shadow-sm hover:shadow-md"
-            >
-              <div className="flex justify-between items-start">
-                <div className="flex items-center gap-3">
-                  {/* 상태 아이콘 강조 */}
-                  <div className={`w-1 h-8 rounded-full ${
-                    event.status === 'Critical' ? 'bg-rose-500' : 
-                    event.status === 'Warning' ? 'bg-amber-500' : 'bg-sky-500'
-                  }`}></div>
-                  
-                  <div className="flex flex-col">
-                    <span className="text-xs font-bold text-slate-800">{event.reservoir}</span>
-                    <span className="text-[10px] text-rose-600 font-semibold">{event.detail}</span>
-                  </div>
+export default function RiskEventPanel({ reservoirLevels }: { reservoirLevels: ReservoirLevelType[] }) {
+  return (
+    <div className="bg-white backdrop-blur-sm border border-slate-200/50 rounded-2xl p-3 lg:p-4 flex flex-col max-h-80 transition-all">
+
+      {/* 헤더 섹션 */}
+      <div className="flex justify-between items-center mb-3 shrink-0 px-1">
+        <h2 className="text-xs lg:text-sm font-bold text-slate-700 flex items-center gap-2">
+          <span className="relative flex h-2 w-2">
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-75"></span>
+            <span className="relative inline-flex rounded-full h-2 w-2 bg-rose-500"></span>
+          </span>
+          배수지 위험 탐지
+        </h2>
+      </div>
+
+      {/* 로그 리스트 영역 */}
+      <div className="overflow-y-auto space-y-2 pr-1 min-h-0 scrollbar-hide">
+        {reservoirLevels.map(r => (
+          <div
+            key={r.facilityId}
+            className="bg-white/60 hover:bg-white border border-slate-200/60 rounded-xl p-3 transition-all duration-200 cursor-pointer group shadow-sm hover:shadow-md"
+          >
+            <div className="flex justify-between items-start">
+              <div className="flex items-center gap-3">
+                {/* 상태 아이콘 강조 */}
+                <div className={`w-1 h-8 rounded-full ${r.minLevel < 3 ? 'bg-rose-500' : 'bg-sky-500'}`}></div>
+
+                <div className="flex flex-col">
+                  <span className="text-xs font-bold text-slate-800">{r.reservoirName}</span>
+                  <span className="text-[10px] text-rose-600 font-semibold">{r.minLevel < 3 && "저수위 경고 발생"}</span>
                 </div>
               </div>
             </div>
-          ))}
-        </div>
+          </div>
+        ))}
       </div>
+    </div>
   )
 }

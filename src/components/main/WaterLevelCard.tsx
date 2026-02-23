@@ -1,6 +1,6 @@
 import { WaterWave } from "@/components/WaterWave";
 import { ReservoirLevelType } from "@/types/types";
-import { AlertTriangle } from "lucide-react";
+import { AlertTriangle, Loader2 } from "lucide-react";
 
 interface WaterLevelCardProps {
     res: ReservoirLevelType;
@@ -8,10 +8,16 @@ interface WaterLevelCardProps {
     isSelected?: boolean;
     onClick: () => void;
     isLevel?: boolean;
+    isLoading?: boolean;
+    isDanger?: boolean;
 }
 
-export default function WaterLevelCard({ res, mapLevel, isSelected, onClick, isLevel = true }: WaterLevelCardProps) {
-    const isDanger = res.level > res.maxLevel * 0.9 || res.level < res.maxLevel * 0.4;
+export default function WaterLevelCard({ res, mapLevel, isSelected, onClick, isLevel = true, isLoading = false, isDanger = false}: WaterLevelCardProps) {
+    if (isLoading)
+        return <div className="w-40 h-20 flex items-center justify-center bg-slate-100 rounded-2xl shadow-inner">
+            <Loader2 className="w-5 h-5 text-slate-300 animate-spin" />
+        </div>
+
     const levelPercent = (res.level / res.maxLevel) * 100;
 
     return (

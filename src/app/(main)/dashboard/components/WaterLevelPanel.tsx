@@ -1,26 +1,32 @@
 'use client'
 
-import { useReservoirLevel } from "@/hooks/useReservoirLevel";
-import { Droplet, Droplets, Factory, Waves } from "lucide-react";
-import { use, useCallback, useEffect, useRef, useState } from "react";
+import { Droplets, Factory, Waves } from "lucide-react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import WaterLevelPanelSkeleton from "../skeletons/WaterLevelPanelSkeleton";
 import ErrorFallback from "@/components/skeletons/ErrorFallback";
-import { useTreatment } from "@/hooks/useTreatment";
 import { useAtom, useSetAtom } from "jotai";
 import { selectedFacilityIdAtom, selectedReservoirAtom } from "@/atoms/uniAtoms";
 import WaterLevelCard from "@/components/main/WaterLevelCard";
-import { Point } from "@/types/types";
+import { Point, ReservoirLevelType, TreatmentType } from "@/types/types";
 import FlowingLine from "./FlowingLine";
 
-export default function WaterLevelPanel() {
+interface WaterLevelPanelProps {
+  reservoirLevels: ReservoirLevelType[];
+  isLoading: boolean;
+  error: Error | null;
+  loadLevels: () => void;
+  treatment: TreatmentType | null;
+  loadTreatment: () => void;
+  dangerReservoirs: ReservoirLevelType[];
+}
+
+export default function WaterLevelPanel({ reservoirLevels, isLoading, error, loadLevels, treatment, loadTreatment, dangerReservoirs }: WaterLevelPanelProps) {
   // 수위 혹은 유입량 토글
   const [isLevel, setIsLevel] = useState(true);
 
   // 데이터
   const [selectedReservoir, setSelectedReservoir] = useAtom(selectedReservoirAtom);
   const setSelectedFacilityId = useSetAtom(selectedFacilityIdAtom);
-  const { reservoirLevels, loadLevels, error } = useReservoirLevel("2023-01-01 00:00:01");
-  const { treatment, loadTreatment } = useTreatment("2023-01-01 00:00:01");
 
   // 물 흐르는 모션
   const containerRef = useRef<HTMLDivElement>(null);
@@ -123,21 +129,47 @@ export default function WaterLevelPanel() {
       <div className="flex-1 flex flex-col gap-4 items-center">
         {/* 1. 정수장 섹션 */}
         <div ref={plantRef} className="relative z-10 mb-10 flex flex-col items-center shrink-0">
-          <div className="relative bg-white/90 border-2 border-slate-700 p-3 lg:p-4 rounded-2xl lg:rounded-3xl shadow-xl backdrop-blur-md flex items-center gap-3 lg:gap-4 min-w-35 lg:min-w-40">
-            <div className="bg-slate-700 p-2 lg:p-2.5 rounded-xl lg:rounded-2xl shadow-inner">
+          <div className="relative bg-white/90 border-2 border-slate-700 p-4 lg:p-5 rounded-2xl lg:rounded-3xl shadow-xl backdrop-blur-md flex items-center gap-4 min-w-[180px] lg:min-w-[200px]">
+            {/* 아이콘 섹션 */}
+            <div className="bg-slate-700 p-2.5 lg:p-3 rounded-xl lg:rounded-2xl shadow-inner shrink-0">
               <Factory className="w-5 h-5 lg:w-6 lg:h-6 text-white" />
             </div>
-            <div className="flex flex-col">
-              <span className="text-[8px] lg:text-[10px] font-bold text-slate-400 uppercase tracking-tighter">송수량</span>
-              <div className="flex items-baseline gap-1">
+
+            {/* 데이터 섹션 */}
+            <div className="grid grid-cols-[auto_1fr] gap-x-3 gap-y-1.5 items-center">
+              {/* 송수량 행 */}
+              <span className="text-[10px] lg:text-[11px] font-bold text-slate-400 uppercase tracking-tighter leading-none">
+                송수량
+              </span>
+              <div className="flex items-baseline gap-1 justify-end">
                 <span className="text-lg lg:text-xl font-black text-slate-800 tabular-nums leading-none">
                   {Number(treatment.flowOutAmt?.toFixed(0)).toLocaleString() || 0}
                 </span>
-                <span className="text-[9px] lg:text-[10px] font-bold text-slate-500">m³/h</span>
+                <span className="text-[9px] lg:text-[10px] font-bold text-slate-500 shrink-0">m³/h</span>
+              </div>
+
+              {/* 구분선 (선택 사항) */}
+              <div className="col-span-2 h-px bg-slate-100 my-0.5" />
+
+              {/* 압력 행 */}
+              <span className="text-[10px] lg:text-[11px] font-bold text-slate-400 uppercase tracking-tighter leading-none">
+                압력
+              </span>
+              <div className="flex items-baseline gap-1 justify-end">
+                <span className="text-lg lg:text-xl font-black text-slate-800 tabular-nums leading-none">
+                  {Number(treatment.pressOutAvg?.toFixed(2)).toLocaleString() || 0}
+                </span>
+                <span className="text-[9px] lg:text-[10px] font-bold text-slate-500 shrink-0">kgf/cm²</span>
               </div>
             </div>
           </div>
-          <span className="mt-2 text-[10px] lg:text-[11px] font-black text-slate-800 uppercase tracking-widest">광역 정수장</span>
+
+          {/* 하단 캡션 */}
+          <div className="mt-3 flex flex-col items-center">
+            <span className="text-[10px] lg:text-[11px] font-black text-slate-800 uppercase tracking-widest">
+              광역 정수장
+            </span>
+          </div>
         </div>
 
         {/* 2. 배수지 섹션 */}
@@ -150,6 +182,8 @@ export default function WaterLevelPanel() {
                 isSelected={selectedReservoir?.facilityId === res.facilityId}
                 onClick={() => { setSelectedReservoir(res); setSelectedFacilityId(res.facilityId); }}
                 isLevel={isLevel}
+                isLoading={isLoading}
+                isDanger={!!dangerReservoirs.find(dr => dr.facilityId === res.facilityId)}
               />
             </div>
           ))}

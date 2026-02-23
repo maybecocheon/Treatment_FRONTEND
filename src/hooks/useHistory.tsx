@@ -19,6 +19,7 @@ export function useHistory(facilityId: number, date: string) {
     // 데이터 통합 관리
     const [infoData, setInfoData] = useState<any>(null);
     const [chartData, setChartData] = useState<any[]>([]);
+    const [monthData, setMonthData] = useState<any[]>([]);
 
     const { facilities, loadFacilities } = useFacilities();
 
@@ -59,10 +60,17 @@ export function useHistory(facilityId: number, date: string) {
         setChartError(null);
 
         try {
-            const chart = await myFetch(`${baseUrl}/${prefix}/history/chart${idPath}?date=${formattedDate}`);
+            const chart = await myFetch(`${baseUrl}/${prefix}/history/chart/day${idPath}?date=${formattedDate}`);
+            const month = await myFetch(`${baseUrl}/${prefix}/history/chart/month${idPath}?date=${formattedDate}`);
 
             setChartData(chart.map((item: any) => ({
                 time: item.time.split("T")[1]?.substring(0, 5) || "",
+                flow: item.flowOut || 0,
+                secondary: isTreatment ? (item.pressPipe || 0) : (item.level || 0),
+            })));
+
+            setMonthData(month.map((item: any) => ({
+                time: item.time,
                 flow: item.flowOut || 0,
                 secondary: isTreatment ? (item.pressPipe || 0) : (item.level || 0),
             })));
@@ -146,19 +154,10 @@ export function useHistory(facilityId: number, date: string) {
 
     return {
         stats,
-        chart: {
-            time: chartData.map(d => d.time),
-            flow: chartData.map(d => d.flow),
-            secondary: chartData.map(d => d.secondary),
-        },
-        labels: {
-            chart1: isTreatment ? "송수량" : "수요량",
-            chart2: isTreatment ? "압력" : "수위",
-        },
-        titles: {
-            chart1: isTreatment ? "시간별 송수량" : "시간별 수요량",
-            chart2: isTreatment ? "시간별 토출 압력" : "시간별 수위 변화",
-        },
+        chartData,
+        monthData,
+        labels: isTreatment ? ["송수량", "압력"] : ["수요량", "수위"],
+        titles: isTreatment ? ["당월 송수량 및 토출 압력", "당일 송수량 및 토출 압력"] : ["당월 수요량 및 수위", "당일 수요량 및 수위"],
         isLoading,
         error,
         isChartLoading,

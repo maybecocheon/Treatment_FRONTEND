@@ -17,7 +17,7 @@ export default function PredictionPanel() {
   const [isModalOpen, setIsModalOpen] = useAtom(isModalOpenAtom);
 
   const { loadPredictionData, filteredChartData,
-    isLoading, error, selectedRange, setSelectedRange } = usePredictionData(selectedReservoir?.facilityId ?? 0, "2023-01-01 00:00:00");
+    isLoading, error, selectedRange, setSelectedRange } = usePredictionData(selectedReservoir?.facilityId ?? 0);
 
   useEffect(() => {
     if (selectedReservoir?.facilityId) {
@@ -36,7 +36,7 @@ export default function PredictionPanel() {
 
             {/* 버튼 영역 */}
             <div className="flex gap-1">
-              {["3h", "6h", "24h"].map(t => (
+              {["3h", "6h", "12h"].map(t => (
                 <button
                   key={t}
                   onClick={(e) => {

@@ -32,7 +32,7 @@ export default function TailChartSkeleton() {
 
       {/* 하단 범례(Legend) 영역 스켈레톤 */}
       <div className="flex items-center justify-center gap-6 h-4">
-        {[1, 2, 3, 4].map((i) => (
+        {[1, 2].map((i) => (
           <div key={i} className="flex items-center gap-2">
             <div className="w-3 h-1 rounded-full bg-slate-200" />
             <div className="h-2 w-12 bg-slate-200 rounded" />

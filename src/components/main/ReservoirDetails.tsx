@@ -14,7 +14,8 @@ export default function ReservoirDetails() {
     const selectedFacilityId = useAtomValue(selectedFacilityIdAtom);
 
     // 차트 데이터
-    const { minuteData, loadPredictionData, filteredChartData, error, selectedRange, setSelectedRange, isLoading } = usePredictionData(selectedFacilityId, "2023-01-01 00:00:00");
+    const { minuteData, loadPredictionData, filteredChartData, error, selectedRange, setSelectedRange, isLoading }
+             = usePredictionData(selectedFacilityId);
 
     // 고수위 & 저수위
     const maxLevelAlert = minuteData?.maxLevel * 0.8;
@@ -38,11 +39,11 @@ export default function ReservoirDetails() {
     }
 
     return (
-        <div className="flex-1 p-6 overflow-y-auto overflow-x-hidden bg-white/50">
+        <div className={`flex-1 p-6 overflow-y-auto overflow-x-hidden rounded-b-4xl ${isLevelCritical ? "bg-red-100/50" : "bg-sky-100/50"}`}>
             <div className="h-full flex flex-col">
                 {/* 수위 경고 배너 (위험 시에만 노출) */}
                 {isLevelCritical && (
-                    <div className="mb-4 flex items-center gap-4 bg-red-50 border-2 border-red-100 p-4 rounded-3xl animate-pulse">
+                    <div className="mb-4 flex items-center gap-4 bg-red-100 border-2 border-red-200 p-4 rounded-3xl animate-pulse">
                         <div className="bg-red-500 p-3 rounded-2xl shadow-lg shadow-red-200">
                             <AlertTriangle className="text-white w-6 h-6" />
                         </div>
@@ -98,7 +99,7 @@ export default function ReservoirDetails() {
                         </h4>
                         <div className="flex flex-col gap-3 items-end">
                             <div className="flex gap-2">
-                                {["3h", "6h", "24h"].map(t => (
+                                {["3h", "6h", "12h"].map(t => (
                                     <button
                                         key={t}
                                         onClick={() => setSelectedRange(t)}
