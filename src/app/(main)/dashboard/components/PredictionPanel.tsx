@@ -1,10 +1,10 @@
 'use client'
 
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 import { usePredictionData } from '@/hooks/usePredictionData';
 import { isModalOpenAtom, selectedFacilityIdAtom, selectedReservoirAtom } from '@/atoms/uniAtoms';
 import { useAtomValue, useAtom, useSetAtom } from 'jotai';
-import TailChart from '@/components/main/TailAreaChart';
+import TailLineChart from '@/components/main/TailLineChart';
 import TailChartSkeleton from '@/components/main/skeletons/TailChartSkeleton';
 import PageFallback from '@/components/skeletons/PageFallback';
 import ErrorFallback from '@/components/skeletons/ErrorFallback';
@@ -76,12 +76,10 @@ export default function PredictionPanel() {
               ) : error ? (
                 <ErrorFallback error={error} onClick={() => loadPredictionData()} />
               ) : (
-                <TailChart
-                  time={filteredChartData.map(d => d.time || 0)}
-                  data1={filteredChartData.map(d => d.actualValue || 0)}
-                  data2={filteredChartData.map(d => d.predictedValue || 0)}
+                <TailLineChart
+                  data={filteredChartData}
                   labels={["실 수요", "예측 수요"]}
-                  units={[" m³/h", " m³/h"]}
+                  mode="prediction"
                 />
               )}
             </div>

@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import Script from "next/script";
 import { Toaster } from "sonner";
+import Providers from "./providers";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -30,7 +31,9 @@ export default function RootLayout({ children, }: Readonly<{ children: React.Rea
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         <div className="flex flex-col w-full min-h-dvh overflow-x-hidden">
           <main className="w-full min-h-dvh">
-            {children}
+            <Providers>
+              {children}
+            </Providers>
           </main>
           <Script src={`//dapi.kakao.com/v2/maps/sdk.js?appkey=${kakaoKey}&autoload=false`} strategy="beforeInteractive" />
           <Toaster

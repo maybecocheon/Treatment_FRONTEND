@@ -19,7 +19,7 @@ export interface UserProfile {
     department: string;
 }
 
-// 스탯 카드 타입
+// 정수장 스탯 카드 타입
 export interface StatCardType {
   icon: React.ReactNode;
   label: string;
@@ -78,6 +78,14 @@ export interface ReservoirLevelType {
     maxLevel: number;
     flowIn: number;
     area: number;
+    riskStatus: "normal" | "low" | "high";
+}
+
+// 유입, 유출 예측 데이터
+export interface PredictionAllType {
+    facilityId: number;
+    flowInAmt: number;
+    flowOutAmt: number;
 }
 
 // 대시보드 물 흐르는 효과

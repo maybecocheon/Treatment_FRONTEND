@@ -1,104 +1,74 @@
 'use client'
 
 import { myFetch } from '@/api/api';
-import { virtualTimeAtom } from '@/atoms/uniAtoms';
-import { ReservoirLevelType } from '@/types/types';
-import dayjs from 'dayjs';
-import { useAtomValue } from 'jotai';
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { ReservoirLevelType, PredictionAllType } from '@/types/types'; 
+import { useQuery } from '@tanstack/react-query';
+import { useRefreshTime } from './useRefreshTime';
+import { useCallback } from 'react';
 
 export function useAllPrediction() {
     const baseUrl = process.env.NEXT_PUBLIC_SERVER_URL;
+    const { roundedTime: date } = useRefreshTime();
 
-    const [error, setError] = useState<Error | null>(null);
-    const [isLoading, setIsLoading] = useState(false);
+    // 메인 쿼리 로직
+    const { data: predictions = [], isLoading, isFetching, error, refetch: loadPredictionAll } = useQuery<PredictionAllType[]>({
+        queryKey: ["allPredictions", date],
 
-    const [predictions, setPredictions] = useState<{facilityId: number, predictedValue: number}[]>([]);
+        queryFn: async () => {
+            const data = await myFetch(`${baseUrl}/reservoir/predict?date=${date}`);
 
-    const time = useAtomValue(virtualTimeAtom);
-    const timeRef = useRef(time);
-    useEffect(() => {
-        timeRef.current = time;
-    }, [time]);
-
-    const lastUpdatedMinute = useRef<string>("");
-
-    const loadPredictionAll = useCallback(async () => {
-        // 함수가 호출되는 시점의 최신 date 생성
-        const m = dayjs(timeRef.current);
-        const roundedMinutes = Math.floor(m.minute() / 15) * 15;
-
-        const currentDate = m
-            .minute(roundedMinutes)
-            .second(0)
-            .format("YYYY-MM-DD HH:mm:ss");
-
-        setIsLoading(true);
-        setError(null);
-
-        const fetchData = async (targetDate: string, retriesRemaining: number): Promise<any> => {
-            const data = await myFetch(`${baseUrl}/reservoir/predict?date=${targetDate}`);
-            if (data.isProcessing && retriesRemaining > 0) {
-                await new Promise(resolve => setTimeout(resolve, 2000));
-                return fetchData(targetDate, retriesRemaining - 1);
+            if (data.isProcessing) {
+                throw new Error("PROCESSING"); // React Query의 retry를 발동시킴
             }
             return data;
-        };
+        },
 
-        try {
-            const data = await fetchData(currentDate, 5);
+        enabled: !!date,
+        staleTime: 1000 * 60 * 15, // 15분
 
-            if (data.isProcessing) throw new Error("시간 초과");
+        // 재시도 전략: 서버가 계산 중일 때 2초 간격으로 최대 5번
+        retry: (failureCount, error: any) => {
+            if (error.message === "PROCESSING" && failureCount < 5) return true;
+            return false;
+        },
+        retryDelay: 2000,
+    });
 
-            // 성공 시점에 '분' 기록
-            lastUpdatedMinute.current = timeRef.current.split(" ")[1]?.substring(0, 5);
-
-            setPredictions(data.predictData);
-        } catch (error: any) {
-            setError(error);
-        } finally {
-            setIsLoading(false);
-        }
-    }, [baseUrl]);
-
-    // 15분 단위 자동 갱신 로직
-    useEffect(() => {
-        const timePart = time.split(" ")[1];
-        if (!timePart) return;
-
-        const currentMinute = timePart.substring(0, 5);
-        const minuteOnly = parseInt(currentMinute.substring(3, 5)); // 15 (숫자)
-
-        if (minuteOnly % 15 === 0 && currentMinute !== lastUpdatedMinute.current) {
-            loadPredictionAll();
-        }
-    }, [time, loadPredictionAll]);
-
-    // 의존성 변경 시 데이터 자동 로드
-    useEffect(() => {
-        loadPredictionAll();
-    }, [loadPredictionAll])
-
-    // 개별 배수지 수위 리스크 판별
-    const checkLevelRisk = (res: ReservoirLevelType) => {
+    // 비즈니스 로직: 리스크 판별
+    const checkLevelRisk = useCallback((res: ReservoirLevelType) => {
+        // 1. 기본값 세팅
         const area = res.area || 500;
         const minLevel = res.minLevel || 0.5;
         const maxLevel = res.maxLevel || 6.0;
 
-        // 예측 수요 데이터 없으면 1200 수요 있다고 가정
-        const totalDemand = Number(predictions.filter(p => p.facilityId === res.facilityId).map(p => p.predictedValue)) || 0;
+        // 2. 예측 데이터 가져오기 (유입/유출)
+        const facilityData = predictions.find((p: any) => p.facilityId === res.facilityId);
+        const flowIn = facilityData?.flowInAmt || 0;  
+        const flowOut = facilityData?.flowOutAmt || 0; 
 
-        // 현재 보유량 (부피)
+        // 3. 핵심 계산: 예상 부피
+        // 공식: (현재 수위 * 면적) + 유입량 - 유출량
         const currentVolume = res.level * area;
+        const estimatedVolume = currentVolume + flowIn - flowOut;
+        const estimatedLevel = estimatedVolume / area;
 
-        // 상황 A: 저수위 위험 (현재 물이 나갈 물보다 적음)
-        const isLowDanger = (currentVolume - totalDemand) < (minLevel * area);
+        // 4. 위험도 판별
+        // 저수위 위험: 예상 수위가 최소 기준보다 낮아질 때
+        const isLowDanger = estimatedLevel < minLevel;
 
-        // 상황 B: 고수위 위험 (현재 수위 자체가 이미 한계치에 근접)
-        const isHighDanger = res.level > maxLevel;
+        // 고수위 위험: 현재 수위 혹은 예상 수위가 최대치를 넘을 때 (보수적 판단)
+        const isHighDanger = estimatedLevel > maxLevel || res.level > maxLevel;
 
-        return isLowDanger ? "low" : isHighDanger ? "high" : "normal";
+        if (isLowDanger) return "low";
+        if (isHighDanger) return "high";
+        return "normal";
+    }, [predictions]);
+
+    return {
+        isLoading: isLoading || (isFetching && !predictions),
+        error,
+        loadPredictionAll,
+        checkLevelRisk,
+        predictions
     };
-
-    return { isLoading, error, loadPredictionAll, checkLevelRisk, predictions };
 }

@@ -93,7 +93,7 @@ export default function RiskDetailPanel({ riskMetrics }: { riskMetrics: { totalS
               {
                 isDanger
                   ? `현재 ${dangerCount}개 배수지에서 수위 위험이 감지되었습니다. 정수장 공급 압력을 확인하십시오.`
-                  : "모든 시설의 공급 및 수위 상태가 매우 양호합니다."
+                  : "시설의 공급 및 수위 상태가 매우 양호합니다."
               }
             </p>
           </div>

@@ -6,7 +6,7 @@ import ReservoirModalSkeleton from './skeletons/ReservoirModalSkeleton';
 import ReservoirDetailSkeleton from './skeletons/ReservoirDetailsSkeleton';
 import { AlertTriangle, BarChart3, TrendingUp, Waves } from 'lucide-react';
 import { WaterWave } from '../WaterWave';
-import TailAreaChart from './TailAreaChart';
+// import TailAreaChart from './TailAreaChart//
 
 export default function ReservoirDetails() {
     const isModalOpen = useAtomValue(isModalOpenAtom);
@@ -48,7 +48,7 @@ export default function ReservoirDetails() {
                             <AlertTriangle className="text-white w-6 h-6" />
                         </div>
                         <div className="flex-1">
-                            <h4 className="text-red-900 font-bold text-lg leading-tight">{minuteData.currentLevel < minLevelAlert ? "저수위 경보 발생" : "고수위 경보 발생"}</h4>
+                            <h4 className="text-red-900 font-bold text-lg leading-tight">{minuteData?.currentLevel < minLevelAlert ? "저수위 경보 발생" : "고수위 경보 발생"}</h4>
                         </div>
                         <button className="bg-red-500 text-white px-5 py-2.5 rounded-xl font-bold text-sm hover:bg-red-600 transition-colors">
                             즉시 조치
@@ -67,9 +67,9 @@ export default function ReservoirDetails() {
                             <div className="flex items-end justify-between">
                                 <div className="flex items-baseline gap-1">
                                     <span className={`text-4xl font-black ${isLevelCritical ? "text-red-600" : "text-slate-900"}`}>
-                                        {minuteData.currentLevel.toFixed(2)}
+                                        {minuteData?.currentLevel?.toFixed(2)}
                                     </span>
-                                    <span className="text-slate-500 font-bold text-lg">/ {minuteData.maxLevel.toFixed(2)}m</span>
+                                    <span className="text-slate-500 font-bold text-lg">/ {minuteData?.maxLevel?.toFixed(2)}m</span>
                                 </div>
                                 <span className={`px-3 py-1 rounded-full text-[12px] font-semibold ${isLevelCritical ? "bg-red-100 text-red-600" : "bg-emerald-100 text-emerald-600"}`}>
                                     {isLevelCritical ? "위험" : "안정"}
@@ -83,9 +83,9 @@ export default function ReservoirDetails() {
                             <BarChart3 size={14} className="text-indigo-500" /> 알고리즘 예측 신뢰도
                         </p>
                         <div className="flex items-center justify-between gap-4">
-                            <span className="text-4xl font-black text-slate-900">{minuteData.predictionAccuracy.toFixed(1)}%</span>
+                            <span className="text-4xl font-black text-slate-900">{minuteData?.predictionAccuracy?.toFixed(1)}%</span>
                             <div className="flex-1 h-3 bg-slate-300 rounded-full overflow-hidden">
-                                <div className="bg-indigo-500 h-full rounded-full transition-all duration-1000" style={{ width: `${minuteData.predictionAccuracy.toFixed(1)}%` }} />
+                                <div className="bg-indigo-500 h-full rounded-full transition-all duration-1000" style={{ width: `${minuteData?.predictionAccuracy?.toFixed(1)}%` }} />
                             </div>
                         </div>
                     </div>
@@ -115,13 +115,13 @@ export default function ReservoirDetails() {
                         </div>
                     </div>
                     <div className="flex-1 w-full" style={{ minHeight: "80px" }}>
-                        <TailAreaChart
+                        {/* <TailAreaChart
                             time={filteredChartData.map(d => d.time || 0)}
                             data1={filteredChartData.map(d => d.actualValue || 0)}
                             data2={filteredChartData.map(d => d.predictedValue || 0)}
                             labels={["실 수요", "예측 수요"]}
                             units={[" m³/h", " m³/h"]}
-                        />
+                        /> */}
                     </div>
                 </div>
             </div>

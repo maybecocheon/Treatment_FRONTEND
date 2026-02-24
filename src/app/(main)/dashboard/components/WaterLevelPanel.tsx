@@ -15,7 +15,7 @@ interface WaterLevelPanelProps {
   isLoading: boolean;
   error: Error | null;
   loadLevels: () => void;
-  treatment: TreatmentType | null;
+  treatment: TreatmentType | undefined;
   loadTreatment: () => void;
   dangerReservoirs: ReservoirLevelType[];
 }
@@ -89,7 +89,7 @@ export default function WaterLevelPanel({ reservoirLevels, isLoading, error, loa
       clearTimeout(timer);
       observer.disconnect();
     };
-  }, [updateConnections]);
+  }, [reservoirLevels.length, updateConnections]);
 
   if (error) return (
     <div className="glass rounded-2xl flex items-center justify-center h-full w-full">

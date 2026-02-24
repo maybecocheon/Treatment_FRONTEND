@@ -1,18 +1,19 @@
 'use client'
 
 import { toast } from "sonner";
-import { useUser } from "./useUser";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
+import { useQueryClient } from "@tanstack/react-query";
+import { useAtomValue } from "jotai";
+import { virtualTimeAtom } from "@/atoms/uniAtoms";
 
 export function useLogin() {
+    const time = useAtomValue(virtualTimeAtom);
     const baseUrl = process.env.NEXT_PUBLIC_SERVER_URL;
-
-    // 로그인 성공 시 불러올 유저 프로필
-    const { loadProfile } = useUser();
     const router = useRouter();
     const searchParams = useSearchParams();
     const [isLoading, setIsLoading] = useState(false);
+    const queryClient = useQueryClient();
 
     // 로그인 함수
     const handleLogin = async (formData: any) => {
@@ -28,8 +29,9 @@ export function useLogin() {
             const data = await response.json();
 
             if (response.ok) {
-                localStorage.setItem("lastLoginTime", new Date().toLocaleString());
-                await loadProfile();
+                localStorage.setItem("lastLoginTime", time);
+
+                queryClient.invalidateQueries({ queryKey: ["userProfile"] });
 
                 const redirectTo = searchParams.get("redirect") || "/dashboard";
                 toast.success("로그인 성공!", {
@@ -46,7 +48,6 @@ export function useLogin() {
                         router.push("/dashboard");
                     }
                 }, 100);
-
 
                 return true;
             } else {

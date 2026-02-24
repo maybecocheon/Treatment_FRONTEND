@@ -2,12 +2,12 @@ import { ComposedChart, Area, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, C
 
 interface TailChartProps {
   data: any[];
-  isTreatment: boolean;
+  isTreatment?: boolean;
   isMonthly?: boolean;
   labels: string[];
 }
 
-export default function TailChart({ data, isTreatment, isMonthly, labels }: TailChartProps) {
+export default function TailChart({ data, isTreatment = false, isMonthly, labels }: TailChartProps) {
   // 유량(area)
   const areaColor = isMonthly ? "#22d3ee" : "#3b82f6";
   // 상태(Bar)
@@ -68,7 +68,7 @@ export default function TailChart({ data, isTreatment, isMonthly, labels }: Tail
 
             <Bar
               yAxisId="right"
-              dataKey="secondary"
+              dataKey="second"
               name={labels[1]}
               fill={barColor}
               radius={[4, 4, 0, 0]}
@@ -79,7 +79,7 @@ export default function TailChart({ data, isTreatment, isMonthly, labels }: Tail
             <Area
               yAxisId="left"
               type="monotone"
-              dataKey="flow"
+              dataKey="first"
               name={labels[0]}
               stroke={areaColor}
               strokeWidth={2}

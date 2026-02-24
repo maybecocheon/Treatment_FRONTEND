@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Calendar, CalendarDays, Clock, Droplets, Filter } from "lucide-react";
 import Title from "@/components/main/Title";
 import ChartBox from "@/components/main/ChartBox";
@@ -18,7 +18,7 @@ export default function History() {
     const [selectedFacility, setSelectedFacility] = useState<FacilityType["facilityId"]>(1);
 
     const { facilities, isLoading } = useFacilities();
-    const { stats, chartData, monthData, labels, titles, isLoading: isHistoryLoading, error: historyError,
+    const { stats, chartData, monthData, labels, titles, isInfoLoading, infoError,
         chartError, isChartLoading, loadHistoryChartData, loadHistoryData } = useHistory(selectedFacility, selectedDate);
 
     return (
@@ -84,6 +84,7 @@ export default function History() {
                             isTreatment={selectedFacility === 1 ? true : false}
                             isMonthly={true}
                             labels={labels}
+                            units={[" m³/h", selectedFacility === 1 ?  " kgf/㎠" : " m"]}
                         />
                     )}
                 </ChartBox>
@@ -99,8 +100,8 @@ export default function History() {
                                 value={stat.value}
                                 unit={stat.unit}
                                 colorClass={stat.colorClass}
-                                loading={isHistoryLoading}
-                                error={historyError}
+                                loading={isInfoLoading}
+                                error={infoError}
                                 onClick={() => loadHistoryData()}
                             />
                         ))}
@@ -122,6 +123,7 @@ export default function History() {
                                 isTreatment={selectedFacility === 1 ? true : false}
                                 isMonthly={false}
                                 labels={labels}
+                                units={[" m³/h", selectedFacility === 1 ?  " kgf/㎠" : " m"]}
                             />
                         )}
                     </ChartBox>

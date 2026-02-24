@@ -1,39 +1,28 @@
-import { myFetch } from '@/api/api';
-import { userProfileAtom } from '@/atoms/uniAtoms';
-import { useAtom } from 'jotai';
-import { useState } from 'react';
+'use client'
+
+import { myFetch } from "@/api/api";
+import { useQuery } from "@tanstack/react-query";
 
 export function useUser() {
   const baseUrl = process.env.NEXT_PUBLIC_SERVER_URL;
 
-  const [error, setError] = useState<Error | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
-  const [profile, setProfile] = useAtom(userProfileAtom);
-
-  const loadProfile = async () => {
-    setError(null);
-    setIsLoading(true);
-    try {
+  const { data, isLoading, error } = useQuery({
+    queryKey: ["userProfile"],
+    queryFn: async () => {
       const data = await myFetch(`${baseUrl}/member/profile`);
-      const userInfo = {
+      return {
         username: data.username,
         alias: data.alias,
-        department: data.department
+        department: data.department,
       };
+    },
+    // 프로필은 자주 안 바뀜
+    staleTime: 1000 * 60 * 60,
+  });
 
-      // 1. 리액트 상태 업데이트 (즉시 반영)
-      setProfile(userInfo);
-
-      // 2. 로컬스토리지 캐싱 (새로고침 대비)
-      localStorage.setItem("user_info", JSON.stringify(userInfo));
-    } catch (error: any) {
-      setProfile(null);
-      setError(error);
-      localStorage.removeItem("user_info");
-    } finally {
-      setIsLoading(false);
-    }
+  return { 
+    profile: data,
+    isLoading, 
+    error
   };
-
-  return { profile, setProfile, loadProfile, error, isLoading };
 }

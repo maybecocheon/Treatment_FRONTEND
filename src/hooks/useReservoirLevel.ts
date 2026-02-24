@@ -1,32 +1,39 @@
 import { myFetch } from "@/api/api";
 import { ReservoirLevelType } from "@/types/types";
-import { useCallback, useEffect, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { useRefreshTime } from "./useRefreshTime";
+import dayjs from "dayjs";
+import { useMemo } from "react";
+import { useAllPrediction } from "./useAllPrediction";
 
-export function useReservoirLevel(date: string) {
-    const baseUrl = process.env.NEXT_PUBLIC_SERVER_URL;
+export function useReservoirLevel() {
+  const baseUrl = process.env.NEXT_PUBLIC_SERVER_URL;
+  const { roundedTime: date } = useRefreshTime();
+  const formattedDate = useMemo(() => {
+    return dayjs(date).add(1, "minute").format("YYYY-MM-DD HH:mm:ss");
+  }, [date]);
 
-    const [error, setError] = useState<Error | null>(null);
-    const [isLoading, setIsLoading] = useState(false);
+  const { checkLevelRisk } = useAllPrediction();
 
-    const [reservoirLevels, setReservoirLevels] = useState<ReservoirLevelType[]>([]);
+  const { data: reservoirLevels = [], isLoading, isFetching, error, refetch: loadLevels } = useQuery<ReservoirLevelType[]>({
+    // 1. queryKey: date가 바뀔 때마다 자동으로 fetch
+    queryKey: ["reservoirLevels", date],
 
-    const loadLevels = useCallback(async () => {
-        setError(null);
-        setIsLoading(true);
-        try {
-            const data = await myFetch(`${baseUrl}/reservoir/levels?date=${date}`);
-            setReservoirLevels(data);
-        } catch (error: any) {
-            setError(error);
-        } finally {
-            setIsLoading(false);
-        }
-    }, [baseUrl, date]);
+    // 2. queryFn: 실제 API 호출 로직
+    queryFn: async () => {
+      const data = await myFetch(`${baseUrl}/reservoir/levels?date=${formattedDate}`);
+      return data;
+    },
 
-    // 의존성 변경 시 데이터 자동 로드
-    useEffect(() => {
-        loadLevels();
-    }, [loadLevels])
+    // 3. 옵션 설정
+    enabled: !!date,
+    staleTime: 1000 * 60 * 15, // 15분
 
-    return { reservoirLevels, loadLevels, isLoading, error };
+    select: (data) => data.map(res => ({
+      ...res,
+      riskStatus: checkLevelRisk(res)
+    })), 
+  });
+
+  return { reservoirLevels, loadLevels, isLoading: isLoading || (isFetching && !reservoirLevels), error };
 }

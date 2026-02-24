@@ -8,11 +8,11 @@ interface WaterLevelCardProps {
     isSelected?: boolean;
     onClick: () => void;
     isLevel?: boolean;
-    isLoading?: boolean;
-    isDanger?: boolean;
+    isLoading: boolean;
+    isDanger: boolean;
 }
 
-export default function WaterLevelCard({ res, mapLevel, isSelected, onClick, isLevel = true, isLoading = false, isDanger = false}: WaterLevelCardProps) {
+export default function WaterLevelCard({ res, mapLevel, isSelected, onClick, isLevel = true, isLoading = false, isDanger }: WaterLevelCardProps) {
     if (isLoading)
         return <div className="w-40 h-20 flex items-center justify-center bg-slate-100 rounded-2xl shadow-inner">
             <Loader2 className="w-5 h-5 text-slate-300 animate-spin" />
@@ -59,7 +59,7 @@ export default function WaterLevelCard({ res, mapLevel, isSelected, onClick, isL
                         <div className="flex items-baseline gap-1">
                             <span className={`text-xl font-black 
                                     ${isDanger ? "text-red-600" : "text-slate-700"}`}>
-                                {mapLevel !== -1 ? res.level.toFixed(2) : isLevel ? levelPercent.toFixed(0) : res.flowIn?.toFixed(2)}
+                                {mapLevel !== -1 ? res.level.toFixed(2) : isLevel ? levelPercent.toFixed(0) : res.flowIn?.toFixed(2) ?? "---"}
                             </span>
                             <span className="text-[10px] font-bold text-slate-500">
                                 {mapLevel !== -1 ? "m" : isLevel ? "%" : "m³/h"}

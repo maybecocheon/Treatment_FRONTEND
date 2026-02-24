@@ -1,15 +1,15 @@
 import { myFetch } from "@/api/api";
 import { useState } from "react";
 import { toast } from "sonner";
-import { useUser } from "./useUser";
 import { useLogout } from "./useLogout";
 import { useRouter } from "next/navigation";
+import { useQueryClient } from "@tanstack/react-query";
 
 export default function useUpdateProfile() {
     const baseUrl = process.env.NEXT_PUBLIC_SERVER_URL;
     const router = useRouter();
+    const queryClient = useQueryClient();
 
-    const { loadProfile } = useUser();
     const { handleLogout } = useLogout();
     const [isLoading, setIsLoading] = useState(false);
 
@@ -21,7 +21,7 @@ export default function useUpdateProfile() {
                 body: JSON.stringify(formData),
             });
             toast.success("회원 정보가 성공적으로 수정되었습니다.");
-            loadProfile();
+            queryClient.invalidateQueries({ queryKey: ["userProfile"] });
         } catch (error) {
             console.error("회원 정보 수정 오류: ", error);
             toast.error("수정 오류", { description: "회원 정보 수정 중 오류가 발생했습니다." });
@@ -64,6 +64,7 @@ export default function useUpdateProfile() {
                         await myFetch(`${baseUrl}/member/delete`, { method: "DELETE" });
                         toast.success("탈퇴 처리되었습니다.");
                         localStorage.clear();
+                        queryClient.clear(); 
                         router.refresh();
                         router.push("/");
                     } catch (error) {

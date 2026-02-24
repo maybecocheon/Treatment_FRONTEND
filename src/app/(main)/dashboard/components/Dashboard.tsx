@@ -7,7 +7,7 @@ import PumpSchedulePanel from "./PumpSchedulePanel";
 import RiskDetailPanel from "./RiskDetailPanel";
 import { useAtomValue } from "jotai";
 import { selectedReservoirAtom } from "@/atoms/uniAtoms";
-import { AlertTriangle, Newspaper } from "lucide-react";
+import { AlertTriangle, Droplets, Newspaper } from "lucide-react";
 import GuidePanels from "./GuidePanels";
 import EnergySave from "@/components/main/EnergySave";
 import { useReservoirLevel } from "@/hooks/useReservoirLevel";
@@ -16,44 +16,41 @@ import { useMemo } from "react";
 import { useAllPrediction } from "@/hooks/useAllPrediction";
 
 export default function Dashboard() {
-    const { reservoirLevels, loadLevels, error, isLoading } = useReservoirLevel("2023-01-01 00:00:01");
-    const { treatment, loadTreatment } = useTreatment("2023-01-01 00:00:01");
+    const { reservoirLevels, loadLevels, error, isLoading } = useReservoirLevel();
+    const { treatment, loadTreatment } = useTreatment();
     const { checkLevelRisk } = useAllPrediction();
 
     const selectedReservoir = useAtomValue(selectedReservoirAtom);
-    const isDanger = selectedReservoir && (selectedReservoir.level > selectedReservoir.maxLevel * 0.9 || selectedReservoir.level < selectedReservoir.maxLevel * 0.4);
 
-
-
-    // 1. 위험 배수지 목록 추출
-    const dangerReservoirs = reservoirLevels?.filter(res => {
-        const riskStatus = checkLevelRisk(res);
-        return riskStatus === "low" || riskStatus === "high";
-    });
+    // 위험한 배수지만 따로 필터링 
+    const dangerReservoirs = useMemo(() => {
+        return reservoirLevels.filter(res => res.riskStatus !== "normal");
+    }, [reservoirLevels]);
 
     // 위험 점수 계산
     const riskMetrics = useMemo(() => {
         if (reservoirLevels.length === 0) {
-            return { totalScore: 100, dangerCount: 0, treatmentFine: true };
+            return { totalScore: 0, dangerCount: 0, treatmentFine: true };
         }
 
         const dangerCount = dangerReservoirs.length;
         const reservoirPenalty = dangerCount * 6;
 
-        // 2. 정수장 상태 체크
+        // 정수장 상태 체크
         const isTreatmentAbnormal = treatment && (treatment.pressOutAvg < 9 || treatment.pressOutAvg > 10);
         const treatmentPenalty = isTreatmentAbnormal ? 28 : 0;
         const treatmentFine = !isTreatmentAbnormal;
 
-        // 3. 최종 점수
+        // 최종 점수
         const totalScore = Math.max(0, 100 - reservoirPenalty - treatmentPenalty);
 
         return {
             totalScore,
             dangerCount,
-            treatmentFine,
+            treatmentFine
         };
     }, [reservoirLevels, treatment, checkLevelRisk]);
+
 
     return (
         <div className="h-full flex flex-col xl:grid xl:grid-cols-12 gap-4">
@@ -66,7 +63,7 @@ export default function Dashboard() {
                 <div className="flex-1 flex flex-col gap-4">
                     <RiskDetailPanel riskMetrics={riskMetrics} />
                     <div className="flex-1 border-t border-red-50 pt-4">
-                        <RiskEventPanel reservoirLevels={reservoirLevels} />
+                        <RiskEventPanel dangerReservoirs={dangerReservoirs} />
                     </div>
                 </div>
             </div>
@@ -77,21 +74,42 @@ export default function Dashboard() {
                     <WaterLevelPanel reservoirLevels={reservoirLevels} isLoading={isLoading} error={error} loadLevels={loadLevels}
                         treatment={treatment} loadTreatment={loadTreatment} dangerReservoirs={dangerReservoirs} />
                 </div>
-                <div className={`flex-1 p-4 md:p-6 rounded-2xl shadow-lg flex flex-col gap-4 transition-colors duration-500
-                    ${isDanger ? "bg-rose-50/90 border-rose-200" : "bg-emerald-50/90"}`}>
-                    <div className="flex justify-between items-center">
-                        <h2 className="text-md font-black text-slate-600 flex items-center gap-2">
-                            <div className={`w-2 h-2 rounded-full ${isDanger ? "bg-rose-500" : "bg-emerald-500"} animate-ping`} />
-                            {selectedReservoir?.reservoirName || "배수지"} 상세 분석
-                        </h2>
-                        <span className={`text-xs font-normal ml-2 ${isDanger ? "text-rose-600/60" : "text-slate-500"}`}>
-                            * 상단에서 배수지를 선택하세요.
-                        </span>
-                    </div>
-                    <div className="flex-1 grid grid-cols-1 lg:grid-cols-2 gap-4">
-                        <PredictionPanel />
-                        <PumpSchedulePanel />
-                    </div>
+                {/* [CENTER SECTION] 내 상세 분석 영역 */}
+                <div className={`flex-1 p-4 md:p-6 rounded-2xl shadow-lg flex flex-col gap-4 transition-all duration-500
+                    ${!selectedReservoir
+                        ? "bg-slate-50/50 border border-dashed border-slate-300"
+                        : selectedReservoir.riskStatus === "normal" ? "bg-emerald-50/90" : "bg-rose-50/90 border-rose-200"}`}>
+
+                    {selectedReservoir ? (
+                        // 1. 배수지가 선택되었을 때
+                        <>
+                            <div className="flex justify-between items-center">
+                                <h2 className="text-md font-black text-slate-600 flex items-center gap-2">
+                                    <div className={`w-2 h-2 rounded-full ${selectedReservoir.riskStatus === "normal" ? "bg-emerald-500" : "bg-rose-500" } animate-ping`} />
+                                    {selectedReservoir.reservoirName} 상세 분석
+                                </h2>
+                                <span className={`text-xs font-normal ml-2 ${selectedReservoir.riskStatus === "normal" ? "text-slate-500" : "text-rose-600/60" }`}>
+                                    * 15분 단위 실시간 데이터입니다.
+                                </span>
+                            </div>
+                            <div className="flex-1 grid grid-cols-1 lg:grid-cols-2 gap-4">
+                                <PredictionPanel />
+                                <PumpSchedulePanel />
+                            </div>
+                        </>
+                    ) : (
+                        // 2. 배수지가 선택되지 않았을 때
+                        <div className="flex-1 flex flex-col items-center justify-center text-center py-10">
+                            <div className="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mb-4">
+                                <Droplets className="text-slate-400 animate-bounce" size={32} />
+                            </div>
+                            <h2 className="text-lg font-bold text-slate-700 mb-1">분석할 배수지를 선택해주세요</h2>
+                            <p className="text-sm text-slate-400">
+                                상단 수위 현황 패널에서 배수지 카드를 클릭하면<br />
+                                수요 예측 및 최적화 펌프 운영 차트를 확인할 수 있습니다.
+                            </p>
+                        </div>
+                    )}
                 </div>
             </div>
 

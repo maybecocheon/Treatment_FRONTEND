@@ -1,31 +1,26 @@
 import { myFetch } from "@/api/api";
 import { TreatmentType } from "@/types/types";
-import { useCallback, useEffect, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { useRefreshTime } from "./useRefreshTime";
 
-export function useTreatment(date: string) {
-    const baseUrl = process.env.NEXT_PUBLIC_SERVER_URL;
-    const [error, setError] = useState<Error | null>(null);
+export function useTreatment() {
+  const baseUrl = process.env.NEXT_PUBLIC_SERVER_URL;
+  const { roundedTime: date} = useRefreshTime();
 
-    const [isLoading, setIsLoading] = useState(false);
-    const [treatment, setTreatment] = useState<TreatmentType | null>(null);
+  const { data: treatment, isLoading, isFetching, error, refetch: loadTreatment } = useQuery<TreatmentType>({
+    // 1. queryKey: date가 바뀔 때마다 자동으로 API를 다시 호출 (useEffect 역할)
+    queryKey: ["treatment", date], 
+    
+    // 2. queryFn: 실제 fetch 로직
+    queryFn: async () => {
+      const data = await myFetch(`${baseUrl}/treatment/now?date=${date}`);
+      return data;
+    },
+    
+    // 3. 옵션 설정
+    enabled: !!date, // date가 있을 때만 실행
+    staleTime: 1000 * 60 * 15, // 15분
+  });
 
-    const loadTreatment = useCallback(async () => {
-        setIsLoading(true);
-        setError(null);
-        try {
-            const data = await myFetch(`${baseUrl}/treatment/now?date=${date}`);
-            setTreatment(data);
-        } catch (error: any) {
-            setError(error);
-        } finally {
-            setIsLoading(false);
-        }
-    }, [baseUrl, date]);
-
-    // 의존성 변경 시 데이터 자동 로드
-    useEffect(() => {
-        loadTreatment();
-    }, [loadTreatment])
-
-    return { treatment, loadTreatment, isLoading, error };
+  return { treatment, loadTreatment, isLoading: isLoading || (isFetching && !treatment), error };
 }
