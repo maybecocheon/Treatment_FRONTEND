@@ -1,13 +1,16 @@
 'use client'
 
+import { selectedReservoirAtom } from "@/atoms/uniAtoms";
 import { useAllPrediction } from "@/hooks/useAllPrediction";
 import { ReservoirLevelType } from "@/types/types";
+import { useSetAtom } from "jotai";
 
 export default function RiskEventPanel({ dangerReservoirs }: { dangerReservoirs: ReservoirLevelType[] }) {
   const { checkLevelRisk } = useAllPrediction();
+  const setSelectedReservoir = useSetAtom(selectedReservoirAtom);
 
   return (
-    <div className="bg-white backdrop-blur-sm border border-slate-200/50 rounded-2xl p-3 lg:p-4 flex flex-col max-h-80 transition-all">
+    <div className="bg-white backdrop-blur-sm border border-slate-200/50 rounded-2xl p-3 lg:p-4 flex flex-col max-h-80 min-h-80 transition-all">
       {/* 헤더 섹션 */}
       <div className="flex justify-between items-center mb-3 shrink-0 px-1">
         <h2 className="text-xs lg:text-sm font-bold text-slate-700 flex items-center gap-2">
@@ -20,11 +23,12 @@ export default function RiskEventPanel({ dangerReservoirs }: { dangerReservoirs:
       </div>
 
       {/* 로그 리스트 영역 */}
-      <div className="overflow-y-auto space-y-2 pr-1 min-h-0 scrollbar-hide">
+      <div className="overflow-y-auto space-y-2 pr-1">
         {dangerReservoirs.map(r => (
           <div
             key={r.facilityId}
             className="bg-white/60 hover:bg-white border border-slate-200/60 rounded-xl p-3 transition-all duration-200 cursor-pointer group shadow-sm hover:shadow-md"
+            onClick={() => setSelectedReservoir(r)}
           >
             <div className="flex justify-between items-start">
               <div className="flex items-center gap-3">

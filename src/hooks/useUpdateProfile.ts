@@ -23,7 +23,6 @@ export default function useUpdateProfile() {
             toast.success("회원 정보가 성공적으로 수정되었습니다.");
             queryClient.invalidateQueries({ queryKey: ["userProfile"] });
         } catch (error) {
-            console.error("회원 정보 수정 오류: ", error);
             toast.error("수정 오류", { description: "회원 정보 수정 중 오류가 발생했습니다." });
         } finally {
             setIsLoading(false);
@@ -45,7 +44,6 @@ export default function useUpdateProfile() {
             handleLogout();
             return true;
         } catch (error) {
-            console.error("비밀번호 변경 오류: ", error);
             toast.error("변경 오류", { description: "비밀번호 수정 중 오류가 발생했습니다." });
         } finally {
             setIsLoading(false);
@@ -68,7 +66,6 @@ export default function useUpdateProfile() {
                         router.refresh();
                         router.push("/");
                     } catch (error) {
-                        console.error("탈퇴 중 오류", error);
                         toast.error("탈퇴 오류", { description: "회원 탈퇴 중 오류가 발생했습니다." });
                     } finally {
                         setIsLoading(false);

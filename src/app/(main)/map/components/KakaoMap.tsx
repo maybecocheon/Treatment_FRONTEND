@@ -5,22 +5,22 @@ import { CustomOverlayMap, Map, Polygon } from "react-kakao-maps-sdk";
 import sidoData from "@/data/sido.json"
 import FacilityOverlay from "./FacilityOverlay";
 import MapSkeleton from "./skeletons/MapSkeleton";
-import { useAtom, useSetAtom } from "jotai";
-import { isModalOpenAtom, mapDetailOpenAtom, mapLevelAtom, selectedFacilityIdAtom } from "@/atoms/uniAtoms";
+import { useAtom, useAtomValue } from "jotai";
+import { mapDetailOpenAtom, mapLevelAtom, selectedFacilityTypeAtom } from "@/atoms/uniAtoms";
 import { useFacilities } from "@/hooks/useFacilities";
-import ReservoirDetailsModal from "@/components/main/OpenDetail";
+import OpenDetail from "@/components/main/OpenDetail";
 import PageFallback from "@/components/skeletons/PageFallback";
 import ErrorFallback from "@/components/skeletons/ErrorFallback";
 
 
 export default function KakaoMap() {
-    const [mapDetailOpen, setMapDetailOpen] = useAtom(mapDetailOpenAtom);
-    const setIsModalOpen = useSetAtom(isModalOpenAtom);
-    const [selectedFacilityId, setSelectedFacilityId] = useAtom(selectedFacilityIdAtom);
+    const mapDetailOpen = useAtomValue(mapDetailOpenAtom);
+    const selectedFacilityType = useAtomValue(selectedFacilityTypeAtom);
     const [mapLevel, setMapLevel] = useAtom(mapLevelAtom);
 
     const [isClient, setIsClient] = useState(false);
     const [formattedPath, setFormattedPath] = useState<{ lat: number, lng: number }[]>([]);
+
     // 부산 시청 좌표를 중심으로 설정
     const center = { lat: 35.1996, lng: 129.0756 };
     const mapRef = useRef<kakao.maps.Map>(null);
@@ -45,7 +45,6 @@ export default function KakaoMap() {
 
                 setFormattedPath(path);
             } catch (err) {
-                console.error("좌표 파싱 중 에러 발생: ", err);
                 setFormattedPath([]);
             }
         }
@@ -55,6 +54,7 @@ export default function KakaoMap() {
         return () => setMapLevel(9);
     }, []);
 
+    // 상세 정보 오픈 시 지도 크기 조절
     useEffect(() => {
         const handleResize = () => {
             const map = mapRef.current;
@@ -70,21 +70,6 @@ export default function KakaoMap() {
             window.removeEventListener("resize", handleResize);
         };
     }, [mapDetailOpen]);
-
-    // 클릭 핸들러 함수 분리
-    const handleFacilityClick = (facilityId: number) => {
-        setSelectedFacilityId(facilityId);
-
-        const isMobile = window.innerWidth < 1028;
-
-        if (isMobile) {
-            setIsModalOpen(true);
-            setMapDetailOpen(false);
-        } else {
-            setMapDetailOpen(true);
-            setIsModalOpen(false); 
-        }
-    };
 
     if (!isClient || isLoading) return <PageFallback skeleton={<MapSkeleton />} />;
     if (error) return <ErrorFallback error={error} onClick={() => loadFacilities()} />;
@@ -120,11 +105,11 @@ export default function KakaoMap() {
                 {facilities &&
                     facilities.map(facility => ((facility.type === "정수장" || facility.type === "배수지") &&
                         <CustomOverlayMap key={facility.facilityId} position={{ lat: facility.lat || 0, lng: facility.lng || 0 }}>
-                            <FacilityOverlay facility={facility} onClick={() => { handleFacilityClick(facility.facilityId); }} />
+                            <FacilityOverlay facility={facility} />
                         </CustomOverlayMap>
                     ))}
             </Map>
-            {selectedFacilityId && <ReservoirDetailsModal />}
+            {selectedFacilityType && <OpenDetail />}
         </div>
     );
 }

@@ -1,10 +1,9 @@
 'use client'
 
-import { useEffect, useMemo } from 'react';
 import { usePredictionData } from '@/hooks/usePredictionData';
-import { isModalOpenAtom, selectedFacilityIdAtom, selectedReservoirAtom } from '@/atoms/uniAtoms';
-import { useAtomValue, useAtom, useSetAtom } from 'jotai';
-import TailLineChart from '@/components/main/TailLineChart';
+import { isModalOpenAtom } from '@/atoms/uniAtoms';
+import { useAtom } from 'jotai';
+import PredictionChart from '@/components/main/PredictionChart';
 import TailChartSkeleton from '@/components/main/skeletons/TailChartSkeleton';
 import PageFallback from '@/components/skeletons/PageFallback';
 import ErrorFallback from '@/components/skeletons/ErrorFallback';
@@ -12,19 +11,9 @@ import { ArrowUpRight } from 'lucide-react';
 import ReservoirDetails from '@/components/main/OpenDetail';
 
 export default function PredictionPanel() {
-  const selectedReservoir = useAtomValue(selectedReservoirAtom);
-  const setSelectedFacilityId = useSetAtom(selectedFacilityIdAtom);
   const [isModalOpen, setIsModalOpen] = useAtom(isModalOpenAtom);
-
-  const { loadPredictionData, filteredChartData,
-    isLoading, error, selectedRange, setSelectedRange } = usePredictionData(selectedReservoir?.facilityId ?? 0);
-
-  useEffect(() => {
-    if (selectedReservoir?.facilityId) {
-      setSelectedFacilityId(selectedReservoir.facilityId);
-    }
-  }, [selectedReservoir?.facilityId, setSelectedFacilityId]);
-
+  const { loadPredictionData, filteredChartData, isLoading, error, selectedRange, setSelectedRange } = usePredictionData();
+  
   return (
     <>
       <div className="flex-1">
@@ -76,7 +65,7 @@ export default function PredictionPanel() {
               ) : error ? (
                 <ErrorFallback error={error} onClick={() => loadPredictionData()} />
               ) : (
-                <TailLineChart
+                <PredictionChart
                   data={filteredChartData}
                   labels={["실 수요", "예측 수요"]}
                   mode="prediction"

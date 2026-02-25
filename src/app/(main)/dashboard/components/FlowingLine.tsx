@@ -6,14 +6,29 @@ interface FlowingLineProps {
 }
 
 export default function FlowingLine({ start, end }: FlowingLineProps) {
-  const midY = start.y + 40;
-  // const pathData = `M ${start.x} ${start.y} L ${start.x} ${midY} L ${end.x} ${midY} L ${end.x} ${end.y}`;
+  const getPathData = (start: Point, end: Point) => {
+    const deltaX = end.x - start.x;
+    const deltaY = end.y - start.y;
+    const isMobile = window.innerWidth < 1024;
 
-  const deltaY = Math.abs(end.y - start.y);
-  const pathData = `M ${start.x} ${start.y} 
-                    C ${start.x} ${start.y + deltaY * 0.4}, 
-                      ${end.x} ${end.y - deltaY * 0.4}, 
-                      ${end.x} ${end.y}`;
+    if (isMobile) {
+      // 가로 방향 곡선 (왼쪽 중앙에 닿을 때)
+      const cp1x = start.x + deltaX * 0.5;
+      const cp1y = start.y;
+      const cp2x = end.x - deltaX * 0.5;
+      const cp2y = end.y;
+      return `M ${start.x} ${start.y} C ${cp1x} ${cp1y}, ${cp2x} ${cp2y}, ${end.x} ${end.y}`;
+    } else {
+      // 세로 방향 곡선
+      const cp1x = start.x;
+      const cp1y = start.y + deltaY * 0.5;
+      const cp2x = end.x;
+      const cp2y = end.y - deltaY * 0.5;
+      return `M ${start.x} ${start.y} C ${cp1x} ${cp1y}, ${cp2x} ${cp2y}, ${end.x} ${end.y}`;
+    }
+  };
+
+  const pathData = getPathData(start, end);
 
   return (
     <g>

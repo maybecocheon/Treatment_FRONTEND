@@ -9,8 +9,7 @@ import { Droplets, Gauge, Waves } from 'lucide-react';
 
 export default function TreatmentDetails() {
     const mapOpenDetail = useAtomValue(mapDetailOpenAtom);
-    const { treatment, loadTreatment, isLoading, error } = useTreatment("2023-01-01 00:00:01");
-
+    const { treatment, loadTreatment, isLoading, error } = useTreatment();
 
     // 에러 발생 시 처리
     if (error) return (
@@ -23,7 +22,7 @@ export default function TreatmentDetails() {
     if ((isLoading || !treatment) && mapOpenDetail) return null;
 
     return (
-        <div className="flex flex-col gap-0 md:gap-4 p-6 h-full">
+        <div className="flex flex-col gap-0 md:gap-4 p-6 h-full bg-sky-200/50">
             <StatCard
                 icon={<Droplets size={28} />}
                 label="실시간 송수량"

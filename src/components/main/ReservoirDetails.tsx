@@ -1,4 +1,6 @@
-import { isModalOpenAtom, mapDetailOpenAtom, selectedFacilityIdAtom } from '@/atoms/uniAtoms';
+'use client'
+
+import { isModalOpenAtom, mapDetailOpenAtom, selectedReservoirAtom } from '@/atoms/uniAtoms';
 import { usePredictionData } from '@/hooks/usePredictionData';
 import { useAtomValue } from 'jotai';
 import ErrorFallback from '../skeletons/ErrorFallback';
@@ -6,22 +8,19 @@ import ReservoirModalSkeleton from './skeletons/ReservoirModalSkeleton';
 import ReservoirDetailSkeleton from './skeletons/ReservoirDetailsSkeleton';
 import { AlertTriangle, BarChart3, TrendingUp, Waves } from 'lucide-react';
 import { WaterWave } from '../WaterWave';
-// import TailAreaChart from './TailAreaChart//
+import TailLineChart from './PredictionChart';
 
 export default function ReservoirDetails() {
     const isModalOpen = useAtomValue(isModalOpenAtom);
     const mapOpenDetail = useAtomValue(mapDetailOpenAtom);
-    const selectedFacilityId = useAtomValue(selectedFacilityIdAtom);
+    const selectedReservoir = useAtomValue(selectedReservoirAtom);
 
     // 차트 데이터
-    const { minuteData, loadPredictionData, filteredChartData, error, selectedRange, setSelectedRange, isLoading }
-             = usePredictionData(selectedFacilityId);
+    const { minuteData, loadPredictionData, filteredChartData, error, selectedRange, setSelectedRange, isLoading } = usePredictionData();
 
-    // 고수위 & 저수위
-    const maxLevelAlert = minuteData?.maxLevel * 0.8;
-    const minLevelAlert = minuteData?.maxLevel * 0.3;
     // 수위 위험 상태 체크
-    const isLevelCritical = (minuteData?.currentLevel < minLevelAlert) || (minuteData?.currentLevel > maxLevelAlert);
+    const levelStatus = selectedReservoir?.riskStatus;
+    const isLevelCritical = selectedReservoir?.riskStatus === "low" || selectedReservoir?.riskStatus === "high";
     const levelPercent = (minuteData?.currentLevel / minuteData?.maxLevel) * 100;
 
     // 에러 발생 시 처리
@@ -39,7 +38,7 @@ export default function ReservoirDetails() {
     }
 
     return (
-        <div className={`flex-1 p-6 overflow-y-auto overflow-x-hidden rounded-b-4xl ${isLevelCritical ? "bg-red-100/50" : "bg-sky-100/50"}`}>
+        <div className={`flex-1 p-6 overflow-y-auto overflow-x-hidden rounded-b-4xl ${isLevelCritical ? "bg-red-100/50" : "bg-sky-200/50"}`}>
             <div className="h-full flex flex-col">
                 {/* 수위 경고 배너 (위험 시에만 노출) */}
                 {isLevelCritical && (
@@ -48,7 +47,7 @@ export default function ReservoirDetails() {
                             <AlertTriangle className="text-white w-6 h-6" />
                         </div>
                         <div className="flex-1">
-                            <h4 className="text-red-900 font-bold text-lg leading-tight">{minuteData?.currentLevel < minLevelAlert ? "저수위 경보 발생" : "고수위 경보 발생"}</h4>
+                            <h4 className="text-red-900 font-bold text-lg leading-tight">{levelStatus === "low" ? "저수위 경보 발생" : "고수위 경보 발생"}</h4>
                         </div>
                         <button className="bg-red-500 text-white px-5 py-2.5 rounded-xl font-bold text-sm hover:bg-red-600 transition-colors">
                             즉시 조치
@@ -115,13 +114,11 @@ export default function ReservoirDetails() {
                         </div>
                     </div>
                     <div className="flex-1 w-full" style={{ minHeight: "80px" }}>
-                        {/* <TailAreaChart
-                            time={filteredChartData.map(d => d.time || 0)}
-                            data1={filteredChartData.map(d => d.actualValue || 0)}
-                            data2={filteredChartData.map(d => d.predictedValue || 0)}
+                        <TailLineChart
+                            data={filteredChartData}
                             labels={["실 수요", "예측 수요"]}
-                            units={[" m³/h", " m³/h"]}
-                        /> */}
+                            mode="prediction"
+                        />
                     </div>
                 </div>
             </div>

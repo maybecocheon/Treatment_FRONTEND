@@ -4,25 +4,27 @@ import { useMemo, useState } from "react";
 import { myFetch } from "@/api/api";
 import { useQuery } from "@tanstack/react-query";
 import { useRefreshTime } from "./useRefreshTime";
+import { useAtomValue } from "jotai";
+import { selectedReservoirAtom } from "@/atoms/uniAtoms";
 
-export function usePredictionData(id: number) {
+export function usePredictionData() {
     const baseUrl = process.env.NEXT_PUBLIC_SERVER_URL;
     const { roundedTime: date } = useRefreshTime();
     const [selectedRange, setSelectedRange] = useState("12h");
+    const selectedReservoir = useAtomValue(selectedReservoirAtom);
 
     // 메인 쿼리
-    const { data: rawChartData = [], isLoading, isFetching, error, refetch: loadPredictionData, data: fullResponse } = useQuery({
-        queryKey: ["predictionChart", id, date],
+    const { isLoading, isFetching, error, refetch: loadPredictionData, data: fullResponse } = useQuery({
+        queryKey: ["predictionChart", selectedReservoir?.facilityId, date],
         queryFn: async () => {
-            const data = await myFetch(`${baseUrl}/reservoir/chart/${id}?date=${date}`);
-            console.log(data)
+            const data = await myFetch(`${baseUrl}/reservoir/chart/${selectedReservoir?.facilityId}?date=${date}`);
 
             // 서버가 계산 중이면 에러 던져서 retry 유도
             if (data.isProcessing) throw new Error("PROCESSING");
 
             return data;
         },
-        enabled: !!id && id !== 0 && !!date,
+        enabled: !!selectedReservoir?.facilityId && selectedReservoir?.facilityId !== 0 && !!date,
         staleTime: 1000 * 60 * 15, // 15분
 
         // 재시도 설정 (2초 간격, 최대 5번)
@@ -31,17 +33,17 @@ export function usePredictionData(id: number) {
             return false;
         },
         retryDelay: 2000,
-
-        // 차트 데이터 가공 (기존 setRawChartData 로직)
-        select: (data) => {
-            const chartList = data.chartData || [];
-            return chartList.map((item: any, index: number) => ({
-                time: item.time.split("T")[1]?.substring(0, 5) || "",
-                first: item.actualValue,
-                second: index >= 720 ? item.predictedValue : null
-            }));
-        }
     });
+
+    // 차트 데이터 가공
+    const rawChartData = useMemo(() => {
+        const chartList = fullResponse?.chartData || [];
+        return chartList.map((item: any, index: number) => ({
+            time: item.time.split("T")[1]?.substring(0, 5) || "",
+            first: item.actualValue,
+            second: index >= 720 ? item.predictedValue : null
+        }));
+    }, [fullResponse]);
 
     // 3. 차트 필터링 로직 (현재 시간 기준 slice)
     const filteredChartData = useMemo(() => {

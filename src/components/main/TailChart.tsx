@@ -11,7 +11,7 @@ export default function TailChart({ data, isTreatment = false, isMonthly, labels
   // 유량(area)
   const areaColor = isMonthly ? "#22d3ee" : "#3b82f6";
   // 상태(Bar)
-  const barColor = isTreatment ? "#10b981" : (isMonthly ? "#0891b2" : "#36bad1");
+  const barColor = isTreatment && isMonthly ? "#2fa880" : (isTreatment && !isMonthly) ? "#10b981" : (!isTreatment && isMonthly) ? "#0891b2" : "#36bad1";
 
   // 단위
   const flowUnit = " m³/h";

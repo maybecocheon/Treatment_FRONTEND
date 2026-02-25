@@ -1,30 +1,47 @@
+'use client'
+
+import { selectedFacilityTypeAtom, selectedReservoirAtom } from "@/atoms/uniAtoms";
 import { WaterWave } from "@/components/WaterWave";
+import useModalSet from "@/hooks/useModalSet";
 import { ReservoirLevelType } from "@/types/types";
+import { useAtom, useSetAtom } from "jotai";
 import { AlertTriangle, Loader2 } from "lucide-react";
+import { useEffect } from "react";
 
 interface WaterLevelCardProps {
     res: ReservoirLevelType;
     mapLevel: number;
-    isSelected?: boolean;
-    onClick: () => void;
     isLevel?: boolean;
     isLoading: boolean;
-    isDanger: boolean;
+    status: string,
 }
 
-export default function WaterLevelCard({ res, mapLevel, isSelected, onClick, isLevel = true, isLoading = false, isDanger }: WaterLevelCardProps) {
+export default function WaterLevelCard({ res, mapLevel, isLevel = true, isLoading = false, status }: WaterLevelCardProps) {
+    // 데이터
+    const [selectedReservoir, setSelectedReservoir] = useAtom(selectedReservoirAtom);
+    const setSelectedFacilityType = useSetAtom(selectedFacilityTypeAtom);
+    const { onOpen } = useModalSet();
+
+    // 초기화
+    useEffect(() => {
+        return () => { setSelectedReservoir(null); setSelectedFacilityType(""); }
+    }, []);
+
+    // 배수지 상태
+    const isSelected = selectedReservoir?.facilityId === res.facilityId;
+    const levelPercent = (res.level / res.maxLevel) * 100;
+    const isDanger = res.riskStatus === "low" || res.riskStatus === "high";
+
     if (isLoading)
         return <div className="w-40 h-20 flex items-center justify-center bg-slate-100 rounded-2xl shadow-inner">
             <Loader2 className="w-5 h-5 text-slate-300 animate-spin" />
         </div>
 
-    const levelPercent = (res.level / res.maxLevel) * 100;
-
     return (
         <div
-            onClick={onClick}
+            onClick={() => status === "map" ? onOpen("배수지", res) : setSelectedReservoir(res)}
             key={res.facilityId}
-            className={`flex-1 pl-4 group cursor-pointer transition-all duration-300
+            className={`flex-1 group cursor-pointer transition-all duration-300
                 ${isSelected ? "scale-105" : "hover:-translate-y-1"}`}
         >
             <div className={`relative overflow-hidden w-36 h-20 rounded-xl lg:rounded-2xl 

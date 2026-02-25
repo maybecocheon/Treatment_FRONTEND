@@ -19,7 +19,6 @@ export function useLogout() {
             await myFetch(`${baseUrl}/auth/logout`, { method: "POST" });
             toast.success("성공적으로 로그아웃되었습니다.", { id: toastId });
         } catch (error) {
-            console.error("로그아웃 오류: ", error);
             toast.error("로그아웃 오류", { id: toastId, description: "강제 로그아웃 처리되었습니다." });
         } finally {
             setIsLoading(false);

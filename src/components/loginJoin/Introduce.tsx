@@ -33,7 +33,7 @@ export default function Introduce() {
     }, [scroll]);
 
     return (
-        <section className="relative min-h-screen flex flex-col items-center justify-center gap-6 overflow-hidden py-12 md:py-20 px-4">
+        <section className="relative min-h-screen flex flex-col items-center justify-center gap-6 overflow-y-auto py-12 md:py-20 px-4">
             {/* 배경 */}
             <Background />
 
@@ -76,10 +76,10 @@ export default function Introduce() {
                             {/* 통계/기능 카드 */}
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-5 max-w-2xl mx-auto lg:mx-0">
                                 {[
-                                    { icon: <Target className="w-5 h-5 text-sky-500" />, label: "98% 이상의 수요 예측도" },
-                                    { icon: <Zap className="w-5 h-5 text-amber-500" />, label: "에너지 비용 15% 절감" },
+                                    { icon: <Target className="w-5 h-5 text-sky-500" />, label: "90% 이상의 수요 예측도" },
+                                    { icon: <Zap className="w-5 h-5 text-amber-500" />, label: "에너지 비용 5~10% 절감" },
                                     { icon: <ShieldCheck className="w-5 h-5 text-emerald-500" />, label: "실시간 수압 이상 탐지" },
-                                    { icon: <Droplets className="w-5 h-5 text-blue-500" />, label: "자동화된 제어 시나리오" }
+                                    { icon: <Droplets className="w-5 h-5 text-blue-500" />, label: "펌프 가동 최적화 운영" }
                                 ].map((item, i) => (
                                     <div key={i} className="flex items-center gap-3 md:gap-4 font-bold text-slate-700 p-3 md:p-4 bg-white/50 rounded-2xl border border-slate-100 lg:bg-transparent lg:border-none">
                                         <div className="p-2 md:p-2.5 bg-white rounded-xl shadow-sm border border-slate-100 shrink-0">{item.icon}</div>

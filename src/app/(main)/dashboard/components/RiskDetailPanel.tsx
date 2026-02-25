@@ -1,6 +1,6 @@
 'use client'
 
-import { PieChart, Pie, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, LabelList } from "recharts";
+import { PieChart, Pie, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, LabelList } from "recharts";
 
 export default function RiskDetailPanel({ riskMetrics }: { riskMetrics: { totalScore: number; dangerCount: number; treatmentFine: boolean; } }) {
   const { totalScore, dangerCount, treatmentFine } = riskMetrics;
@@ -92,7 +92,9 @@ export default function RiskDetailPanel({ riskMetrics }: { riskMetrics: { totalS
               <span className="font-bold mr-1">● 분석 결과:</span>
               {
                 isDanger
-                  ? `현재 ${dangerCount}개 배수지에서 수위 위험이 감지되었습니다. 정수장 공급 압력을 확인하십시오.`
+                  ? treatmentFine ?
+                  `현재 ${dangerCount}개 배수지에서 수위 위험이 감지되었습니다.`
+                  : "정수장 공급 압력을 확인하십시오."
                   : "시설의 공급 및 수위 상태가 매우 양호합니다."
               }
             </p>

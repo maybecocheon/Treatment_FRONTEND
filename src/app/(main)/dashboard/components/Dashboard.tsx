@@ -14,6 +14,7 @@ import { useReservoirLevel } from "@/hooks/useReservoirLevel";
 import { useTreatment } from "@/hooks/useTreatment";
 import { useMemo } from "react";
 import { useAllPrediction } from "@/hooks/useAllPrediction";
+import EmptySelection from "@/components/main/EmptySelection";
 
 export default function Dashboard() {
     const { reservoirLevels, loadLevels, error, isLoading } = useReservoirLevel();
@@ -51,7 +52,6 @@ export default function Dashboard() {
         };
     }, [reservoirLevels, treatment, checkLevelRisk]);
 
-
     return (
         <div className="h-full flex flex-col xl:grid xl:grid-cols-12 gap-4">
 
@@ -70,12 +70,12 @@ export default function Dashboard() {
 
             {/* [CENTER SECTION]: 수위 or 유입량 현황 */}
             <div className="h-auto flex-1 xl:col-span-7 flex flex-col gap-4">
-                <div className="flex-1">
+                <div className="flex-[1.2]">
                     <WaterLevelPanel reservoirLevels={reservoirLevels} isLoading={isLoading} error={error} loadLevels={loadLevels}
-                        treatment={treatment} loadTreatment={loadTreatment} dangerReservoirs={dangerReservoirs} />
+                        treatment={treatment} loadTreatment={loadTreatment} />
                 </div>
                 {/* [CENTER SECTION] 내 상세 분석 영역 */}
-                <div className={`flex-1 p-4 md:p-6 rounded-2xl shadow-lg flex flex-col gap-4 transition-all duration-500
+                <div className={`flex-[0.8] p-4 md:p-6 rounded-2xl shadow-lg flex flex-col gap-4 transition-all duration-500
                     ${!selectedReservoir
                         ? "bg-slate-50/50 border border-dashed border-slate-300"
                         : selectedReservoir.riskStatus === "normal" ? "bg-emerald-50/90" : "bg-rose-50/90 border-rose-200"}`}>
@@ -89,7 +89,7 @@ export default function Dashboard() {
                                     {selectedReservoir.reservoirName} 상세 분석
                                 </h2>
                                 <span className={`text-xs font-normal ml-2 ${selectedReservoir.riskStatus === "normal" ? "text-slate-500" : "text-rose-600/60" }`}>
-                                    * 15분 단위 실시간 데이터입니다.
+                                    * 분 단위 실시간 데이터입니다.
                                 </span>
                             </div>
                             <div className="flex-1 grid grid-cols-1 lg:grid-cols-2 gap-4">
@@ -99,16 +99,7 @@ export default function Dashboard() {
                         </>
                     ) : (
                         // 2. 배수지가 선택되지 않았을 때
-                        <div className="flex-1 flex flex-col items-center justify-center text-center py-10">
-                            <div className="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mb-4">
-                                <Droplets className="text-slate-400 animate-bounce" size={32} />
-                            </div>
-                            <h2 className="text-lg font-bold text-slate-700 mb-1">분석할 배수지를 선택해주세요</h2>
-                            <p className="text-sm text-slate-400">
-                                상단 수위 현황 패널에서 배수지 카드를 클릭하면<br />
-                                수요 예측 및 최적화 펌프 운영 차트를 확인할 수 있습니다.
-                            </p>
-                        </div>
+                        <EmptySelection />
                     )}
                 </div>
             </div>

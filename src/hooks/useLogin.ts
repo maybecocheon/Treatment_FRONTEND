@@ -54,7 +54,6 @@ export function useLogin() {
                 toast.error(data.message || "아이디 또는 비밀번호를 다시 확인해 주세요.");
             }
         } catch (error) {
-            console.error("로그인 오류: ", error);
             toast.error("로그인 중 일시적인 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.");
         } finally {
             setIsLoading(false);

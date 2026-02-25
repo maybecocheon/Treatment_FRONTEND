@@ -1,23 +1,22 @@
 'use client'
 
 import { useState } from "react";
-import { Calendar, CalendarDays, Clock, Droplets, Filter } from "lucide-react";
+import { Calendar, CalendarDays, Clock, Filter } from "lucide-react";
 import Title from "@/components/main/Title";
 import ChartBox from "@/components/main/ChartBox";
 import { useHistory } from "@/hooks/useHistory";
 import { StatCard } from "@/components/main/StatCard";
 import { FacilityType } from "@/types/types";
-import { useFacilities } from "@/hooks/useFacilities";
 import PageFallback from "@/components/skeletons/PageFallback";
 import TailChartSkeleton from "@/components/main/skeletons/TailChartSkeleton";
 import ErrorFallback from "@/components/skeletons/ErrorFallback";
 import TailChart from "@/components/main/TailChart";
+import FacilitySelect from "@/components/main/FacilitySelect";
 
 export default function History() {
     const [selectedDate, setSelectedDate] = useState<string>("2023-12-31");
     const [selectedFacility, setSelectedFacility] = useState<FacilityType["facilityId"]>(1);
 
-    const { facilities, isLoading } = useFacilities();
     const { stats, chartData, monthData, labels, titles, isInfoLoading, infoError,
         chartError, isChartLoading, loadHistoryChartData, loadHistoryData } = useHistory(selectedFacility, selectedDate);
 
@@ -31,28 +30,7 @@ export default function History() {
                         <Filter className="w-4 h-4" />
                     </button>
                     {/* 카테고리 */}
-                    <div className="relative flex-1">
-                        <Droplets className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-                        <select
-                            className="w-full bg-slate-50 border border-slate-100 rounded-2xl py-2.5 pl-11 pr-4 text-sm font-bold text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
-                            name="category"
-                            value={selectedFacility}
-                            onChange={(e) => setSelectedFacility(Number(e.target.value))}
-                        >
-                            {
-                                isLoading ?
-                                    (
-                                        <option value="" disabled>
-                                            로딩중...
-                                        </option>
-                                    )
-                                    : (
-                                        facilities.filter(f => f.type === "정수장" || f.type === "배수지")
-                                            .map(f => <option key={f.facilityId} value={f.facilityId}>{f.name}</option>)
-                                    )
-                            }
-                        </select>
-                    </div>
+                    <FacilitySelect value={selectedFacility} onChange={setSelectedFacility} filterTypes={["정수장", "배수지"]}/>
                     {/* 날짜 */}
                     <div className="relative max-w-full xl:max-w-60">
                         <Calendar className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
@@ -84,7 +62,6 @@ export default function History() {
                             isTreatment={selectedFacility === 1 ? true : false}
                             isMonthly={true}
                             labels={labels}
-                            units={[" m³/h", selectedFacility === 1 ?  " kgf/㎠" : " m"]}
                         />
                     )}
                 </ChartBox>
@@ -123,7 +100,6 @@ export default function History() {
                                 isTreatment={selectedFacility === 1 ? true : false}
                                 isMonthly={false}
                                 labels={labels}
-                                units={[" m³/h", selectedFacility === 1 ?  " kgf/㎠" : " m"]}
                             />
                         )}
                     </ChartBox>

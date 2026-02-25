@@ -1,15 +1,12 @@
 'use client'
 
-import { selectedReservoirAtom } from '@/atoms/uniAtoms';
 import TailChartSkeleton from '@/components/main/skeletons/TailChartSkeleton';
-import TailLineChart from '@/components/main/TailLineChart';
+import PredictionChart from '@/components/main/PredictionChart';
 import ErrorFallback from '@/components/skeletons/ErrorFallback';
 import PageFallback from '@/components/skeletons/PageFallback';
 import useOptimization from '@/hooks/useOptimization';
-import { useAtomValue } from 'jotai';
 
 export default function PumpSchedulePanel() {
-  const selectedReservoir = useAtomValue(selectedReservoirAtom);
   const { optimizationData, isLoading, error, loadOptimization } = useOptimization();
 
   return (
@@ -29,9 +26,9 @@ export default function PumpSchedulePanel() {
             ) : error ? (
               <ErrorFallback error={error} onClick={() => loadOptimization()} />
             ) : (
-              <TailLineChart
+              <PredictionChart
                 data={optimizationData}
-                labels={["펌프 대수", "예측 수위"]}
+                labels={["예측 수위", "가동 펌프"]}
               />
             )}
           </div>
