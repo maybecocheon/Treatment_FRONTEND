@@ -9,7 +9,7 @@ export default function HistorySkeleton() {
           <div className="h-10 w-64 bg-slate-200 rounded-xl" />
           <div className="h-5 w-80 bg-slate-100 rounded-lg" />
         </div>
-        
+
         <div className="glass p-3 rounded-4xl flex items-center gap-4 w-full md:w-auto shadow-sm">
           <div className="h-12 w-36 bg-slate-100 rounded-2xl flex-1 md:flex-none" />
           <div className="h-12 w-48 bg-slate-100 rounded-2xl" />

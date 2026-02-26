@@ -8,6 +8,11 @@ import WaterLevelCard from "@/components/main/WaterLevelCard";
 import { Point, ReservoirLevelType, TreatmentType } from "@/types/types";
 import FlowingLine from "./FlowingLine";
 import PageFallback from "@/components/skeletons/PageFallback";
+import { useAtom } from "jotai";
+import { timeSlideAtom, virtualTimeAtom } from "@/atoms/uniAtoms";
+import dayjs from "dayjs";
+import { useRefreshTime } from "@/hooks/useRefreshTime";
+import { Clock } from "lucide-react";
 
 interface WaterLevelPanelProps {
   reservoirLevels: ReservoirLevelType[];
@@ -27,6 +32,32 @@ export default function WaterLevelPanel({ reservoirLevels, isLoading, error, loa
   const plantRef = useRef<HTMLDivElement>(null);
   const cardsRef = useRef<(HTMLDivElement | null)[]>([]);
   const [connections, setConnections] = useState<{ start: Point; end: Point }[]>([]);
+
+  // 타임 슬라이드 상태
+  const [timeSlide, setTimeSlide] = useAtom(timeSlideAtom);
+  const { roundedTime } = useRefreshTime();
+
+  // 페이지 벗어날 시 (unmount) 타임 슬라이드 초기화
+  useEffect(() => {
+    return () => {
+      setTimeSlide(null);
+    };
+  }, [setTimeSlide]);
+
+  // 슬라이더 값 계산 (0 ~ 48, 15분 단위, -6h ~ +6h 범위)
+  // 0: -6시간, 24: 현재(roundedTime), 48: +6시간
+  const calculateSliderValue = () => {
+    if (!timeSlide || !roundedTime) return 24;
+    const diffMin = dayjs(timeSlide).diff(dayjs(roundedTime), 'minute');
+    return 24 + (diffMin / 15);
+  };
+
+  const handleSliderChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const val = parseInt(e.target.value);
+    const offsetMin = (val - 24) * 15;
+    const newTime = dayjs(roundedTime).add(offsetMin, 'minute').format("YYYY-MM-DD HH:mm:ss");
+    setTimeSlide(newTime);
+  };
 
   const updateConnections = useCallback(() => {
     if (!containerRef.current || !plantRef.current) return;
@@ -78,24 +109,25 @@ export default function WaterLevelPanel({ reservoirLevels, isLoading, error, loa
   }, [reservoirLevels]);
 
   // 반응형 감지
-  // DOM이 브라우저에 페인팅된 직후 실행되도록 약간의 지연
+  // 화면 크기가 변할 때 즉시 선 재계산
+  useEffect(() => {
+    const handleResize = () => {
+      updateConnections();
+    };
+
+    window.addEventListener("resize", handleResize);
+    updateConnections();
+
+    return () => window.removeEventListener("resize", handleResize);
+  }, [updateConnections]);
+
+  // 데이터 변경 시 호출하는 타이머
   useEffect(() => {
     if (reservoirLevels.length > 0 && treatment) {
-      
-      const timer = setTimeout(() => {
-        updateConnections();
-      }, 100); 
-
+      const timer = setTimeout(updateConnections, 100);
       return () => clearTimeout(timer);
     }
   }, [reservoirLevels, treatment, updateConnections]);
-
-  // 다시 돌아왔을 때도 선이 깨지지 않게 보정
-  useEffect(() => {
-    const handleFocus = () => updateConnections();
-    window.addEventListener("focus", handleFocus);
-    return () => window.removeEventListener("focus", handleFocus);
-  }, [updateConnections]);
 
   const topCards = reservoirLevels.slice(0, 6);
   const bottomCards = reservoirLevels.slice(6, 12);
@@ -109,26 +141,26 @@ export default function WaterLevelPanel({ reservoirLevels, isLoading, error, loa
     </div>
   );
 
-  if (!reservoirLevels || !treatment) return <PageFallback skeleton={<WaterLevelPanelSkeleton />} />;
+  if (!reservoirLevels || !treatment || isLoading) return <PageFallback skeleton={<WaterLevelPanelSkeleton />} />;
 
   return (
-    <div ref={containerRef} className="h-full glass rounded-2xl p-4 lg:p-6 flex flex-col relative">
-      <div className="flex gap-2 mb-6">
-        <h2 className="text-md font-black text-slate-600 px-1 flex items-center gap-1">
+    <div ref={containerRef} className="h-full glass rounded-2xl p-5 flex flex-col relative">
+      <div className="flex gap-2 mb-2">
+        <h2 className="text-md font-black text-foreground opacity-80 px-1 flex items-center gap-1">
           {isLevel ? (
             <>
-              <Droplets size={18} className="text-blue-500" />
+              <Droplets size={18} className="text-primary" />
               <span>수위 현황</span>
             </>
           ) : (
             <>
-              <Waves size={18} className="text-sky-500" />
+              <Waves size={18} className="text-primary" />
               <span>유입량 현황</span>
             </>
           )}
         </h2>
-        <button onClick={toggle} className={`w-10 h-6 flex items-center rounded-full p-1 duration-300 ease-in-out ${isLevel ? "bg-blue-600" : "bg-gray-300"}`}>
-          <div className={`bg-white w-4 h-4 rounded-full shadow-md transform duration-300 ease-in-out ${isLevel ? "translate-x-4" : "translate-x-0"}`} />
+        <button onClick={toggle} className={`w-10 h-6 flex items-center rounded-full p-1 duration-300 ease-in-out ${isLevel ? "bg-primary" : "bg-muted/30"}`}>
+          <div className={`bg-primary-foreground w-4 h-4 rounded-full shadow-md transform duration-300 ease-in-out ${isLevel ? "translate-x-4" : "translate-x-0"}`} />
         </button>
       </div>
 
@@ -141,7 +173,7 @@ export default function WaterLevelPanel({ reservoirLevels, isLoading, error, loa
 
       <div className="flex flex-col items-center">
         {/* 1. 상단 배수지 그리드 */}
-        <div className="grid grid-cols-2 lg:grid-cols-6 gap-y-3 gap-x-20 lg:gap-x-3 mb-5 z-10">
+        <div className="grid grid-cols-2 lg:grid-cols-6 gap-y-3 gap-x-20 lg:gap-x-3 mb-2 z-10">
           {topCards.map((res, i) => (
             <div key={res.facilityId} ref={el => { cardsRef.current[i] = el; }}>
               <WaterLevelCard res={res} mapLevel={-1} isLevel={isLevel} isLoading={isLoading} status="dashboard" />
@@ -150,45 +182,45 @@ export default function WaterLevelPanel({ reservoirLevels, isLoading, error, loa
         </div>
 
         {/* 1. 정수장 섹션 */}
-        <div ref={plantRef} className="relative z-10 mb-5 flex flex-col items-center shrink-0">
-          <div className="relative bg-white/90 border-2 border-slate-700 p-4 lg:p-5 rounded-2xl lg:rounded-3xl shadow-xl backdrop-blur-md flex items-center gap-4 min-w-45 lg:min-w-50">
+        <div ref={plantRef} className="relative z-10 mb-2 flex flex-col items-center shrink-0">
+          <div className="relative bg-card/90 border-3 border-card-border p-4 lg:p-5 rounded-2xl lg:rounded-3xl shadow-xl backdrop-blur-md flex items-center gap-4 min-w-45 lg:min-w-50">
             {/* 아이콘 섹션 */}
-            <div className="bg-slate-700 p-2.5 lg:p-3 rounded-xl lg:rounded-2xl shadow-inner shrink-0">
-              <Factory className="w-5 h-5 lg:w-6 lg:h-6 text-white" />
+            <div className="bg-primary p-2.5 lg:p-3 rounded-xl lg:rounded-2xl shadow-inner shrink-0">
+              <Factory className="w-5 h-5 lg:w-6 lg:h-6 text-primary-foreground" />
             </div>
 
             {/* 데이터 섹션 */}
             <div className="grid grid-cols-[auto_1fr] gap-x-3 gap-y-1.5 items-center">
               {/* 송수량 행 */}
-              <span className="text-[10px] lg:text-[11px] font-bold text-slate-400 uppercase tracking-tighter leading-none">
+              <span className="text-[10px] lg:text-[11px] font-bold text-muted uppercase tracking-tighter leading-none">
                 송수량
               </span>
               <div className="flex items-baseline gap-1 justify-end">
-                <span className="text-lg lg:text-xl font-black text-slate-800 tabular-nums leading-none">
+                <span className="text-lg lg:text-xl font-black text-foreground tabular-nums leading-none">
                   {Number(treatment.flowOutAmt?.toFixed(0)).toLocaleString() || 0}
                 </span>
-                <span className="text-[9px] lg:text-[10px] font-bold text-slate-500 shrink-0">m³/h</span>
+                <span className="text-[9px] lg:text-[10px] font-bold text-muted opacity-60 shrink-0">m³/h</span>
               </div>
 
-              {/* 구분선 (선택 사항) */}
-              <div className="col-span-2 h-px bg-slate-100 my-0.5" />
+              {/* 구분선 */}
+              <div className="col-span-2 h-px bg-card-border/50 my-0.5" />
 
               {/* 압력 행 */}
-              <span className="text-[10px] lg:text-[11px] font-bold text-slate-400 uppercase tracking-tighter leading-none">
+              <span className="text-[10px] lg:text-[11px] font-bold text-muted uppercase tracking-tighter leading-none">
                 압력
               </span>
               <div className="flex items-baseline gap-1 justify-end">
-                <span className="text-lg lg:text-xl font-black text-slate-800 tabular-nums leading-none">
+                <span className="text-lg lg:text-xl font-black text-foreground tabular-nums leading-none">
                   {Number(treatment.pressOutAvg?.toFixed(2)).toLocaleString() || 0}
                 </span>
-                <span className="text-[9px] lg:text-[10px] font-bold text-slate-500 shrink-0">kgf/cm²</span>
+                <span className="text-[9px] lg:text-[10px] font-bold text-muted opacity-60 shrink-0">kgf/cm²</span>
               </div>
             </div>
           </div>
 
           {/* 하단 캡션 */}
-          <div className="mt-3 flex flex-col items-center">
-            <span className="text-[10px] lg:text-[11px] font-black text-slate-800 uppercase tracking-widest">
+          <div className="mt-1 flex flex-col items-center">
+            <span className="text-[10px] lg:text-[11px] font-black text-foreground/80 uppercase tracking-widest">
               광역 정수장
             </span>
           </div>
@@ -201,6 +233,38 @@ export default function WaterLevelPanel({ reservoirLevels, isLoading, error, loa
               <WaterLevelCard res={res} mapLevel={-1} isLevel={isLevel} isLoading={isLoading} status="dashboard" />
             </div>
           ))}
+        </div>
+      </div>
+      {/* 타임 슬라이드 */}
+      <div className="mt-4 px-4 py-2 bg-muted/5 border border-card-border/50 rounded-2xl">
+        <div className="flex items-center justify-between mb-2">
+          <div className="flex items-center gap-2">
+            <Clock size={16} className="text-primary" />
+            <span className="text-xs font-bold text-muted uppercase tracking-wider">시간별 수위 데이터</span>
+          </div>
+          <span className="text-sm font-black text-primary tabular-nums">
+            {timeSlide ? dayjs(timeSlide).format("HH:mm") : "실시간 (현재)"}
+          </span>
+        </div>
+
+        <div className="relative flex items-center gap-4">
+          <span className="text-[10px] font-bold text-muted/50">-6h</span>
+          <input
+            type="range"
+            min="0"
+            max="48"
+            step="1"
+            value={calculateSliderValue()}
+            onChange={handleSliderChange}
+            className="flex-1 h-1.5 bg-card-border/50 rounded-lg appearance-none cursor-pointer accent-primary"
+          />
+          <span className="text-[10px] font-bold text-muted/50">+6h</span>
+        </div>
+
+        <div className="flex justify-between mt-1 px-7">
+          <div className="w-px h-1 bg-card-border/30" />
+          <div className="w-px h-2 bg-primary/40" />
+          <div className="w-px h-1 bg-card-border/30" />
         </div>
       </div>
     </div>

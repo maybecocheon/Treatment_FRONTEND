@@ -10,13 +10,13 @@ export default function RiskEventPanel({ dangerReservoirs }: { dangerReservoirs:
   const setSelectedReservoir = useSetAtom(selectedReservoirAtom);
 
   return (
-    <div className="bg-white backdrop-blur-sm border border-slate-200/50 rounded-2xl p-3 lg:p-4 flex flex-col max-h-80 min-h-80 transition-all">
+    <div className="bg-card backdrop-blur-sm border border-card-border rounded-2xl p-3 lg:p-4 flex flex-col max-h-80 min-h-80 transition-all">
       {/* 헤더 섹션 */}
       <div className="flex justify-between items-center mb-3 shrink-0 px-1">
-        <h2 className="text-xs lg:text-sm font-bold text-slate-700 flex items-center gap-2">
+        <h2 className="text-xs lg:text-sm font-bold text-foreground opacity-80 flex items-center gap-2">
           <span className="relative flex h-2 w-2">
-            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-75"></span>
-            <span className="relative inline-flex rounded-full h-2 w-2 bg-rose-500"></span>
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-danger/40 opacity-75"></span>
+            <span className="relative inline-flex rounded-full h-2 w-2 bg-danger"></span>
           </span>
           배수지 위험 탐지
         </h2>
@@ -27,17 +27,17 @@ export default function RiskEventPanel({ dangerReservoirs }: { dangerReservoirs:
         {dangerReservoirs.map(r => (
           <div
             key={r.facilityId}
-            className="bg-white/60 hover:bg-white border border-slate-200/60 rounded-xl p-3 transition-all duration-200 cursor-pointer group shadow-sm hover:shadow-md"
+            className="bg-card/60 hover:bg-card border border-card-border rounded-xl p-3 transition-all duration-200 cursor-pointer group shadow-sm hover:shadow-md"
             onClick={() => setSelectedReservoir(r)}
           >
             <div className="flex justify-between items-start">
               <div className="flex items-center gap-3">
                 {/* 상태 아이콘 강조 */}
-                <div className="w-1 h-8 rounded-full bg-rose-500"></div>
+                <div className="w-1 h-8 rounded-full bg-danger"></div>
 
                 <div className="flex flex-col">
-                  <span className="text-xs font-bold text-slate-800">{r.reservoirName}</span>
-                  <span className="text-[10px] text-rose-600 font-semibold">{checkLevelRisk(r) === "low" ? "저수위 경고 발생" : "고수위 경고 발생"}</span>
+                  <span className="text-xs font-bold text-foreground">{r.reservoirName}</span>
+                  <span className="text-[10px] text-danger font-semibold">{checkLevelRisk(r) === "low" ? "저수위 경고 발생" : "고수위 경고 발생"}</span>
                 </div>
               </div>
             </div>

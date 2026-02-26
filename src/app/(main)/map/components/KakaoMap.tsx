@@ -5,8 +5,9 @@ import { CustomOverlayMap, Map, Polygon } from "react-kakao-maps-sdk";
 import sidoData from "@/data/sido.json"
 import FacilityOverlay from "./FacilityOverlay";
 import MapSkeleton from "./skeletons/MapSkeleton";
+import { MapUIProvider, useMapUI } from './MapUIContext';
 import { useAtom, useAtomValue } from "jotai";
-import { mapDetailOpenAtom, mapLevelAtom, selectedFacilityTypeAtom } from "@/atoms/uniAtoms";
+import { mapLevelAtom, selectedFacilityTypeAtom } from "@/atoms/uniAtoms";
 import { useFacilities } from "@/hooks/useFacilities";
 import OpenDetail from "@/components/main/OpenDetail";
 import PageFallback from "@/components/skeletons/PageFallback";
@@ -14,7 +15,8 @@ import ErrorFallback from "@/components/skeletons/ErrorFallback";
 
 
 export default function KakaoMap() {
-    const mapDetailOpen = useAtomValue(mapDetailOpenAtom);
+    const mapUI = useMapUI();
+    const mapDetailOpen = mapUI?.mapDetailOpen;
     const selectedFacilityType = useAtomValue(selectedFacilityTypeAtom);
     const [mapLevel, setMapLevel] = useAtom(mapLevelAtom);
 

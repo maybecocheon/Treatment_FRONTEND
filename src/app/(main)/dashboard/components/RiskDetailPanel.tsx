@@ -1,18 +1,21 @@
 'use client'
 
 import { PieChart, Pie, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, LabelList } from "recharts";
+import { useTheme } from "next-themes";
 
 export default function RiskDetailPanel({ riskMetrics }: { riskMetrics: { totalScore: number; dangerCount: number; treatmentFine: boolean; } }) {
   const { totalScore, dangerCount, treatmentFine } = riskMetrics;
   const isDanger = totalScore < 80;
+  const { theme } = useTheme();
+  const isDark = theme === "dark";
 
   return (
     <div className="flex-1">
-      <div className="bg-white backdrop-blur-sm border border-slate-200/50 rounded-2xl p-3 lg:p-4 h-full flex flex-col transition-all">
+      <div className="bg-card backdrop-blur-sm border border-card-border rounded-2xl p-3 lg:p-4 h-full flex flex-col transition-all">
 
         <div className="flex items-center gap-2 mb-3 shrink-0">
-          <div className="w-1.5 h-3 bg-red-500 rounded-full"></div>
-          <h2 className="text-xs lg:text-sm font-bold text-slate-700">운영 리스크 가중치</h2>
+          <div className="w-1.5 h-3 bg-danger rounded-full"></div>
+          <h2 className="text-xs lg:text-sm font-bold text-foreground">운영 리스크 가중치</h2>
         </div>
 
         <div className="flex-1 flex flex-col min-h-0 gap-4">
@@ -22,8 +25,8 @@ export default function RiskDetailPanel({ riskMetrics }: { riskMetrics: { totalS
               <PieChart>
                 <Pie
                   data={[
-                    { value: totalScore, fill: totalScore > 80 ? "#10b981" : "#ef4444" },
-                    { value: 100 - totalScore, fill: "#f1f5f9" }
+                    { value: totalScore, fill: totalScore > 80 ? "var(--success)" : "var(--danger)" },
+                    { value: 100 - totalScore, fill: "var(--card-border)" }
                   ]}
                   cx="50%"
                   cy="50%"
@@ -39,16 +42,16 @@ export default function RiskDetailPanel({ riskMetrics }: { riskMetrics: { totalS
               </PieChart>
             </ResponsiveContainer>
             <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-              <span className={`text-xl font-black ${isDanger ? "text-red-600" : "text-emerald-600"} leading-none`}>{totalScore}</span>
-              <span className="text-[8px] text-slate-400 uppercase font-bold mt-1">Score</span>
+              <span className={`text-xl font-black ${isDanger ? "text-danger" : "text-success"} leading-none`}>{totalScore}</span>
+              <span className="text-[8px] text-muted uppercase font-bold mt-1">Score</span>
             </div>
           </div>
 
           {/* 바 차트 */}
           <div className="flex-[1.5] flex flex-col justify-center">
             {[
-              { name: "배수지 수위", value: dangerCount * 6, max: 72, label: `${dangerCount}개소`, fill: "#ef4444" },
-              { name: "정수장 압력", value: treatmentFine ? 0 : 28, max: 28, label: treatmentFine ? "정상" : "이상", fill: "#f59e0b" }
+              { name: "배수지 수위", value: dangerCount * 6, max: 72, label: `${dangerCount}개소`, fill: "var(--danger)" },
+              { name: "정수장 압력", value: treatmentFine ? 0 : 28, max: 28, label: treatmentFine ? "정상" : "이상", fill: "var(--warning)" }
             ].map((item) => (
               <div key={item.name} className="h-10">
                 <ResponsiveContainer width="100%" height="100%">
@@ -61,7 +64,7 @@ export default function RiskDetailPanel({ riskMetrics }: { riskMetrics: { totalS
                     <YAxis
                       type="category"
                       dataKey="name"
-                      stroke="#64748b"
+                      stroke={isDark ? "#94a3b8" : "#64748b"}
                       fontSize={10}
                       axisLine={false}
                       tickLine={false}
@@ -70,13 +73,13 @@ export default function RiskDetailPanel({ riskMetrics }: { riskMetrics: { totalS
                       dataKey="value"
                       radius={[0, 4, 4, 0]}
                       barSize={8}
-                      background={{ fill: "#f1f5f9" }}
+                      background={{ fill: "var(--subtle-border)" }}
                       isAnimationActive={false}
                     >
                       <LabelList
                         dataKey="label"
                         position="right"
-                        style={{ fontSize: '10px', fontWeight: 'bold', fill: '#64748b' }}
+                        style={{ fontSize: '10px', fontWeight: 'bold', fill: isDark ? "#94a3b8" : "#64748b" }}
                         offset={10}
                       />
                     </Bar>
@@ -87,14 +90,14 @@ export default function RiskDetailPanel({ riskMetrics }: { riskMetrics: { totalS
           </div>
 
           {/* 결과 요약 뱃지 스타일 */}
-          <div className={`mt-3 px-3 py-1.5 ${isDanger ? "bg-red-50 border-red-100 text-red-700" : "bg-emerald-50 border-emerald-100 text-emerald-700"}`}>
+          <div className={`mt-3 px-3 py-1.5 rounded-lg border border-card-border/50 ${isDanger ? "bg-danger-bg text-danger" : "bg-success-bg text-success"}`}>
             <p className="text-[10px] font-medium">
               <span className="font-bold mr-1">● 분석 결과:</span>
               {
                 isDanger
                   ? treatmentFine ?
-                  `현재 ${dangerCount}개 배수지에서 수위 위험이 감지되었습니다.`
-                  : "정수장 공급 압력을 확인하십시오."
+                    `현재 ${dangerCount}개 배수지에서 수위 위험이 감지되었습니다.`
+                    : "정수장 공급 압력을 확인하십시오."
                   : "시설의 공급 및 수위 상태가 매우 양호합니다."
               }
             </p>

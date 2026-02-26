@@ -10,7 +10,7 @@ import { FacilityType } from "@/types/types";
 import PageFallback from "@/components/skeletons/PageFallback";
 import TailChartSkeleton from "@/components/main/skeletons/TailChartSkeleton";
 import ErrorFallback from "@/components/skeletons/ErrorFallback";
-import TailChart from "@/components/main/TailChart";
+import HistoryChart from "@/components/main/HistoryChart";
 import FacilitySelect from "@/components/main/FacilitySelect";
 
 export default function History() {
@@ -25,20 +25,20 @@ export default function History() {
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 {/* 헤더 영역 */}
                 <Title title="히스토리 뷰어" subtitle="과거 운영 데이터 분석" />
-                <div className="glass p-3 rounded-2xl flex items-center gap-3 md:w-auto">
-                    <button className="p-3 text-slate-500">
+                <div className="p-3 rounded-2xl flex items-center gap-3 md:w-auto">
+                    <button className="p-3 text-muted">
                         <Filter className="w-4 h-4" />
                     </button>
                     {/* 카테고리 */}
-                    <FacilitySelect value={selectedFacility} onChange={setSelectedFacility} filterTypes={["정수장", "배수지"]}/>
+                    <FacilitySelect value={selectedFacility} onChange={setSelectedFacility} filterTypes={["정수장", "배수지"]} />
                     {/* 날짜 */}
                     <div className="relative max-w-full xl:max-w-60">
-                        <Calendar className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                        <Calendar className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted" />
                         <input
                             type="date"
                             value={selectedDate} max={"2023-12-31"}
                             onChange={(e) => setSelectedDate(e.target.value)}
-                            className="w-full bg-slate-50 border border-slate-100 rounded-2xl py-2.5 pl-11 pr-4 text-sm font-bold text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+                            className="w-full bg-muted/10 border border-card-border rounded-2xl py-2.5 pl-11 pr-4 text-sm font-bold text-foreground focus:outline-none focus:ring-2 focus:ring-primary/20"
                         />
                     </div>
                 </div>
@@ -57,7 +57,7 @@ export default function History() {
                     ) : chartError ? (
                         <ErrorFallback error={chartError} onClick={() => loadHistoryChartData()} />
                     ) : (
-                        <TailChart
+                        <HistoryChart
                             data={monthData}
                             isTreatment={selectedFacility === 1 ? true : false}
                             isMonthly={true}
@@ -66,7 +66,7 @@ export default function History() {
                     )}
                 </ChartBox>
 
-                <div className="flex flex-col gap-3 w-full border-t border-slate-200 pt-4 xl:border-l xl:border-t-0 xl:pt-0 xl:pl-4">
+                <div className="flex flex-col gap-3 w-full border-t border-card-border pt-4 xl:border-l xl:border-t-0 xl:pt-0 xl:pl-4">
                     {/* 요약 카드 영역 */}
                     <div className="grid grid-cols-1 md:grid-cols-4 gap-0 md:gap-3">
                         {stats.map((stat, idx) => (
@@ -95,7 +95,7 @@ export default function History() {
                         ) : chartError ? (
                             <ErrorFallback error={chartError} onClick={() => loadHistoryChartData()} />
                         ) : (
-                            <TailChart
+                            <HistoryChart
                                 data={chartData}
                                 isTreatment={selectedFacility === 1 ? true : false}
                                 isMonthly={false}

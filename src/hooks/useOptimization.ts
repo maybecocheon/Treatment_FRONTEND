@@ -1,14 +1,18 @@
+'use client'
+
 import { useAtomValue } from "jotai";
 import { useRefreshTime } from "./useRefreshTime";
-import { selectedReservoirAtom } from "@/atoms/uniAtoms";
+import { selectedReservoirIdAtom } from "@/atoms/uniAtoms";
 import { useQuery } from "@tanstack/react-query";
 import { myFetch } from "@/api/api";
 import { useMemo } from "react";
+import { useFacilities } from "./useFacilities";
 
 export default function useOptimization() {
     const baseUrl = process.env.NEXT_PUBLIC_SERVER_URL;
     const { roundedTime: date } = useRefreshTime();
-    const selectedReservoir = useAtomValue(selectedReservoirAtom);
+    const { facilities } = useFacilities();
+    const selectedReservoirId = useAtomValue(selectedReservoirIdAtom);
 
     // 최적화 쿼리 
     const { data: fullResponse, isLoading, error, refetch: loadOptimization } = useQuery({
@@ -40,7 +44,7 @@ export default function useOptimization() {
         const chartList = fullResponse?.chartData;
         if (!chartList) return [];
 
-        const reservoirKey = selectedReservoir ? selectedReservoir.reservoirName.slice(0, 1) : null;
+        const reservoirKey = selectedReservoirId && selectedReservoirId !== 0 && facilities ? facilities.find((f: any) => f.facilityId === selectedReservoirId)?.name.slice(0, 1) : null;
         const dynamicKey = reservoirKey ? `level${reservoirKey}` : "";
 
         return chartList.map((item: any) => ({
@@ -48,7 +52,7 @@ export default function useOptimization() {
             first: item[dynamicKey] || 0,
             second: item.pumpNum || 0,
         }));
-    }, [fullResponse, selectedReservoir]);
+    }, [fullResponse, selectedReservoirId]);
 
     // 비용만 필터
     const costData = useMemo(() => {
@@ -59,12 +63,12 @@ export default function useOptimization() {
 
         if (!existingCost || !optimizationCost) return;
 
-        return { existingCost, optimizationCost, savingCost, savingRate }; 
+        return { existingCost, optimizationCost, savingCost, savingRate };
     }, [fullResponse, data])
 
     return {
         rawData: fullResponse,
-        isLoading, 
+        isLoading,
         error: error || costError,
         costError,
         costData,

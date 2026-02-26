@@ -22,7 +22,7 @@ export default function LoginSkeleton() {
                     <div className="h-14 bg-slate-100/80 rounded-2xl" />
                     <div className="h-14 bg-sky-200/50 rounded-2xl" />
                 </div>
-                
+
                 {/* 하단 회원가입 유도 영역 */}
                 <div className="w-full mt-6 h-12 bg-white/40 rounded-2xl border border-white/20" />
             </div>

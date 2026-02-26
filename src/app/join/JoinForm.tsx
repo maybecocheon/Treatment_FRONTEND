@@ -12,7 +12,7 @@ import { toast } from 'sonner';
 import { useJoin } from '@/hooks/useJoin';
 
 export default function JoinForm() {
-  const router = useRouter();
+    const router = useRouter();
 
     const { handleJoin, handleDuplicate, usernameChecked, setUsernameChecked } = useJoin();
 

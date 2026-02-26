@@ -6,7 +6,7 @@ export default function ErrorFallback({ error, onClick }: { error?: Error; onCli
   return (
     <div className="flex flex-col items-center justify-center w-full h-full min-h-35 p-4 text-center">
       <AlertCircle size={20} className="text-red-400 mb-2" />
-      
+
       <div className="space-y-1 mb-4">
         <h3 className="text-sm font-semibold text-slate-700">로드 실패</h3>
         {error && (

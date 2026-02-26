@@ -6,11 +6,11 @@ import { mapLevelAtom } from "@/atoms/uniAtoms";
 import { FacilityType } from "@/types/types";
 import { useReservoirLevel } from "@/hooks/useReservoirLevel";
 import WaterLevelCard from "@/components/main/WaterLevelCard";
-import useModalSet from "@/hooks/useModalSet";
+import { useMapUI } from "./MapUIContext";
 
 export default function FacilityOverlay({ facility }: { facility: FacilityType }) {
     const mapLevel = useAtomValue(mapLevelAtom);
-    const { onOpen } = useModalSet();
+    const mapUI = useMapUI();
 
     // 수위 레벨 얻기
     const { reservoirLevels, isLoading } = useReservoirLevel();
@@ -18,7 +18,7 @@ export default function FacilityOverlay({ facility }: { facility: FacilityType }
     // 1. 정수장
     if (facility.type === "정수장") {
         return (
-            <div className="flex flex-col items-center group transition-all duration-300 hover:-translate-y-2" onClick={() => onOpen(facility.type)}>
+            <div className="flex flex-col items-center group transition-all duration-300 hover:-translate-y-2" onClick={() => mapUI?.onOpen(facility.type)}>
                 <div className="relative">
                     <div className="absolute inset-0 blur-xl opacity-40 animate-pulse" />
                     <div className="relative bg-white/50 border-2 border-slate-700 p-4 rounded-full shadow-2xl backdrop-blur-md">

@@ -1,28 +1,110 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Light Theme */
+  --background: #f8fafc;
+  /* slate-50 */
+  --foreground: #0f172a;
+  /* slate-900 */
+  --card-bg: #ffffff;
+  --card-border: #e7eaee;
+  /* slate-200 */
+  --glass-bg: rgba(255, 255, 255, 0.6);
+  --glass-border: rgba(255, 255, 255, 0.8);
+  --primary: #0ea5e9;
+  /* sky-500 */
+  --primary-foreground: #ffffff;
+
+  /* Semantic Colors */
+  --success: #10b981;
+  /* emerald-500 */
+  --success-bg: #ecfdf5;
+  --success-text: #0e9972;
+  --danger: #ef4444;
+  /* red-500 */
+  --danger-bg: #fff1f2;
+  --danger-text: #9f1239;
+  --info: #0ea5e9;
+  /* sky-500 */
+  --info-bg: #f0f9ff;
+  --info-text: #075985;
+  --warning: #f59e0b;
+  /* amber-500 */
+  --warning-bg: #fffbeb;
+  --warning-text: #92400e;
+
+  --muted: #64748b;
+  --muted-foreground: #94a3b8;
+  --subtle-border: #f1f5f9;
+}
+
+.dark {
+  /* Dark Theme */
+  --background: #020617;
+  --foreground: #f1f5f9;
+  --card-bg: #0f172a;
+  --card-border: #1e293b;
+  --glass-bg: rgba(15, 23, 42, 0.6);
+  --glass-border: rgba(30, 41, 59, 0.8);
+  --primary: #38bdf8;
+  --primary-foreground: #0f172a;
+
+  /* Semantic Colors Dark */
+  --success: #32bd8a;
+  /* emerald-400 */
+  --success-bg: rgba(6, 78, 59, 0.2);
+  --success-text: #34d399;
+  --danger: #f87171;
+  /* red-400 */
+  --danger-bg: rgba(159, 18, 57, 0.2);
+  --danger-text: #fb7185;
+  --info: #38bdf8;
+  /* sky-400 */
+  --info-bg: rgba(7, 89, 133, 0.2);
+  --info-text: #38bdf8;
+  --warning: #fbbf24;
+  /* amber-400 */
+  --warning-bg: rgba(146, 64, 14, 0.2);
+  --warning-text: #fbbf24;
+
+  --muted: #94a3b8;
+  --muted-foreground: #64748b;
+  --subtle-border: #1e293b;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-card: var(--card-bg);
+  --color-card-border: var(--card-border);
+  --color-subtle-border: var(--subtle-border);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-success: var(--success);
+  --color-success-bg: var(--success-bg);
+  --color-success-text: var(--success-text);
+  --color-danger: var(--danger);
+  --color-danger-bg: var(--danger-bg);
+  --color-danger-text: var(--danger-text);
+  --color-info: var(--info);
+  --color-info-bg: var(--info-bg);
+  --color-info-text: var(--info-text);
+  --color-warning: var(--warning);
+  --color-warning-bg: var(--warning-bg);
+  --color-warning-text: var(--warning-text);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
 }
 
 /* 글래스모피즘 */
 @layer components {
   .glass {
-    @apply bg-white/60 backdrop-blur-md border border-white shadow-lg shadow-indigo-900/5;
+    background-color: var(--glass-bg);
+    backdrop-filter: blur(12px);
+    border: 1px solid var(--glass-border);
+    @apply shadow-lg shadow-indigo-900/5;
   }
 }
 
@@ -35,40 +117,58 @@
 
 /* Chrome, Safari, Edge용 */
 *::-webkit-scrollbar {
-  width: 6px; 
+  width: 6px;
   height: 6px;
 }
 
 *::-webkit-scrollbar-track {
-  background: transparent; 
+  background: transparent;
 }
 
 *::-webkit-scrollbar-thumb {
-  background-color: #cbd5e1; 
-  border-radius: 40px; 
-  border: 1px solid transparent; 
+  background-color: #cbd5e1;
+  border-radius: 40px;
+  border: 1px solid transparent;
 }
 
 *::-webkit-scrollbar-thumb:hover {
-  background-color: #94a3b8; 
+  background-color: #94a3b8;
 }
 
 /* 배수지 수위 모션 */
 @keyframes water-wave {
-  0%   { transform: translateX(0); }
-  50%  { transform: translateX(-6px); }
-  100% { transform: translateX(0); }
+  0% {
+    transform: translateX(0);
+  }
+
+  50% {
+    transform: translateX(-6px);
+  }
+
+  100% {
+    transform: translateX(0);
+  }
 }
 
 @keyframes water-bob {
-  0%   { transform: translateY(0); }
-  50%  { transform: translateY(-2px); }
-  100% { transform: translateY(0); }
+  0% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-2px);
+  }
+
+  100% {
+    transform: translateY(0);
+  }
 }
 
 /* 물 흐르는 모션 */
 @keyframes flow {
-  to { stroke-dashoffset: -30; }
+  to {
+    stroke-dashoffset: -30;
+  }
 }
 
 body {

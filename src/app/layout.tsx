@@ -27,7 +27,7 @@ export default function RootLayout({ children, }: Readonly<{ children: React.Rea
   const kakaoKey = process.env.NEXT_PUBLIC_KAKAO_API;
 
   return (
-    <html lang="ko">
+    <html lang="ko" suppressHydrationWarning>
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         <div className="flex flex-col w-full min-h-dvh overflow-x-hidden">
           <main className="w-full min-h-dvh">

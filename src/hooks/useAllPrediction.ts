@@ -1,14 +1,14 @@
 'use client'
 
 import { myFetch } from '@/api/api';
-import { ReservoirLevelType, PredictionAllType } from '@/types/types'; 
+import { ReservoirLevelType, PredictionAllType } from '@/types/types';
 import { useQuery } from '@tanstack/react-query';
 import { useRefreshTime } from './useRefreshTime';
 import { useCallback } from 'react';
 
 export function useAllPrediction() {
     const baseUrl = process.env.NEXT_PUBLIC_SERVER_URL;
-    const { roundedTime: date } = useRefreshTime();
+    const { displayTime: date } = useRefreshTime();
 
     // 메인 쿼리 로직
     const { data: predictions = [], isLoading, isFetching, error, refetch: loadPredictionAll } = useQuery<PredictionAllType[]>({
@@ -43,8 +43,8 @@ export function useAllPrediction() {
 
         // 2. 예측 데이터 가져오기 (유입/유출)
         const facilityData = predictions.find((p: any) => p.facilityId === res.facilityId);
-        const flowIn = facilityData?.flowInAmt || 0;  
-        const flowOut = facilityData?.flowOutAmt || 0; 
+        const flowIn = facilityData?.flowInAmt || 0;
+        const flowOut = facilityData?.flowOutAmt || 0;
 
         // 3. 핵심 계산: 예상 부피
         // 공식: (현재 수위 * 면적) + 유입량 - 유출량

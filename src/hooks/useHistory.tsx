@@ -21,7 +21,7 @@ export function useHistory(facilityId: number, date: string) {
     const idPath = isTreatment ? "" : `/${facilityId}`;
 
     // 2. Info 데이터 쿼리
-    const { data: infoData, isLoading: isInfoLoading, isFetching: isInfoFetching, error: infoError, refetch: loadHistoryData} = useQuery({
+    const { data: infoData, isLoading: isInfoLoading, isFetching: isInfoFetching, error: infoError, refetch: loadHistoryData } = useQuery({
         queryKey: [prefix, "history", "info", facilityId, date],
         queryFn: async () => {
             const data = await myFetch(`${baseUrl}/${prefix}/history/info${idPath}?date=${date} 00:00:00`);
@@ -44,13 +44,13 @@ export function useHistory(facilityId: number, date: string) {
             return {
                 day: day.map((item: any) => ({
                     time: item.time.split("T")[1]?.substring(0, 5) || "",
-                    first: item.flowOut || 0,
-                    second: isTreatment ? (item.pressPipe || 0) : (item.level || 0),
+                    first: isTreatment ? (item.flowOut || 0) : (item.level || 0),
+                    second: isTreatment ? (item.pressPipe || 0) : (item.flowOut || 0),
                 })),
                 month: month.map((item: any) => ({
                     time: item.time,
-                    first: item.flowOut || 0,
-                    second: isTreatment ? (item.pressPipe || 0) : (item.level || 0),
+                    first: isTreatment ? (item.flowOut || 0) : (item.level || 0),
+                    second: isTreatment ? (item.pressPipe || 0) : (item.flowOut || 0),
                 }))
             };
         },
@@ -97,7 +97,7 @@ export function useHistory(facilityId: number, date: string) {
         stats,
         chartData: charts?.day ?? [],
         monthData: charts?.month ?? [],
-        labels: isTreatment ? ["송수량", "압력"] : ["수요량", "수위"],
+        labels: isTreatment ? ["송수량", "압력"] : ["수위", "수요량"],
         titles: isTreatment ? ["당월 송수량 및 토출 압력", "당일 송수량 및 토출 압력"] : ["당월 수요량 및 수위", "당일 수요량 및 수위"],
         isInfoLoading: isInfoLoading || (isInfoFetching && !infoData),
         isChartLoading: isChartLoading || (isChartFetching && !charts),

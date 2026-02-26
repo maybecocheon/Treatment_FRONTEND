@@ -25,7 +25,7 @@ export default function WaterLevelPanelSkeleton() {
           <div className="bg-white border-2 border-slate-100 p-4 lg:p-5 rounded-2xl lg:rounded-3xl shadow-sm flex items-center gap-4 min-w-45 lg:min-w-50">
             {/* 아이콘 박스 */}
             <div className="w-10 h-10 lg:w-12 lg:h-12 bg-slate-100 rounded-xl lg:rounded-2xl shrink-0" />
-            
+
             {/* 텍스트 데이터 라인들 */}
             <div className="flex-1 space-y-3">
               <div className="h-3 bg-slate-100 rounded w-12" />

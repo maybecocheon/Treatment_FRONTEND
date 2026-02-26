@@ -7,11 +7,6 @@ export interface TeamMemberType {
     description: string;
 }
 
-// params 타입
-export interface ParamsType {
-    params: { id: string };
-}
-
 // 로그인한 유저 프로필 타입
 export interface UserProfile {
     username: string;

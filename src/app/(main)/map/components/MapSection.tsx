@@ -4,12 +4,12 @@ import KakaoMap from './KakaoMap'
 import MapControl from './MapControl'
 import MapLegend from './MapLegend'
 import ReservoirDetails from '@/components/main/OpenDetail'
-import { useAtomValue } from 'jotai';
-import { isModalOpenAtom, mapDetailOpenAtom } from '@/atoms/uniAtoms';
+import { MapUIProvider, useMapUI } from './MapUIContext';
 
-export default function MapSection() {
-    const mapDetailOpen = useAtomValue(mapDetailOpenAtom);
-    const isModalOpen = useAtomValue(isModalOpenAtom);
+function MapSectionContent() {
+    const mapUI = useMapUI();
+    const mapDetailOpen = mapUI?.mapDetailOpen;
+    const isModalOpen = mapUI?.isModalOpen;
 
     return (
         <>
@@ -30,5 +30,13 @@ export default function MapSection() {
             )}
             {isModalOpen && <ReservoirDetails />}
         </>
+    )
+}
+
+export default function MapSection() {
+    return (
+        <MapUIProvider>
+            <MapSectionContent />
+        </MapUIProvider>
     )
 }

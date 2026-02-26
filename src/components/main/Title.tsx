@@ -5,11 +5,11 @@ export interface TitleProps {
     subtitle: string;
 }
 
-export default function Title({ title, subtitle }: TitleProps) {  
+export default function Title({ title, subtitle }: TitleProps) {
     return (
         <div className="p-2 space-y-1">
-            <h2 className="text-2xl md:text-3xl font-extrabold text-blue-950 tracking-tight">{title}</h2>
-            <p className="text-blue-800/60 font-medium text-sm md:text-base">{subtitle}</p>
+            <h2 className="text-2xl md:text-3xl font-extrabold text-foreground tracking-tight">{title}</h2>
+            <p className="text-muted font-medium text-sm md:text-base">{subtitle}</p>
         </div>
     )
 }

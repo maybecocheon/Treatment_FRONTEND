@@ -8,7 +8,7 @@ import Input from "../TailInput";
 import TailButton from "../TailButton";
 import { useLogin } from "@/hooks/useLogin";
 
-export default function Login({ setIsModalOpen } : {setIsModalOpen: Function}) {
+export default function Login({ setIsModalOpen }: { setIsModalOpen: Function }) {
     const router = useRouter();
     const [formData, setFormData] = useState({ username: "", password: "" });
     const { handleLogin, isLoading } = useLogin();
@@ -24,25 +24,24 @@ export default function Login({ setIsModalOpen } : {setIsModalOpen: Function}) {
     };
 
     return (
-        <section className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-in fade-in duration-300">
+        <section className="fixed inset-0 bg-background/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-in fade-in duration-300">
             {/* 배경 클릭 시 닫기 */}
             <div className="absolute inset-0" onClick={() => setIsModalOpen(false)} />
 
-            <div className="relative bg-white/90 rounded-[2.5rem] shadow-2xl w-full p-10 max-w-md overflow-hidden animate-in zoom-in-95 duration-300">
-                
+            <div className="relative bg-card/90 rounded-[2.5rem] shadow-2xl w-full p-4 max-w-md overflow-hidden animate-in zoom-in-95 duration-300 border border-card-border">
                 {/* 닫기 */}
-                <button 
+                <button
                     onClick={() => setIsModalOpen(false)}
-                    className="absolute top-5 right-5 p-2 rounded-full bg-slate-100 text-slate-400 hover:bg-red-50 hover:text-red-500 transition-all z-20 group"
+                    className="absolute top-5 right-5 p-2 rounded-full bg-muted/10 text-muted hover:bg-danger-bg hover:text-danger transition-all z-20 group"
                 >
                     <X className="w-5 h-5 group-hover:rotate-90 transition-transform duration-300" />
                 </button>
 
-                <div className="relative z-10 w-full px-8 py-12 flex flex-col items-center gap-8">
+                <div className="relative z-10 w-full px-8 py-6 flex flex-col items-center gap-8">
                     {/* 로고 영역 */}
                     <div className="mb-2">
                         <Logo scale={0.8} />
-                        <p className="text-center text-slate-400 text-sm mt-3 font-medium">시스템에 로그인 후 이용해 주세요.</p>
+                        <p className="text-center text-muted text-sm mt-3 font-medium">시스템에 로그인 후 이용해 주세요.</p>
                     </div>
 
                     <form
@@ -59,21 +58,21 @@ export default function Login({ setIsModalOpen } : {setIsModalOpen: Function}) {
                         </div>
 
                         <div className="pt-2">
-                            <TailButton 
-                                disabled={isLoading} 
-                                text={isLoading ? "로그인 중..." : "로그인"} 
-                                icon={ArrowRight} 
-                                style="bg-sky-500 hover:bg-sky-600 w-full py-4 shadow-lg shadow-sky-200 transition-all active:scale-[0.98]" 
+                            <TailButton
+                                disabled={isLoading}
+                                text={isLoading ? "로그인 중..." : "로그인"}
+                                icon={ArrowRight}
+                                style="bg-primary hover:bg-primary/90 w-full py-4 shadow-lg shadow-primary/20 transition-all active:scale-[0.98]"
                             />
                         </div>
                     </form>
 
                     {/* 하단 푸터 영역 */}
-                    <div className="w-full pt-6 border-t border-slate-100 flex items-center justify-center gap-2">
-                        <span className="text-slate-400 text-sm">계정이 없으신가요?</span>
+                    <div className="w-full flex flex-col md:flex-row pt-6 border-t border-card-border items-center justify-center gap-2">
+                        <span className="text-muted text-sm">계정이 없으신가요?</span>
                         <button
                             onClick={() => router.push("/join")}
-                            className="text-sky-600 text-sm font-bold hover:underline underline-offset-4 flex items-center gap-1"
+                            className="text-primary text-sm font-bold hover:underline underline-offset-4 flex items-center gap-1"
                         >
                             <UserPlus className="w-4 h-4" />
                             회원가입 요청

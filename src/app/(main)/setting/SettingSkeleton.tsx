@@ -15,7 +15,7 @@ export default function SettingSkeleton() {
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
-                
+
                 {/* 좌측: 프로필 카드 스켈레톤 */}
                 <div className="lg:col-span-3 h-full">
                     <div className="glass h-full p-8 rounded-[3rem] flex flex-col items-center border border-white/60 relative overflow-hidden">
@@ -24,11 +24,11 @@ export default function SettingSkeleton() {
                         </div>
                         <div className="h-7 w-24 bg-slate-200 rounded-md mb-2 animate-pulse" />
                         <div className="h-4 w-32 bg-slate-100 rounded-md mb-6 animate-pulse" />
-                        
+
                         <div className="h-8 w-32 bg-blue-50 rounded-xl animate-pulse" />
-                        
+
                         <div className="w-full h-px bg-slate-100 my-8" />
-                        
+
                         <div className="w-full space-y-3">
                             <div className="h-3 w-16 bg-slate-100 rounded animate-pulse" />
                             <div className="h-16 w-full bg-white/40 rounded-2xl border border-white/40 animate-pulse" />
@@ -38,7 +38,7 @@ export default function SettingSkeleton() {
 
                 {/* 우측: 설정 영역 스켈레톤 (기본정보 & 비밀번호) */}
                 <div className="lg:col-span-9 grid grid-cols-1 md:grid-cols-2 gap-8">
-                    
+
                     {/* 섹션 반복 (기본정보/비밀번호) */}
                     {[1, 2].map((i) => (
                         <div key={i} className="glass p-10 rounded-[3rem] flex flex-col space-y-8">

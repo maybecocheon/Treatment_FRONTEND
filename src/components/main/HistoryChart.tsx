@@ -1,21 +1,46 @@
+import { useMemo } from "react";
 import { ComposedChart, Area, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from "recharts";
+import { useTheme } from "next-themes";
 
-interface TailChartProps {
+
+interface HistoryChartProps {
   data: any[];
   isTreatment?: boolean;
   isMonthly?: boolean;
   labels: string[];
 }
 
-export default function TailChart({ data, isTreatment = false, isMonthly, labels }: TailChartProps) {
-  // 유량(area)
-  const areaColor = isMonthly ? "#22d3ee" : "#3b82f6";
-  // 상태(Bar)
-  const barColor = isTreatment && isMonthly ? "#2fa880" : (isTreatment && !isMonthly) ? "#10b981" : (!isTreatment && isMonthly) ? "#0891b2" : "#36bad1";
+export default function HistoryChart({ data, isTreatment = false, isMonthly, labels }: HistoryChartProps) {
+  const { theme } = useTheme();
+  const isDark = theme === "dark";
+
+  const isNoData = useMemo(() => {
+    if (!data || data.length === 0) return true;
+    return data.every(item =>
+      (!item.first || item.first === 0) &&
+      (!item.second || item.second === 0)
+    );
+  }, [data]);
+
+  if (isNoData) {
+    return (
+      <div className="w-full h-70 md:h-full flex flex-col items-center justify-center text-muted gap-2 bg-muted/5 rounded-2xl border border-dashed border-card-border min-h-[150px]">
+        <span className="text-sm font-medium">데이터가 없습니다.</span>
+      </div>
+    );
+  }
+
+  // 유량(area) / 수위 (Cyan - Bright & Clean)
+  const areaColor = isDark ? "#22d3ee" : "#0ea5e9";
+
+  // 상태(Bar) / 압력 / 수요량
+  const barColor = isTreatment
+    ? (isDark ? "#10b981" : "#059669") // 압력 (Green)
+    : (isDark ? "#818cf8" : "#3b82f6"); // 수요량 (Indigo in Dark, Blue in Light)
 
   // 단위
-  const flowUnit = " m³/h";
-  const secondaryUnit = isTreatment ? " kgf/㎠" : " m";
+  const flowUnit = isTreatment ? " m³/h" : " m";
+  const secondaryUnit = isTreatment ? " kgf/㎠" : " m³/h";
 
   // 범례
   const legendItems = [
@@ -35,13 +60,13 @@ export default function TailChart({ data, isTreatment = false, isMonthly, labels
               </linearGradient>
             </defs>
 
-            <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#d8dde3" />
+            <CartesianGrid strokeDasharray="3 3" vertical={false} stroke={isDark ? "#334155" : "#e2e8f0"} />
 
             <XAxis
               dataKey="time"
               axisLine={false}
               tickLine={false}
-              tick={{ fill: "#94a3b8", fontSize: 11 }}
+              tick={{ fill: isDark ? "#64748b" : "#94a3b8", fontSize: 11 }}
               interval="preserveStartEnd"
               tickFormatter={(value) => {
                 if (!value) return "";
@@ -58,11 +83,20 @@ export default function TailChart({ data, isTreatment = false, isMonthly, labels
             <YAxis yAxisId="right" orientation="right" axisLine={false} tickLine={false} tick={{ fill: barColor, fontSize: 10 }} domain={["auto", "auto"]} />
 
             <Tooltip
-              contentStyle={{ backgroundColor: "rgba(255, 255, 255, 0.9)", borderRadius: "12px", boxShadow: "0 4px 12px rgba(0,0,0,0.1)" }}
+              cursor={{ stroke: isDark ? "#475569" : "#cbd5e1", strokeWidth: 1 }}
+              contentStyle={{
+                backgroundColor: isDark ? "rgba(15, 23, 42, 0.95)" : "rgba(255,255,255,0.95)",
+                border: isDark ? "1px solid #334155" : "1px solid #e2e8f0",
+                borderRadius: "12px",
+                padding: "10px",
+                fontSize: "12px",
+                boxShadow: "0 4px 12px rgba(0,0,0,0.1)"
+              }}
+              labelStyle={{ color: isDark ? "#94a3b8" : "#64748b" }}
               formatter={(value, name) => {
                 const numValue = Number(value);
                 const unit = name === labels[0] ? flowUnit : secondaryUnit;
-                return [`${numValue.toLocaleString(undefined, { maximumFractionDigits: 0 })}${unit}`, name];
+                return [`${numValue.toLocaleString(undefined, { maximumFractionDigits: 2 })}${unit}`, name];
               }}
             />
 
@@ -106,9 +140,9 @@ export default function TailChart({ data, isTreatment = false, isMonthly, labels
                 <div className="w-2.5 h-3.5 rounded-xs" style={{ backgroundColor: item.color, opacity: 0.8 }} />
               )}
             </div>
-            
+
             {/* 레이블 텍스트 */}
-            <span className="text-[11px] text-slate-500">
+            <span className="text-[11px] text-muted">
               {item.label}
             </span>
           </div>

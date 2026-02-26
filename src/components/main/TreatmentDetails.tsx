@@ -1,14 +1,19 @@
 'use client'
 
-import { mapDetailOpenAtom } from '@/atoms/uniAtoms';
 import { useTreatment } from '@/hooks/useTreatment';
-import { useAtomValue } from 'jotai';
 import ErrorFallback from '../skeletons/ErrorFallback';
 import { StatCard } from './StatCard';
 import { Droplets, Gauge, Waves } from 'lucide-react';
+import { useMapUI } from '@/app/(main)/map/components/MapUIContext';
+import TreatmentDetailsSkeleton from './skeletons/TreatmentDetailsSkeleton';
 
-export default function TreatmentDetails() {
-    const mapOpenDetail = useAtomValue(mapDetailOpenAtom);
+interface TreatmentDetailsProps {
+    mapDetailOpen?: boolean;
+}
+
+export default function TreatmentDetails({ mapDetailOpen: propMapDetailOpen }: TreatmentDetailsProps) {
+    const mapUI = useMapUI();
+    const mapOpenDetail = propMapDetailOpen ?? mapUI?.mapDetailOpen;
     const { treatment, loadTreatment, isLoading, error } = useTreatment();
 
     // 에러 발생 시 처리
@@ -18,17 +23,20 @@ export default function TreatmentDetails() {
         </div>
     );
 
-    // 데이터가 로드되었지만 비어있는 경우
-    if ((isLoading || !treatment) && mapOpenDetail) return null;
+    // 로딩 중이거나 데이터가 없을 때
+    if (isLoading || !treatment) {
+        if (mapOpenDetail) return <TreatmentDetailsSkeleton />;
+        return null;
+    }
 
     return (
-        <div className="flex flex-col gap-0 md:gap-4 p-6 h-full bg-sky-200/50">
+        <div className="flex flex-col gap-0 md:gap-4 p-6 h-full bg-info-bg">
             <StatCard
                 icon={<Droplets size={28} />}
                 label="실시간 송수량"
                 value={treatment ? treatment.flowOutAmt.toLocaleString(undefined, { maximumFractionDigits: 0 }) : "---"}
                 unit="m³/h"
-                colorClass="bg-blue-100/60 text-blue-700"
+                colorClass="bg-info-bg text-info"
                 loading={isLoading}
                 error={error}
                 onClick={loadTreatment}
@@ -38,7 +46,7 @@ export default function TreatmentDetails() {
                 label="실시간 압력"
                 value={treatment ? treatment.pressOutAvg.toFixed(2) : "---"}
                 unit="kgf/㎠"
-                colorClass="bg-emerald-100/60 text-emerald-700"
+                colorClass="bg-success-bg text-success"
                 loading={isLoading}
                 error={error}
                 onClick={loadTreatment}
@@ -48,7 +56,7 @@ export default function TreatmentDetails() {
                 label="배수지 개수"
                 value={treatment ? treatment.reservoirCnt : "---"}
                 unit="개"
-                colorClass="bg-indigo-100/60 text-indigo-700"
+                colorClass="bg-info-bg text-info"
                 loading={isLoading}
                 error={error}
                 onClick={loadTreatment}

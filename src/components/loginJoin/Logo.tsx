@@ -29,7 +29,7 @@ export default function Logo({ variant = "default", scale = 1 }: LogoProps) {
 
         {/* 텍스트 로고 */}
         <div className="flex flex-col items-center">
-          <h1 className="text-6xl md:text-7xl font-black tracking-[calc(-0.05em)] text-slate-900 flex items-center">
+          <h1 className="text-6xl md:text-7xl font-black tracking-[calc(-0.05em)] text-foreground flex items-center">
             <span>FLOWISE</span>
           </h1>
           <p className="mt-3 text-sky-600 font-bold tracking-[0.2em] text-center text-xs md:text-sm uppercase">

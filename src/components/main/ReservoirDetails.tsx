@@ -1,127 +1,185 @@
 'use client'
 
-import { isModalOpenAtom, mapDetailOpenAtom, selectedReservoirAtom } from '@/atoms/uniAtoms';
-import { usePredictionData } from '@/hooks/usePredictionData';
-import { useAtomValue } from 'jotai';
-import ErrorFallback from '../skeletons/ErrorFallback';
-import ReservoirModalSkeleton from './skeletons/ReservoirModalSkeleton';
-import ReservoirDetailSkeleton from './skeletons/ReservoirDetailsSkeleton';
-import { AlertTriangle, BarChart3, TrendingUp, Waves } from 'lucide-react';
-import { WaterWave } from '../WaterWave';
-import TailLineChart from './PredictionChart';
+import { detailViewModeAtom, selectedReservoirAtom } from "@/atoms/uniAtoms";
+import { usePredictionData } from "@/hooks/usePredictionData";
+import useOptimization from "@/hooks/useOptimization";
+import { useAtom, useAtomValue } from "jotai";
+import ErrorFallback from "../skeletons/ErrorFallback";
+import ReservoirModalSkeleton from "./skeletons/ReservoirModalSkeleton";
+import ReservoirDetailSkeleton from "./skeletons/ReservoirDetailsSkeleton";
+import { AlertTriangle, BarChart3, TrendingUp, Waves, Sparkles } from "lucide-react";
+import { WaterWave } from "../WaterWave";
+import PredictionChart from "./PredictionChart";
+import EnergySave from "./EnergySave";
+import { useMapUI } from "@/app/(main)/map/components/MapUIContext";
 
-export default function ReservoirDetails() {
-    const isModalOpen = useAtomValue(isModalOpenAtom);
-    const mapOpenDetail = useAtomValue(mapDetailOpenAtom);
+interface ReservoirDetailsProps {
+    isModalOpen?: boolean;
+    mapDetailOpen?: boolean;
+}
+
+export default function ReservoirDetails({ isModalOpen: propIsModalOpen, mapDetailOpen: propMapDetailOpen }: ReservoirDetailsProps) {
+    const mapUI = useMapUI();
+    const isModalOpen = propIsModalOpen ?? mapUI?.isModalOpen;
+    const mapOpenDetail = propMapDetailOpen ?? mapUI?.mapDetailOpen;
     const selectedReservoir = useAtomValue(selectedReservoirAtom);
 
-    // 차트 데이터
-    const { minuteData, loadPredictionData, filteredChartData, error, selectedRange, setSelectedRange, isLoading } = usePredictionData();
+    // viewMode 상태
+    const [viewMode, setDetailViewMode] = useAtom(detailViewModeAtom);
 
-    // 수위 위험 상태 체크
-    const levelStatus = selectedReservoir?.riskStatus;
-    const isLevelCritical = selectedReservoir?.riskStatus === "low" || selectedReservoir?.riskStatus === "high";
-    const levelPercent = (minuteData?.currentLevel / minuteData?.maxLevel) * 100;
+    // 예측 데이터
+    const { minuteData, loadPredictionData, filteredChartData, error: predictionError, selectedRange, setSelectedRange, isLoading: isPredictionLoading } = usePredictionData();
 
-    // 에러 발생 시 처리
+    // 최적화 데이터
+    const { optimizationData, isLoading: isOptLoading, error: optError, loadOptimization } = useOptimization();
+
+    // 공통 로딩 및 에러 처리
+    const isLoading = isPredictionLoading || (viewMode === "optimization" && isOptLoading);
+    const error = viewMode === "prediction" ? predictionError : optError;
+    const handleReload = viewMode === "prediction" ? loadPredictionData : loadOptimization;
+
     if (error) return (
         <div className="flex items-center justify-center h-screen w-full">
-            <ErrorFallback error={error} onClick={() => loadPredictionData()} />
+            <ErrorFallback error={error} onClick={() => handleReload()} />
         </div>
     );
 
-    // 데이터가 로드되었지만 비어있는 경우
     if (isLoading || !minuteData) {
         if (isModalOpen) return <ReservoirModalSkeleton />;
         if (mapOpenDetail) return <ReservoirDetailSkeleton />;
         return null;
     }
 
+    const isLevelCritical = selectedReservoir?.riskStatus === "low" || selectedReservoir?.riskStatus === "high";
+    const levelPercent = (minuteData?.currentLevel / minuteData?.maxLevel) * 100;
+
     return (
-        <div className={`flex-1 p-6 overflow-y-auto overflow-x-hidden rounded-b-4xl ${isLevelCritical ? "bg-red-100/50" : "bg-sky-200/50"}`}>
-            <div className="h-full flex flex-col">
-                {/* 수위 경고 배너 (위험 시에만 노출) */}
-                {isLevelCritical && (
-                    <div className="mb-4 flex items-center gap-4 bg-red-100 border-2 border-red-200 p-4 rounded-3xl animate-pulse">
-                        <div className="bg-red-500 p-3 rounded-2xl shadow-lg shadow-red-200">
-                            <AlertTriangle className="text-white w-6 h-6" />
-                        </div>
-                        <div className="flex-1">
-                            <h4 className="text-red-900 font-bold text-lg leading-tight">{levelStatus === "low" ? "저수위 경보 발생" : "고수위 경보 발생"}</h4>
-                        </div>
-                        <button className="bg-red-500 text-white px-5 py-2.5 rounded-xl font-bold text-sm hover:bg-red-600 transition-colors">
-                            즉시 조치
+        <div className={`flex-1 p-6 overflow-y-auto overflow-x-hidden rounded-b-4xl transition-colors duration-500 
+            ${isLevelCritical
+                ? "bg-danger-bg"
+                : "bg-info-bg"}`}>
+            <div className="h-full flex flex-col gap-4">
+                <div className="flex justify-center">
+                    <div className="flex w-full p-1.5 bg-muted/10 backdrop-blur-md rounded-2xl border border-card-border shadow-inner">
+                        {/* 예측 탭 */}
+                        <button
+                            onClick={() => setDetailViewMode("prediction")}
+                            className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl text-sm font-bold transition-all duration-300
+                                ${viewMode === "prediction"
+                                    ? "bg-card text-foreground shadow-sm"
+                                    : "text-muted hover:text-foreground hover:bg-card/40"
+                                }`}
+                        >
+                            <Waves size={16} className={viewMode === "prediction" ? "text-primary" : "opacity-50"} />
+                            실시간 예측 정보
+                        </button>
+
+                        {/* AI 최적화 탭 */}
+                        <button
+                            onClick={() => setDetailViewMode("optimization")}
+                            className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl text-sm font-bold transition-all duration-300
+                                ${viewMode === "optimization"
+                                    ? "bg-card text-foreground shadow-sm"
+                                    : "text-muted hover:text-foreground hover:bg-card/40"
+                                }`}
+                        >
+                            <Sparkles size={16} className={viewMode === "optimization" ? "text-primary" : "opacity-50"} />
+                            AI 최적화 스케줄링
                         </button>
                     </div>
-                )}
-
-                {/* 상단 요약 카드 */}
-                <div className={`grid grid-cols-1 xl:grid-cols-2 gap-4 mb-4`}>
-                    <div className={`glass p-6 rounded-3xl transition-colors overflow-hidden ${isLevelCritical ? "border-red-200 ring-2 ring-red-50" : "border-slate-100"}`}>
-                        <WaterWave levelPercent={levelPercent} danger={isLevelCritical} />
-                        <div className="relative h-full z-2">
-                            <p className="text-xs text-slate-500 font-bold uppercase tracking-wider mb-3 flex items-center gap-2">
-                                <Waves size={14} className={isLevelCritical ? "text-red-500" : "text-blue-500"} /> 현재 수위 현황
-                            </p>
-                            <div className="flex items-end justify-between">
-                                <div className="flex items-baseline gap-1">
-                                    <span className={`text-4xl font-black ${isLevelCritical ? "text-red-600" : "text-slate-900"}`}>
-                                        {minuteData?.currentLevel?.toFixed(2)}
-                                    </span>
-                                    <span className="text-slate-500 font-bold text-lg">/ {minuteData?.maxLevel?.toFixed(2)}m</span>
+                </div>
+                {/* 예측 */}
+                {viewMode === "prediction" ? (
+                    <>
+                        {isLevelCritical && (
+                            <div className="flex items-center gap-4 bg-danger-bg border border-danger/20 p-4 rounded-3xl animate-pulse">
+                                <div className="bg-danger p-3 rounded-2xl shadow-lg shadow-danger/20">
+                                    <AlertTriangle className="text-white w-6 h-6" />
                                 </div>
-                                <span className={`px-3 py-1 rounded-full text-[12px] font-semibold ${isLevelCritical ? "bg-red-100 text-red-600" : "bg-emerald-100 text-emerald-600"}`}>
-                                    {isLevelCritical ? "위험" : "안정"}
-                                </span>
+                                <div className="flex-1">
+                                    <h4 className="text-danger font-bold text-lg leading-tight">
+                                        {selectedReservoir?.riskStatus === "low" ? "저수위 경보 발생" : "고수위 경보 발생"}
+                                    </h4>
+                                </div>
+                                <button className="bg-danger text-white px-5 py-2.5 rounded-xl font-bold text-sm hover:opacity-90 transition-opacity">
+                                    즉시 조치
+                                </button>
                             </div>
-                        </div>
-                    </div>
+                        )}
 
-                    <div className="glass p-6 rounded-3xl">
-                        <p className="text-xs text-slate-500 font-bold uppercase tracking-wider mb-3 flex items-center gap-2">
-                            <BarChart3 size={14} className="text-indigo-500" /> 알고리즘 예측 신뢰도
-                        </p>
-                        <div className="flex items-center justify-between gap-4">
-                            <span className="text-4xl font-black text-slate-900">{minuteData?.predictionAccuracy?.toFixed(1)}%</span>
-                            <div className="flex-1 h-3 bg-slate-300 rounded-full overflow-hidden">
-                                <div className="bg-indigo-500 h-full rounded-full transition-all duration-1000" style={{ width: `${minuteData?.predictionAccuracy?.toFixed(1)}%` }} />
+                        <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
+                            <div className={`glass p-6 rounded-3xl relative overflow-hidden ${isLevelCritical ? "border-danger/30 ring-2 ring-danger/10" : "border-card-border"}`}>
+                                <WaterWave levelPercent={levelPercent} danger={isLevelCritical} />
+                                <div className="relative z-10">
+                                    <p className="text-xs text-muted font-bold uppercase tracking-wider mb-3 flex items-center gap-2">
+                                        <Waves size={14} className={isLevelCritical ? "text-danger" : "text-primary"} /> 현재 수위 현황
+                                    </p>
+                                    <div className="flex items-end justify-between">
+                                        <div className="flex items-baseline gap-1">
+                                            <span className={`text-4xl font-black ${isLevelCritical ? "text-danger" : "text-foreground"}`}>
+                                                {minuteData?.currentLevel?.toFixed(2)}
+                                            </span>
+                                            <span className="text-muted font-bold text-lg">/ {minuteData?.maxLevel?.toFixed(2)}m</span>
+                                        </div>
+                                        <span className={`px-3 py-1 rounded-full text-[12px] font-semibold ${isLevelCritical ? "bg-danger-bg text-danger border border-danger/20" : "bg-success-bg text-success border border-success/20"}`}>
+                                            {isLevelCritical ? "위험" : "안정"}
+                                        </span>
+                                    </div>
+                                </div>
                             </div>
-                        </div>
-                    </div>
-                </div>
 
-                {/* 메인 차트 영역 */}
-                <div className="flex-1 glass rounded-3xl p-6 flex flex-col">
-                    <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-4 gap-2">
-                        <h4 className="font-bold text-slate-800 flex items-center gap-2">
-                            <TrendingUp size={20} className="text-emerald-500" />수요 예측 추이
-                        </h4>
-                        <div className="flex flex-col gap-3 items-end">
-                            <div className="flex gap-2">
-                                {["3h", "6h", "12h"].map(t => (
-                                    <button
-                                        key={t}
-                                        onClick={() => setSelectedRange(t)}
-                                        className={`text-[12px] px-4 py-1 rounded-2xl transition-colors ${selectedRange === t ?
-                                            "bg-sky-500 text-white shadow-md"
-                                            : "bg-slate-200 text-slate-500 hover:bg-slate-100"
-                                            }`}
-                                    >
-                                        {t}
-                                    </button>
-                                ))}
+                            <div className="glass p-6 rounded-3xl border border-card-border">
+                                <p className="text-xs text-muted font-bold uppercase tracking-wider mb-3 flex items-center gap-2">
+                                    <BarChart3 size={14} className="text-primary opacity-80" /> 알고리즘 예측 신뢰도
+                                </p>
+                                <div className="flex items-center justify-between gap-4">
+                                    <span className="text-4xl font-black text-foreground">{minuteData?.predictionAccuracy?.toFixed(1)}%</span>
+                                    <div className="flex-1 h-3 bg-muted/20 rounded-full overflow-hidden">
+                                        <div className="bg-primary h-full rounded-full transition-all duration-1000" style={{ width: `${minuteData?.predictionAccuracy}%` }} />
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <div className="flex-1 w-full" style={{ minHeight: "80px" }}>
-                        <TailLineChart
-                            data={filteredChartData}
-                            labels={["실 수요", "예측 수요"]}
-                            mode="prediction"
-                        />
-                    </div>
-                </div>
+
+                        <div className="flex-1 glass rounded-3xl p-6 flex flex-col border-slate-100/20 dark:border-slate-800">
+                            <div className="flex justify-between items-center mb-4">
+                                <h4 className="font-bold text-foreground opacity-90 flex items-center gap-2">
+                                    <TrendingUp size={20} className="text-success" />수요 예측 추이
+                                </h4>
+                                <div className="flex gap-2">
+                                    {["3h", "6h", "12h"].map(t => (
+                                        <button key={t} onClick={() => setSelectedRange(t)} className={`text-[12px] px-4 py-1 rounded-2xl transition-colors ${selectedRange === t ? "bg-primary text-white shadow-md" : "bg-muted/10 text-muted hover:bg-muted/20"}`}>
+                                            {t}
+                                        </button>
+                                    ))}
+                                </div>
+                            </div>
+                            <div className="flex-1 w-full" style={{ minHeight: "80px" }}>
+                                <PredictionChart data={filteredChartData} labels={["실제 수요", "예측 수요"]} mode="prediction" />
+                            </div>
+                        </div>
+                    </>
+                ) : (
+                    /* 최적화 */
+                    <>
+                        <div className="grid grid-cols-1 gap-4 p-4 glass rounded-3xl">
+                            <EnergySave />
+                        </div>
+
+                        <div className="flex-1 glass rounded-3xl p-6 flex flex-col">
+                            <h4 className="font-bold text-foreground opacity-90 flex items-center gap-2">
+                                <TrendingUp size={20} className="text-success" />최적화 스케줄링
+                            </h4>
+                            <div className="flex-1 w-full" style={{ minHeight: "80px" }}>
+                                <PredictionChart
+                                    data={optimizationData}
+                                    labels={["예측 수위", "가동 펌프"]}
+                                />
+                            </div>
+                        </div>
+                    </>
+                )}
             </div>
         </div>
-    )
+    );
 }

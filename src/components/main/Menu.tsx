@@ -29,11 +29,11 @@ export default function Menu({ isMobileMenuOpen, setIsMobileMenuOpen }: MenuProp
             key={item.path}
             href={item.path}
             className={`flex items-center gap-2 px-5 py-2 rounded-2xl text-sm font-bold transition-all duration-300 ${isActive(item.path)
-                ? "bg-sky-50 text-sky-600 shadow-sm shadow-sky-100"
-                : "text-slate-500 hover:text-sky-500 hover:bg-slate-50"
+              ? "bg-primary/10 text-primary"
+              : "text-muted hover:text-primary hover:bg-muted/10"
               }`}
           >
-            <span className={`${isActive(item.path) ? "text-sky-500" : "text-slate-400"}`}>
+            <span className={`${isActive(item.path) ? "text-primary" : "text-muted"}`}>
               {item.icon}
             </span>
             {item.name}
@@ -43,7 +43,7 @@ export default function Menu({ isMobileMenuOpen, setIsMobileMenuOpen }: MenuProp
 
       {/* 모바일 네비게이션 */}
       {isMobileMenuOpen && (
-        <div className="lg:hidden absolute top-full left-0 w-full bg-white/95 backdrop-blur-2xl border-b border-slate-100 p-4 shadow-2xl shadow-slate-200/50 animate-in slide-in-from-top-4 duration-300">
+        <div className="lg:hidden absolute top-full left-0 w-full bg-card/95 backdrop-blur-2xl border-b border-card-border p-4 shadow-2xl animate-in slide-in-from-top-4 duration-300">
           <nav className="flex flex-col gap-2">
             {menuItems.map((item) => (
               <Link
@@ -51,12 +51,12 @@ export default function Menu({ isMobileMenuOpen, setIsMobileMenuOpen }: MenuProp
                 href={item.path}
                 onClick={() => setIsMobileMenuOpen(false)}
                 className={`flex items-center justify-between px-5 py-4 rounded-3xl font-bold transition-all ${isActive(item.path)
-                    ? "bg-linear-to-r from-sky-500 to-blue-600 text-white shadow-lg shadow-sky-500/30"
-                    : "bg-slate-50 text-slate-500 border border-slate-100"
+                  ? "bg-linear-to-r from-primary to-blue-600 text-white shadow-lg shadow-primary/20"
+                  : "bg-muted/5 text-muted border border-card-border/50"
                   }`}
               >
                 <div className="flex items-center gap-3">
-                  <span className={`${isActive(item.path) ? "text-white" : "text-sky-500"}`}>
+                  <span className={`${isActive(item.path) ? "text-white" : "text-primary"}`}>
                     {item.icon}
                   </span>
                   <span className="text-base">{item.name}</span>
@@ -64,14 +64,14 @@ export default function Menu({ isMobileMenuOpen, setIsMobileMenuOpen }: MenuProp
                 {isActive(item.path) ? (
                   <ChevronRight size={18} className="text-white/70" />
                 ) : (
-                  <ChevronRight size={18} className="text-slate-300" />
+                  <ChevronRight size={18} className="text-muted" />
                 )}
               </Link>
             ))}
           </nav>
 
-          <div className="mt-6 px-5 py-4 border-t border-slate-100">
-            <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em]">
+          <div className="mt-6 px-5 py-4 border-t border-card-border/50">
+            <p className="text-[10px] font-black text-muted uppercase tracking-[0.3em]">
               FLOWISE System
             </p>
           </div>
