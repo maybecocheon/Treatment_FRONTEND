@@ -69,7 +69,8 @@ export function usePredictionData() {
         filteredChartData,
         minuteData: fullResponse,
         loadPredictionData,
-        isLoading: isLoading || (isFetching && !fullResponse),
+        isLoading,
+        isFetching,
         error,
         selectedRange,
         setSelectedRange

@@ -12,13 +12,14 @@ import TailChartSkeleton from "@/components/main/skeletons/TailChartSkeleton";
 import ErrorFallback from "@/components/skeletons/ErrorFallback";
 import HistoryChart from "@/components/main/HistoryChart";
 import FacilitySelect from "@/components/main/FacilitySelect";
+import FetchingSpinner from "@/components/main/FetchingSpinner";
 
 export default function History() {
     const [selectedDate, setSelectedDate] = useState<string>("2023-12-31");
     const [selectedFacility, setSelectedFacility] = useState<FacilityType["facilityId"]>(1);
 
-    const { stats, chartData, monthData, labels, titles, isInfoLoading, infoError,
-        chartError, isChartLoading, loadHistoryChartData, loadHistoryData } = useHistory(selectedFacility, selectedDate);
+    const { stats, dayData, monthData, labels, titles, isInfoLoading, infoError, isInfoFetching,
+        isDayLoading, isMonthLoading, isDayFetching, isMonthFetching, dayError, monthError, loadHistoryData, loadHistoryDayData, loadHistoryMonthData } = useHistory(selectedFacility, selectedDate);
 
     return (
         <>
@@ -52,10 +53,11 @@ export default function History() {
                     icon={CalendarDays}
                     textSize="text-[20px]"
                 >
-                    {isChartLoading ? (
-                        <PageFallback skeleton={<TailChartSkeleton />} />
-                    ) : chartError ? (
-                        <ErrorFallback error={chartError} onClick={() => loadHistoryChartData()} />
+                    <FetchingSpinner isFetching={isMonthFetching} />
+                    {isMonthLoading ? (
+                        <TailChartSkeleton />
+                    ) : monthError ? (
+                        <ErrorFallback error={monthError} onClick={() => loadHistoryMonthData()} />
                     ) : (
                         <HistoryChart
                             data={monthData}
@@ -90,13 +92,14 @@ export default function History() {
                         color="text-green-700"
                         textSize="text-[20px]"
                     >
-                        {isChartLoading ? (
-                            <PageFallback skeleton={<TailChartSkeleton />} />
-                        ) : chartError ? (
-                            <ErrorFallback error={chartError} onClick={() => loadHistoryChartData()} />
+                        <FetchingSpinner isFetching={isDayFetching} />
+                        {isDayLoading ? (
+                            <TailChartSkeleton />
+                        ) : dayError ? (
+                            <ErrorFallback error={dayError} onClick={() => loadHistoryDayData()} />
                         ) : (
                             <HistoryChart
-                                data={chartData}
+                                data={dayData}
                                 isTreatment={selectedFacility === 1 ? true : false}
                                 isMonthly={false}
                                 labels={labels}

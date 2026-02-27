@@ -15,7 +15,7 @@ export default function useOptimization() {
     const selectedReservoirId = useAtomValue(selectedReservoirIdAtom);
 
     // 최적화 쿼리 
-    const { data: fullResponse, isLoading, error, refetch: loadOptimization } = useQuery({
+    const { data: fullResponse, isLoading, isFetching, error, refetch: loadOptimization } = useQuery({
         queryKey: ["treatmentChartAll", date],
         queryFn: async () => {
             const data = await myFetch(`${baseUrl}/treatment/chart/miniute?date=${date}`);
@@ -69,6 +69,7 @@ export default function useOptimization() {
     return {
         rawData: fullResponse,
         isLoading,
+        isFetching,
         error: error || costError,
         costError,
         costData,

@@ -77,7 +77,7 @@ export default function KakaoMap() {
     if (error) return <ErrorFallback error={error} onClick={() => loadFacilities()} />;
 
     return (
-        <div style={{ width: "100%", height: "100%" }}>
+        <div className="kakao-map-container" style={{ width: "100%", height: "100%" }}>
             <Map
                 center={center}
                 level={mapLevel}
@@ -95,10 +95,10 @@ export default function KakaoMap() {
                         <Polygon
                             path={formattedPath}
                             strokeWeight={4}
-                            strokeColor={"#3b82f6"}
-                            strokeOpacity={0.4}
-                            fillColor={"#0f172a"}
-                            fillOpacity={0.15}
+                            strokeColor={"#6366f1"}
+                            strokeOpacity={0.6}
+                            fillColor={"#8b5cf6"}
+                            fillOpacity={0.1}
                         />
                     )
                 }

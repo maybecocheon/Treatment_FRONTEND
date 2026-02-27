@@ -4,14 +4,16 @@ import { useState } from 'react';
 import { usePredictionData } from '@/hooks/usePredictionData';
 import OpenDetail from '@/components/main/OpenDetail';
 import ChartPanel from './ChartPanel';
+import FetchingSpinner from '@/components/main/FetchingSpinner';
 
 export default function PredictionPanel() {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const { loadPredictionData, filteredChartData, isLoading, error, selectedRange, setSelectedRange } = usePredictionData();
+  const { loadPredictionData, filteredChartData, isLoading, isFetching, error, selectedRange, setSelectedRange } = usePredictionData();
 
   return (
     <>
-      <div className="flex-1">
+      <div className="flex-1 relative">
+        <FetchingSpinner isFetching={isFetching} />
         <div className="glass backdrop-blur-xl rounded-3xl p-4 h-full flex flex-col overflow-hidden">
           <div className="flex justify-between items-start gap-2 mb-1 shrink-0">
             <div className="flex gap-2 items-center">

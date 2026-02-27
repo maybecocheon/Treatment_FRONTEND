@@ -2,7 +2,7 @@
 
 import { AlertCircle, RefreshCcw } from "lucide-react";
 
-export default function ErrorFallback({ error, onClick }: { error?: Error; onClick: (id?: string | number) => void; }) {
+export default function ErrorFallback({ error, onClick }: { error?: Error | null; onClick: (id?: string | number) => void; }) {
   return (
     <div className="flex flex-col items-center justify-center w-full h-full min-h-35 p-4 text-center">
       <AlertCircle size={20} className="text-red-400 mb-2" />

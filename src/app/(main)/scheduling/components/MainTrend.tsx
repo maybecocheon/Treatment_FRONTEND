@@ -40,7 +40,7 @@ export default function MainTrend() {
             </div>
 
             {/* 메인 차트 영역 */}
-            <div className={`flex-1 flex flex-col gap-4 rounded-3xl transition-all duration-500 ${isNotSelected ? "bg-muted/5 border border-dashed border-card-border" : ""}`}>
+            <div className={`flex-1 flex flex-col gap-4 rounded-2xl transition-all duration-500 ${isNotSelected ? "bg-muted/5 border border-dashed border-card-border" : ""}`}>
                 {isNotSelected ? (
                     <EmptySelection />
                 ) : (

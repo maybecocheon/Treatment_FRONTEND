@@ -96,7 +96,7 @@ export default function Setting() {
     if (!profile) return null;
 
     return (
-        <div className="flex-1 w-full max-w-7xl mx-auto px-4 md:px-0 flex flex-col gap-6 h-screen overflow-y-auto" >
+        <div className="flex-1 w-full max-w-7xl mx-auto px-4 md:px-0 flex flex-col gap-5 h-screen overflow-y-auto" >
             {/* 상단 타이틀 영역 */}
             <div className="flex items-center gap-4 w-full" >
                 <button

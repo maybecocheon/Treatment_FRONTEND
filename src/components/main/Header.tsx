@@ -69,11 +69,13 @@ export default function Header() {
           </div>
         </div>
 
+
         <div className="flex items-center gap-3 md:gap-6">
+          <ThemeToggle />
           {/* 시간 섹션 */}
           <button
             onClick={addOneHour}
-            className="hidden sm:flex items-center gap-1.5 px-3 py-2 bg-card border border-card-border text-foreground rounded-2xl text-xs font-bold hover:bg-white/40 dark:hover:bg-slate-800/60 transition-all active:scale-95 shadow-sm group"
+            className="hidden sm:flex items-center gap-1.5 px-3 py-2 bg-card border border-card-border text-foreground rounded-xl text-xs font-bold hover:bg-white/40 dark:hover:bg-slate-800/60 transition-all active:scale-95 shadow-sm group"
           >
             <ClockAlert className="w-3.5 h-3.5 text-warning group-hover:animate-pulse" />
             <span>+1시간</span>
@@ -90,8 +92,6 @@ export default function Header() {
               </span>
             </div>
           </div>
-
-          <ThemeToggle />
 
           {/* 프로필 섹션 */}
           {isProfileLoading ? (

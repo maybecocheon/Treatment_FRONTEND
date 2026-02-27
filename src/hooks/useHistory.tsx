@@ -10,6 +10,10 @@ import { useMemo } from "react";
 export function useHistory(facilityId: number, date: string) {
     const baseUrl = process.env.NEXT_PUBLIC_SERVER_URL;
     const { facilities } = useFacilities();
+    const currentMonth = useMemo(() => {
+        if (!date) return "";
+        return date.substring(0, 7); // "2024-05-20" -> "2024-05"
+    }, [date]);
 
     // 1. 시설 타입 판별
     const facilityType = useMemo(() =>
@@ -31,34 +35,42 @@ export function useHistory(facilityId: number, date: string) {
         staleTime: 1000 * 60 * 60,
     });
 
-    // 3. 차트 데이터 (일간/월간) 쿼리
-    const { data: charts, isLoading: isChartLoading, isFetching: isChartFetching, error: chartError, refetch: loadHistoryChartData } = useQuery({
-        queryKey: [prefix, "history", "charts", facilityId, date],
+    // 3. 차트 데이터 (월간) 쿼리
+    const { data: month, isLoading: isMonthLoading, isFetching: isMonthFetching, error: monthError, refetch: loadHistoryMonthData } = useQuery({
+        queryKey: [prefix, "history", "month", facilityId, currentMonth],
 
         queryFn: async () => {
-            const [day, month] = await Promise.all([
-                myFetch(`${baseUrl}/${prefix}/history/chart/day${idPath}?date=${date} 00:00:00`),
-                myFetch(`${baseUrl}/${prefix}/history/chart/month${idPath}?date=${date} 00:00:00`)
-            ]);
+            const monthData = await myFetch(`${baseUrl}/${prefix}/history/chart/month${idPath}?date=${date} 00:00:00`);
 
-            return {
-                day: day.map((item: any) => ({
-                    time: item.time.split("T")[1]?.substring(0, 5) || "",
-                    first: isTreatment ? (item.flowOut || 0) : (item.level || 0),
-                    second: isTreatment ? (item.pressPipe || 0) : (item.flowOut || 0),
-                })),
-                month: month.map((item: any) => ({
-                    time: item.time,
-                    first: isTreatment ? (item.flowOut || 0) : (item.level || 0),
-                    second: isTreatment ? (item.pressPipe || 0) : (item.flowOut || 0),
-                }))
-            };
+            return monthData.map((item: any) => ({
+                time: item.time,
+                first: isTreatment ? (item.flowOut || 0) : (item.level || 0),
+                second: isTreatment ? (item.pressPipe || 0) : (item.flowOut || 0),
+            }));
+        },
+        // currentMonth가 존재할 때만 실행
+        enabled: !!facilityId && !!currentMonth && !!facilityType,
+        staleTime: 1000 * 60 * 60,
+    });
+
+    // 4. 차트 데이터 (일간) 쿼리
+    const { data: day, isLoading: isDayLoading, isFetching: isDayFetching, error: dayError, refetch: loadHistoryDayData } = useQuery({
+        queryKey: [prefix, "history", "day", facilityId, date],
+
+        queryFn: async () => {
+            const day = await myFetch(`${baseUrl}/${prefix}/history/chart/day${idPath}?date=${date} 00:00:00`);
+
+            return day.map((item: any) => ({
+                time: item.time.split("T")[1]?.substring(0, 5) || "",
+                first: isTreatment ? (item.flowOut || 0) : (item.level || 0),
+                second: isTreatment ? (item.pressPipe || 0) : (item.flowOut || 0),
+            }));
         },
         enabled: !!facilityId && !!date && !!facilityType,
         staleTime: 1000 * 60 * 60,
     });
 
-    // 4. UI 통계 데이터 가공
+    // 5. UI 통계 데이터 가공
     const stats: StatCardType[] = useMemo(() => {
         if (!infoData) return [];
         const commonStats = [
@@ -95,15 +107,21 @@ export function useHistory(facilityId: number, date: string) {
 
     return {
         stats,
-        chartData: charts?.day ?? [],
-        monthData: charts?.month ?? [],
+        dayData: day ?? [],
+        monthData: month ?? [],
         labels: isTreatment ? ["송수량", "압력"] : ["수위", "수요량"],
         titles: isTreatment ? ["당월 송수량 및 토출 압력", "당일 송수량 및 토출 압력"] : ["당월 수요량 및 수위", "당일 수요량 및 수위"],
-        isInfoLoading: isInfoLoading || (isInfoFetching && !infoData),
-        isChartLoading: isChartLoading || (isChartFetching && !charts),
+        isInfoLoading,
+        isDayLoading,
+        isMonthLoading,
+        isInfoFetching,
+        isDayFetching,
+        isMonthFetching,
         infoError,
-        chartError,
+        dayError,
+        monthError,
         loadHistoryData,
-        loadHistoryChartData,
+        loadHistoryDayData,
+        loadHistoryMonthData,
     };
 }

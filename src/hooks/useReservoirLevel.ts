@@ -8,7 +8,7 @@ import { useAllPrediction } from "./useAllPrediction";
 
 export function useReservoirLevel() {
   const baseUrl = process.env.NEXT_PUBLIC_SERVER_URL;
-  const { displayTime: date } = useRefreshTime();
+  const { roundedTime: date } = useRefreshTime();
   const formattedDate = useMemo(() => {
     return dayjs(date).add(1, "minute").format("YYYY-MM-DD HH:mm:ss");
   }, [date]);
@@ -35,5 +35,5 @@ export function useReservoirLevel() {
     })),
   });
 
-  return { reservoirLevels, loadLevels, isLoading: isLoading || (isFetching && !reservoirLevels), error };
+  return { reservoirLevels, loadLevels, isLoading, isFetching, error };
 }

@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { History, ChevronRight, Factory, Map, LayoutDashboard } from "lucide-react";
+import { History, ChevronRight, Factory, Map, LayoutDashboard, Settings2 } from "lucide-react";
 
 interface MenuProps {
   isMobileMenuOpen: boolean;
@@ -16,7 +16,7 @@ export default function Menu({ isMobileMenuOpen, setIsMobileMenuOpen }: MenuProp
   const menuItems = [
     { name: "실시간 대시보드", path: "/dashboard", icon: <LayoutDashboard size={18} /> },
     { name: "지도", path: "/map", icon: <Map size={18} /> },
-    { name: "스케줄링", path: "/scheduling", icon: <Factory size={18} /> },
+    { name: "AI 스케줄링", path: "/scheduling", icon: <Factory size={18} /> },
     { name: "히스토리", path: "/history", icon: <History size={18} /> },
   ];
 

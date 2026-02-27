@@ -46,7 +46,8 @@ export function useOnlyPrediction() {
     return {
         loadOnlyPredictionData,
         onlyPredictionData,
-        isLoading: isLoading || (isFetching && !fullResponse),
+        isLoading,
+        isFetching,
         error
     };
 }

@@ -43,7 +43,7 @@ export default function Introduce() {
                 <ThemeToggle />
                 <button
                     onClick={() => setIsModalOpen(true)}
-                    className="flex items-center gap-2 px-4 py-2 md:px-5 md:py-2.5 bg-card/90 backdrop-blur-md border border-card-border rounded-xl text-muted font-bold shadow-md hover:shadow-lg hover:border-primary/30 hover:text-primary transition-all duration-300 group"
+                    className="flex items-center gap-2 px-4 py-2 md:px-5 bg-card/90 backdrop-blur-md border border-card-border rounded-xl text-muted font-bold shadow-md hover:shadow-lg hover:border-primary/30 hover:text-primary transition-all duration-300 group"
                 >
                     <User className="w-4 h-4 transition-transform group-hover:scale-110" />
                     <span className="text-sm md:text-base">로그인</span>

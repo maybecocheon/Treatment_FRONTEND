@@ -4,13 +4,15 @@ import { selectedReservoirAtom } from "@/atoms/uniAtoms";
 import { useAllPrediction } from "@/hooks/useAllPrediction";
 import { ReservoirLevelType } from "@/types/types";
 import { useSetAtom } from "jotai";
+import FetchingSpinner from "@/components/main/FetchingSpinner";
 
-export default function RiskEventPanel({ dangerReservoirs }: { dangerReservoirs: ReservoirLevelType[] }) {
+export default function RiskEventPanel({ dangerReservoirs, isFetching }: { dangerReservoirs: ReservoirLevelType[]; isFetching: boolean; }) {
   const { checkLevelRisk } = useAllPrediction();
   const setSelectedReservoir = useSetAtom(selectedReservoirAtom);
 
   return (
-    <div className="bg-card backdrop-blur-sm border border-card-border rounded-2xl p-3 lg:p-4 flex flex-col max-h-80 min-h-80 transition-all">
+    <div className="bg-card backdrop-blur-sm border border-card-border rounded-2xl p-3 lg:p-4 flex flex-col max-h-80 min-h-80 transition-all relative">
+      <FetchingSpinner isFetching={isFetching} />
       {/* 헤더 섹션 */}
       <div className="flex justify-between items-center mb-3 shrink-0 px-1">
         <h2 className="text-xs lg:text-sm font-bold text-foreground opacity-80 flex items-center gap-2">

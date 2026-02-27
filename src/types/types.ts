@@ -16,14 +16,14 @@ export interface UserProfile {
 
 // 정수장 스탯 카드 타입
 export interface StatCardType {
-  icon: React.ReactNode;
-  label: string;
-  value: number | string;
-  unit?: string;
-  colorClass: string;
-  loading?: boolean;
-  error?: Error | null;
-  onClick?: () => void;
+    icon: React.ReactNode;
+    label: string;
+    value: number | string;
+    unit?: string;
+    colorClass: string;
+    loading?: boolean;
+    error?: Error | null;
+    onClick?: () => void;
 }
 
 // 차트 박스 타입
@@ -119,4 +119,20 @@ export interface ReservoirHistoryChartType {
     time: string;
     level: number;
     flowOut: number;
+}
+
+// 시뮬레이션 타입
+export interface SimulationType {
+    facilityId: number;
+    facilityName?: string;
+    maxLevel: number;
+    minLevel: number;
+    chartData: SimulationChartType[];
+}
+
+export interface SimulationChartType {
+    time: string;
+    flowOut: number;
+    flowIn: number;
+    predictLevel: number;
 }

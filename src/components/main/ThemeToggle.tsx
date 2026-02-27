@@ -15,7 +15,7 @@ export function ThemeToggle() {
 
     if (!mounted) {
         return (
-            <div className="w-10 h-10 rounded-xl bg-slate-100/50 dark:bg-slate-800/50 animate-pulse" />
+            <div className="w-9 h-9 rounded-xl bg-slate-100/50 dark:bg-slate-800/50 animate-pulse" />
         );
     }
 
@@ -24,7 +24,7 @@ export function ThemeToggle() {
     return (
         <button
             onClick={() => setTheme(isDark ? "light" : "dark")}
-            className="relative w-10 h-10 flex items-center justify-center rounded-xl glass border-white/20 dark:border-slate-800 hover:bg-white/40 dark:hover:bg-slate-800/60 transition-all duration-300 active:scale-90 group overflow-hidden"
+            className="relative w-9 h-9 flex items-center justify-center rounded-xl bg-card shadow-sm border border-card-border hover:bg-white/40 dark:hover:bg-slate-800/60 transition-all duration-300 active:scale-90 group overflow-hidden"
             aria-label="테마 전환"
         >
             <div className="relative w-5 h-5">

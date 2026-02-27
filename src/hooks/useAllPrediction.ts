@@ -8,7 +8,7 @@ import { useCallback } from 'react';
 
 export function useAllPrediction() {
     const baseUrl = process.env.NEXT_PUBLIC_SERVER_URL;
-    const { displayTime: date } = useRefreshTime();
+    const { roundedTime: date } = useRefreshTime();
 
     // 메인 쿼리 로직
     const { data: predictions = [], isLoading, isFetching, error, refetch: loadPredictionAll } = useQuery<PredictionAllType[]>({
@@ -26,12 +26,12 @@ export function useAllPrediction() {
         enabled: !!date,
         staleTime: 1000 * 60 * 15, // 15분
 
-        // 재시도 전략: 서버가 계산 중일 때 2초 간격으로 최대 5번
+        // 재시도 전략: 서버가 계산 중일 때 10초 간격으로 최대 3번
         retry: (failureCount, error: any) => {
-            if (error.message === "PROCESSING" && failureCount < 5) return true;
+            if (error.message === "PROCESSING" && failureCount < 3) return true;
             return false;
         },
-        retryDelay: 2000,
+        retryDelay: 10000,
     });
 
     // 비즈니스 로직: 리스크 판별
@@ -65,7 +65,8 @@ export function useAllPrediction() {
     }, [predictions]);
 
     return {
-        isLoading: isLoading || (isFetching && !predictions),
+        isLoading,
+        isFetching,
         error,
         loadPredictionAll,
         checkLevelRisk,

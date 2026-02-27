@@ -4,14 +4,16 @@ import { useState } from 'react';
 import useOptimization from '@/hooks/useOptimization';
 import ChartPanel from './ChartPanel';
 import OpenDetail from '@/components/main/OpenDetail';
+import FetchingSpinner from '@/components/main/FetchingSpinner';
 
 export default function PumpSchedulePanel() {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const { optimizationData, isLoading, error, loadOptimization } = useOptimization();
+  const { optimizationData, isLoading, isFetching, error, loadOptimization } = useOptimization();
 
   return (
     <>
-      <div className="flex-1">
+      <div className="flex-1 relative">
+        <FetchingSpinner isFetching={isFetching} />
         <div className="glass backdrop-blur-xl rounded-3xl p-4 h-full flex flex-col overflow-hidden">
           <div className="flex justify-between items-start gap-2 mb-1 shrink-0">
             <div className="flex gap-2 items-center">
