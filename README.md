@@ -6,14 +6,6 @@
 
 ---
 
-## 🎨 Preview (UI Mockup)
-
-<p align="center">
-  <img src="./public/flowise.png" alt="FLOWISE Dashboard" width="800" style="border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.1);"/>
-</p>
-
----
-
 ## 🛠 Tech Stacks
 
 ### Frontend
