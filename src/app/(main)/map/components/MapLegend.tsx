@@ -1,5 +1,3 @@
-'use client'
-
 export default function MapLegend() {
     return (
         <div className="absolute bottom-8 right-8 z-20 bg-background/80 backdrop-blur-md p-5 rounded-3xl border border-glass-border shadow-[0_10px_30px_rgba(0,0,0,0.08)] flex flex-col gap-3">

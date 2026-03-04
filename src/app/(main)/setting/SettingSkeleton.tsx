@@ -1,6 +1,4 @@
-'use client'
-
-import { User } from 'lucide-react';
+import { User } from "lucide-react";
 
 export default function SettingSkeleton() {
     return (

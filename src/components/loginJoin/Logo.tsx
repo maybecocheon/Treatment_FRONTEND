@@ -15,9 +15,9 @@ export default function Logo({ variant = "default", scale = 1 }: LogoProps) {
     <div
       onClick={() => router.push("/")}
       style={{ transform: `scale(${scale})` }}
-      className={`relative z-10 flex flex-col items-center justify-center w-full 
+      className="relative z-10 flex flex-col items-center justify-center w-full 
         transition-all duration-1000 animate-in fade-in slide-in-from-top-4 
-        cursor-pointer group ${variant === "main" ? "mb-16" : ""}`}
+        cursor-pointer group"
     >
       <div className={`relative flex ${variant === "main" ? "flex-row" : "flex-col items-center"} gap-4`}>
         {/* 메인 아이콘 */}

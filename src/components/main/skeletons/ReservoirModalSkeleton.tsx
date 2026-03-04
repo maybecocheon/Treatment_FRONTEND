@@ -1,5 +1,3 @@
-'use client'
-
 export default function ReservoirModalSkeleton() {
   return (
     <div className="h-full p-4 md:p-6 space-y-4 bg-card/20 border-t border-card-border">

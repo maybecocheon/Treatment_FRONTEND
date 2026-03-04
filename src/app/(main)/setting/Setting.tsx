@@ -1,17 +1,18 @@
 'use client'
 
-import React, { useEffect, useState } from 'react';
-import Title from '@/components/main/Title';
-import { User, Shield, ArrowLeft, Trash2, Key, Lock, Globe, Clock, ShieldIcon, KeyRound, ShieldCheckIcon, Mail, Save, Building2 } from 'lucide-react';
-import TailInput from '@/components/TailInput';
-import TailSelect from '@/components/TailSelect';
-import TailButton from '@/components/TailButton';
-import { usePasswordMatch } from '@/hooks/usePasswordMatch';
-import { useValidationRules } from '@/hooks/useValidationRules';
-import { useRouter } from 'next/navigation';
-import { useUser } from '@/hooks/useUser';
-import { toast } from 'sonner';
-import useUpdateProfile from '@/hooks/useUpdateProfile';
+import React, { useEffect, useState } from "react";
+import Title from "@/components/main/Title";
+import { User, Shield, ArrowLeft, Trash2, Key, Lock, Globe, Clock, ShieldIcon, KeyRound, ShieldCheckIcon, Mail, Save, Building2 } from "lucide-react";
+import TailInput from "@/components/TailInput";
+import TailSelect from "@/components/TailSelect";
+import TailButton from "@/components/TailButton";
+import { usePasswordMatch } from "@/hooks/usePasswordMatch";
+import { useValidationRules } from "@/hooks/useValidationRules";
+import { useRouter } from "next/navigation";
+import { useUser } from "@/hooks/useUser";
+import { toast } from "sonner";
+import useUpdateProfile from "@/hooks/useUpdateProfile";
+import SettingSkeleton from "./SettingSkeleton";
 
 
 export default function Setting() {
@@ -93,7 +94,7 @@ export default function Setting() {
         deleteAccount();
     };
 
-    if (!profile) return null;
+    if (!profile) return <SettingSkeleton />;
 
     return (
         <div className="flex-1 w-full max-w-7xl mx-auto px-4 md:px-0 flex flex-col gap-5 h-screen overflow-y-auto" >
@@ -109,7 +110,7 @@ export default function Setting() {
             </div >
 
             {/* 좌측: 프로필 카드 */}
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+            <div className="flex-1 grid grid-cols-1 lg:grid-cols-12 gap-8">
                 {/* 좌측: 프로필 카드 */}
                 <div className="lg:col-span-4 xl:col-span-3">
                     <div className="glass h-full p-8 rounded-[2.5rem] border border-card-border shadow-2xl relative overflow-hidden flex flex-col items-center">
@@ -149,10 +150,10 @@ export default function Setting() {
                 </div>
 
                 {/* 우측: 메인 설정 영역 */}
-                <div className="lg:col-span-9 grid grid-cols-1 md:grid-cols-2 gap-8 items-stretch">
+                <div className="lg:col-span-9 grid grid-cols-1 lg:grid-cols-2 gap-8 items-stretch">
 
                     {/* 기본 정보 수정 섹션 */}
-                    <form className="glass p-10 rounded-[3rem] flex flex-col" onSubmit={handleSubmit}>
+                    <form className="glass p-10 rounded-[3rem] flex flex-col border border-card-border" onSubmit={handleSubmit}>
                         {/* 상단 헤더 */}
                         <div className="flex items-center gap-3 mb-8">
                             <div className="p-3 bg-info-bg rounded-2xl text-info shadow-sm">
@@ -211,7 +212,7 @@ export default function Setting() {
                     </form>
 
                     {/* 비밀번호 변경 섹션 */}
-                    <div className="glass p-10 rounded-[3rem] flex flex-col">
+                    <div className="glass p-10 rounded-[3rem] flex flex-col border border-card-border">
                         <div className="flex items-center gap-3 mb-8">
                             <div className="p-3 bg-warning-bg rounded-2xl text-warning shadow-sm">
                                 <Lock size={20} />
@@ -261,7 +262,7 @@ export default function Setting() {
                                     value={newPasswordRe || ""}
                                     onChange={(e) => setNewPasswordRe(e.target.value)} />
                                 {confirmPasswordMsg && (
-                                    <p className={`text-xs ml-2 font-medium mt-1 ${newPassword === newPasswordRe ? 'text-primary' : 'text-danger'}`}>
+                                    <p className={`text-xs ml-2 font-medium mt-1 ${newPassword === newPasswordRe ? "text-primary" : "text-danger"}`}>
                                         {confirmPasswordMsg}
                                     </p>
                                 )}

@@ -1,22 +1,20 @@
-'use client'
-
 export default function TailChartSkeleton() {
   return (
-    <div className="w-full h-full flex flex-col gap-4 animate-pulse">
+    <div className="w-full h-full flex flex-col gap-4 animate-pulse min-h-17">
       {/* 차트 본체 영역 */}
       <div className="flex-1 w-full relative">
-        <div className="absolute inset-0 bg-card/50 rounded-2xl border border-card-border flex items-end p-4">
+        <div className="absolute inset-0 bg-card/50 rounded-2xl border border-card-border flex items-end p-6">
           {/* 차트 격자 느낌을 주기 위한 가로선들 */}
-          <div className="w-full h-full flex flex-col justify-between pt-5 pb-8">
+          <div className="w-full h-full flex flex-col justify-between pt-8 pb-10">
             {[1, 2, 3, 4].map((i) => (
               <div key={i} className="w-full border-t border-card-border/50" />
             ))}
           </div>
 
-          {/* X축 라벨 스켈레톤 (시간 표시 부분) */}
+          {/* X축 라벨 스켈레톤 */}
           <div className="absolute bottom-2 left-0 right-0 flex justify-around px-10">
             {[1, 2, 3, 4, 5].map((i) => (
-              <div key={i} className="h-2 w-8 bg-card-border rounded" />
+              <div key={i} className="h-3 w-8 bg-card-border rounded" />
             ))}
           </div>
 

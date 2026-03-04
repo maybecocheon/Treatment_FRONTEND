@@ -1,5 +1,3 @@
-'use client'
-
 export default function TreatmentDetailsSkeleton() {
     return (
         <div className="flex flex-col gap-0 md:gap-4 p-6 h-full bg-card animate-pulse">

@@ -1,3 +1,5 @@
+'use client'
+
 import { useMemo } from "react";
 import { ComposedChart, Area, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from "recharts";
 import { useTheme } from "next-themes";

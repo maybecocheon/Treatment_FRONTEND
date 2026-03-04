@@ -11,14 +11,14 @@ import { useReservoirLevel } from "@/hooks/useReservoirLevel";
 import { useTreatment } from "@/hooks/useTreatment";
 import { useSimulation } from "@/hooks/useSimulation";
 import FlowingLine from "@/app/(main)/dashboard/components/FlowingLine";
-import PageFallback from "@/components/skeletons/PageFallback";
-import ErrorFallback from "@/components/skeletons/ErrorFallback";
-import WaterLevelPanelSkeleton from "@/app/(main)/dashboard/skeletons/WaterLevelPanelSkeleton";
+import PageFallback from "@/components/fallback/PageFallback";
+import ErrorFallback from "@/components/fallback/ErrorFallback";
 import UnifiedWaterCard from "./UnifiedWaterCard";
 import FetchingSpinner from "./FetchingSpinner";
+import WaterLevelPanelSkeleton from "@/app/(main)/dashboard/skeletons/WaterLevelPanelSkeleton";
 
 interface UnifiedWaterLevelPanelProps {
-    mode: 'dashboard' | 'simulation';
+    mode: "dashboard" | "simulation";
 }
 
 export default function UnifiedWaterLevelPanel({ mode }: UnifiedWaterLevelPanelProps) {
@@ -31,14 +31,14 @@ export default function UnifiedWaterLevelPanel({ mode }: UnifiedWaterLevelPanelP
 
     // 3. 시뮬레이션 전용 Logic
     const [selectedPumpCount, setSelectedPumpCount] = useState<number>(1);
-    const { simulation, loadSimulation, error: simError, isLoading: isSimulationLoading } = useSimulation(mode === 'simulation' ? selectedPumpCount : 0);
+    const { simulation, loadSimulation, error: simError, isLoading: isSimulationLoading } = useSimulation(mode === "simulation" ? selectedPumpCount : 0);
     const [timeSlide, setTimeSlide] = useAtom(timeSlideAtom);
     const { roundedTime } = useRefreshTime();
 
     // 데이터 병합 Logic (Simulation 모드인 경우)
     const displayedData = useMemo(() => {
         if (!reservoirLevels || reservoirLevels.length === 0) return [];
-        if (mode === 'dashboard') return reservoirLevels;
+        if (mode === "dashboard") return reservoirLevels;
 
         if (!simulation || simulation.length === 0) return reservoirLevels;
 
@@ -48,22 +48,22 @@ export default function UnifiedWaterLevelPanel({ mode }: UnifiedWaterLevelPanelP
         });
     }, [reservoirLevels, simulation, mode]);
 
-    // 시뮬레이션 합계 계산
-    const calculateTotalSimFlow = useCallback((type: 'flowIn' | 'flowOut') => {
-        if (mode === 'dashboard' || !displayedData || !timeSlide) return 0;
+    // 시뮬레이션 유입량, 유출량 합계 계산
+    const calculateTotalSimFlow = useCallback((type: "flowIn" | "flowOut") => {
+        if (mode === "dashboard" || !displayedData || !timeSlide) return 0;
         const currentTime = dayjs(timeSlide);
 
         return displayedData.reduce((sum, res) => {
-            if (!('chartData' in res)) return sum;
+            if (!("chartData" in res)) return sum;
             const matchingItem = (res as SimulationType).chartData.find(
-                item => dayjs(item.time).isSame(currentTime, 'minute')
+                item => dayjs(item.time).isSame(currentTime, "minute")
             );
             return sum + (matchingItem?.[type] || 0);
         }, 0);
     }, [displayedData, timeSlide, mode]);
 
-    const simTotalIn = useMemo(() => calculateTotalSimFlow('flowIn'), [calculateTotalSimFlow]);
-    const simTotalOut = useMemo(() => calculateTotalSimFlow('flowOut'), [calculateTotalSimFlow]);
+    const simTotalIn = useMemo(() => calculateTotalSimFlow("flowIn"), [calculateTotalSimFlow]);
+    const simTotalOut = useMemo(() => calculateTotalSimFlow("flowOut"), [calculateTotalSimFlow]);
 
     // SVG 연결선 Logic
     const containerRef = useRef<HTMLDivElement>(null);
@@ -125,19 +125,18 @@ export default function UnifiedWaterLevelPanel({ mode }: UnifiedWaterLevelPanelP
 
     // 슬라이더 Logic
     const calculateSliderValue = () => {
-        if (mode === 'dashboard') {
-            // Dashboard mode might still use slider if requested, but plan said only simulation
+        if (mode === "dashboard") {
             return 24;
         }
         if (!timeSlide || !roundedTime) return 0;
-        const diffMin = dayjs(timeSlide).diff(dayjs(roundedTime), 'minute');
+        const diffMin = dayjs(timeSlide).diff(dayjs(roundedTime), "minute");
         return diffMin / 15;
     };
 
     const handleSliderChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const val = parseInt(e.target.value);
         const offsetMin = val * 15;
-        const newTime = dayjs(roundedTime).add(offsetMin, 'minute').format("YYYY-MM-DD HH:mm:ss");
+        const newTime = dayjs(roundedTime).add(offsetMin, "minute").format("YYYY-MM-DD HH:mm:ss");
         setTimeSlide(newTime);
     };
 
@@ -146,16 +145,16 @@ export default function UnifiedWaterLevelPanel({ mode }: UnifiedWaterLevelPanelP
         return () => { setTimeSlide(null); };
     }, [setTimeSlide]);
 
-    if (levelError || (mode === 'simulation' && simError)) {
+    if (levelError || (mode === "simulation" && simError)) {
         return (
             <div className="glass rounded-2xl flex items-center justify-center h-full w-full">
-                <ErrorFallback error={levelError || simError} onClick={() => { loadLevels(); mode === 'simulation' ? loadSimulation() : loadTreatment(); }} />
+                <ErrorFallback error={levelError || simError} onClick={() => { loadLevels(); mode === "simulation" ? loadSimulation() : loadTreatment(); }} />
             </div>
         );
     }
 
-    if (isLevelLoading || (mode === 'dashboard' && isTreatmentLoading) || (mode === 'simulation' && isSimulationLoading) || displayedData.length === 0) {
-        return <PageFallback skeleton={<WaterLevelPanelSkeleton isSimulation={mode === 'simulation'} />} />;
+    if (isLevelLoading || (mode === "dashboard" && isTreatmentLoading) || (mode === "simulation" && isSimulationLoading) || displayedData.length === 0) {
+        return <PageFallback skeleton={<WaterLevelPanelSkeleton isSimulation={mode === "simulation"} />} />;
     }
 
     const topCards = displayedData.slice(0, 6);
@@ -164,9 +163,9 @@ export default function UnifiedWaterLevelPanel({ mode }: UnifiedWaterLevelPanelP
     return (
         <div ref={containerRef} className="h-full glass rounded-2xl p-5 flex flex-col gap-8 relative overflow-hidden border border-card-border">
             <FetchingSpinner isFetching={isLevelLoading || isTreatmentLoading || isSimulationLoading} />
-            {/* Header / Controls */}
+            {/* 헤더 / 컨트롤 */}
             <div className="flex justify-between items-center z-20">
-                {mode === 'dashboard' ? (
+                {mode === "dashboard" ? (
                     <div className="flex gap-2">
                         <h2 className="text-md font-black text-foreground opacity-80 px-1 flex items-center gap-1">
                             {isLevel ? <><Droplets size={18} className="text-primary" /><span>수위 현황</span></> : <><Waves size={18} className="text-primary" /><span>유입량 현황</span></>}
@@ -190,7 +189,7 @@ export default function UnifiedWaterLevelPanel({ mode }: UnifiedWaterLevelPanelP
                 )}
             </div>
 
-            {/* SVG Connections */}
+            {/* SVG 물 흐름 연결선 */}
             <svg className="absolute inset-0 pointer-events-none z-0" style={{ width: "100%", height: "100%" }}>
                 {connections.map((conn, idx) => (
                     <FlowingLine key={idx} start={conn.start} end={conn.end} />
@@ -198,7 +197,7 @@ export default function UnifiedWaterLevelPanel({ mode }: UnifiedWaterLevelPanelP
             </svg>
 
             <div className="flex-1 flex flex-col items-center justify-between min-h-0">
-                {/* Top Cards */}
+                {/* 상단 배수지 */}
                 <div className="grid grid-cols-2 lg:grid-cols-6 gap-y-3 gap-x-20 lg:gap-x-3 z-10">
                     {topCards.map((res, i) => (
                         <div key={res.facilityId} ref={el => { cardsRef.current[i] = el; }}>
@@ -207,7 +206,7 @@ export default function UnifiedWaterLevelPanel({ mode }: UnifiedWaterLevelPanelP
                     ))}
                 </div>
 
-                {/* Plant Section */}
+                {/* 정수장 */}
                 <div ref={plantRef} className="relative z-10 flex flex-col items-center shrink-0">
                     <div className="relative bg-card/90 border-3 border-card-border p-4 lg:p-5 rounded-2xl lg:rounded-3xl shadow-xl backdrop-blur-md flex items-center gap-4 min-w-45 lg:min-w-50">
                         <div className="bg-primary p-2.5 lg:p-3 rounded-xl lg:rounded-2xl shadow-inner shrink-0">
@@ -215,7 +214,7 @@ export default function UnifiedWaterLevelPanel({ mode }: UnifiedWaterLevelPanelP
                         </div>
 
                         <div className="grid grid-cols-[auto_1fr] gap-x-3 gap-y-1.5 items-center">
-                            {mode === 'dashboard' ? (
+                            {mode === "dashboard" ? (
                                 <>
                                     <span className="text-[10px] lg:text-[11px] font-bold text-muted uppercase tracking-tighter leading-none">송수량</span>
                                     <div className="flex items-baseline gap-1 justify-end">
@@ -251,7 +250,7 @@ export default function UnifiedWaterLevelPanel({ mode }: UnifiedWaterLevelPanelP
                     </div>
                 </div>
 
-                {/* Bottom Cards */}
+                {/* 하단 배수지 */}
                 <div className="grid grid-cols-2 lg:grid-cols-6 gap-y-3 gap-x-20 lg:gap-x-3 z-10">
                     {bottomCards.map((res, i) => (
                         <div key={res.facilityId} ref={el => { cardsRef.current[i + 6] = el; }}>
@@ -261,8 +260,8 @@ export default function UnifiedWaterLevelPanel({ mode }: UnifiedWaterLevelPanelP
                 </div>
             </div>
 
-            {/* Simulation Slider */}
-            {mode === 'simulation' && (
+            {/* 시뮬레이션 타임 슬라이더 */}
+            {mode === "simulation" && (
                 <div className="mt-4 px-4 py-4 bg-muted/5 border border-card-border/50 rounded-2xl z-20">
                     <div className="flex items-center justify-between mb-2">
                         <div className="flex items-center gap-2">

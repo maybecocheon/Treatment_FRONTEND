@@ -1,4 +1,4 @@
-import { TeamMemberType } from '@/types/types';
+import { TeamMemberType } from "@/types/types";
 
 export const FACILITY_COORDS: Record<string, { lat: number; lng: number }> = {
   "1": { lat: 35.2850, lng: 129.0850 }, // 중앙 정수장 
@@ -22,21 +22,25 @@ export const TEAM_MEMBERS: TeamMemberType[] = [
   {
     name: "이현지",
     role: "Leader / Front-end",
-    description: "Next.js 기반의 사용자 친화적 반응형 인터페이스 구현. 대내외 커뮤니케이션을 통한 프로젝트 리딩."
+    description: "Next.js 기반의 사용자 친화적 반응형 인터페이스 구현. 대내외 커뮤니케이션을 통한 프로젝트 리딩.",
+    img: "/lee.jpg",
   },
   {
     name: "최윤영",
     role: "Data Scientist",
-    description: "Attention Mechanism 기반의 LSTM 수요 예측 모델 설계 및 실험. 데이터 전처리 및 분석 결과를 활용한 시각화 구현."
+    description: "Attention Mechanism 기반의 LSTM 수요 예측 모델 설계 및 실험. 데이터 전처리 및 분석 결과를 활용한 시각화 구현.",
+    img: "/choi.jpg",
   },
   {
     name: "박진하",
     role: "AI Engineer / Back-end",
-    description: "LSTM·Transformer 기반 수요 예측 모델 설계 및 FastAPI 연동. 데이터 전처리 파이프라인 구축 및 펌프 최적화 API 구현."
+    description: "LSTM·Transformer 기반 수요 예측 모델 설계 및 FastAPI 연동. 데이터 전처리 파이프라인 구축 및 펌프 최적화 API 구현.",
+    img: "/park.jpg",
   },
   {
     name: "석동찬",
     role: "Back-end Developer",
-    description: "정수장 펌프 운영 최적화 알고리즘 설계 및 백엔드 시스템 구축. 효율적인 데이터 관리와 비즈니스 로직의 안정적 구현."
+    description: "정수장 펌프 운영 최적화 알고리즘 설계 및 백엔드 시스템 구축. 효율적인 데이터 관리와 비즈니스 로직의 안정적 구현.",
+    img: "/seok.jpg",
   }
 ];

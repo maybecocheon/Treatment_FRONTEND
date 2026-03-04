@@ -1,9 +1,7 @@
-'use client'
-
 export default function ReservoirDetailSkeleton() {
   return (
-    <div className="flex-1 p-6 overflow-hidden">
-      <div className="h-full flex flex-col gap-6 bg-white/20">
+    <div className="flex-1 overflow-hidden">
+      <div className="h-full flex flex-col gap-6">
 
         {/* 요약 정보 카드 */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">

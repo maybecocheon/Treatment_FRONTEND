@@ -1,5 +1,3 @@
-'use client'
-
 import { Droplets } from "lucide-react";
 
 interface EmptySelectionProps {
@@ -14,7 +12,7 @@ export default function EmptySelection({
   return (
     <div className="flex-1 flex flex-col items-center justify-center text-center py-10 px-6 animate-in fade-in zoom-in duration-300">
       <div className="w-16 h-16 bg-card rounded-full flex items-center justify-center mb-4">
-        <Droplets className="text-slate-300 dark:bg-slate-900 animate-bounce" size={32} />
+        <Droplets className="text-glass-border animate-bounce" size={32} />
       </div>
       <h2 className="text-lg font-black text-foreground mb-1">{title}</h2>
       <p className="text-sm text-muted opacity-80 whitespace-pre-line leading-relaxed">

@@ -2,9 +2,8 @@
 
 import { PieChart, Pie, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, LabelList } from "recharts";
 import { useTheme } from "next-themes";
-import FetchingSpinner from "@/components/main/FetchingSpinner";
 
-export default function RiskDetailPanel({ riskMetrics, isFetching }: { riskMetrics: { totalScore: number; dangerCount: number; treatmentFine: boolean; }; isFetching: boolean; }) {
+export default function RiskDetailPanel({ riskMetrics }: { riskMetrics: { totalScore: number; dangerCount: number; treatmentFine: boolean; }; }) {
   const { totalScore, dangerCount, treatmentFine } = riskMetrics;
   const isDanger = totalScore < 80;
   const { theme } = useTheme();
@@ -12,7 +11,6 @@ export default function RiskDetailPanel({ riskMetrics, isFetching }: { riskMetri
 
   return (
     <div className="flex-1 relative">
-      <FetchingSpinner isFetching={isFetching} />
       <div className="bg-card backdrop-blur-sm border border-card-border rounded-2xl p-3 lg:p-4 h-full flex flex-col transition-all">
 
         <div className="flex items-center gap-2 mb-3 shrink-0">

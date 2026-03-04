@@ -26,9 +26,9 @@ export default function OpenDetail({ isModalOpen: propIsModalOpen, onClose: prop
     const renderContent = () => {
         // 정수장 선택 시
         if (selectedFacilityType === "정수장") {
-            return <TreatmentDetails mapDetailOpen={mapOpenDetail} />;
+            return <TreatmentDetails />;
         }
-        return <ReservoirDetails isModalOpen={isModalOpen} mapDetailOpen={mapOpenDetail} />
+        return <ReservoirDetails isModalOpen={isModalOpen} />
     }
 
     // 수위 위험 상태 체크

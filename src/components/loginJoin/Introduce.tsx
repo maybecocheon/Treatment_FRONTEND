@@ -60,9 +60,9 @@ export default function Introduce() {
                 <Logo variant="main" />
             </div>
 
-            <div className="relative z-10 max-w-6xl mx-auto w-full">
+            <div className="relative z-10 max-w-6xl mx-auto w-full flex flex-col">
                 {/* 메인 히어로 섹션 */}
-                <div className="flex flex-col mb-20 md:mb-40 lg:mb-50">
+                <div className="flex-1 flex flex-col justify-center min-h-[calc(90vh-120px)] mb-32 md:mb-52 lg:mb-64">
                     <div className="grid lg:grid-cols-2 gap-10 lg:gap-20 items-center">
                         <div className="text-center lg:text-left">
                             <h2 className="text-3xl sm:text-4xl md:text-5xl font-black mb-6 leading-[1.2] tracking-tight text-foreground/80">
@@ -111,7 +111,7 @@ export default function Introduce() {
 
                     <button
                         onClick={() => setScroll(v => v + 1)}
-                        className="mt-16 md:mt-20 text-muted hover:text-primary transition-colors animate-bounce flex flex-col items-center gap-2"
+                        className="mt-5 pt-10 text-muted hover:text-primary transition-colors animate-bounce flex flex-col items-center gap-2"
                     >
                         <span className="text-[10px] font-bold uppercase tracking-[0.2em]">About Team</span>
                         <ChevronDown className="w-6 h-6 text-primary" />
@@ -131,7 +131,7 @@ export default function Introduce() {
                             <div className="relative w-24 h-24 md:w-28 md:h-28 mx-auto mb-6 md:mb-8">
                                 <div className="absolute inset-0 bg-primary/20 rounded-4xl md:rounded-[2.5rem] rotate-6 opacity-20 group-hover:rotate-12 transition-transform duration-500" />
                                 <div className="relative w-full h-full rounded-[1.8rem] md:rounded-[2.2rem] bg-muted/10 overflow-hidden border-4 border-card shadow-md">
-                                    <img src={`https://picsum.photos/300/300?random=${i + 20}`} alt={member.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+                                    <img src={member.img} alt={member.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
                                 </div>
                             </div>
                             <h4 className="text-xl md:text-2xl font-black text-foreground mb-2">{member.name}</h4>

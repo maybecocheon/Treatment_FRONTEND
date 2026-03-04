@@ -1,5 +1,5 @@
-import Footer from '@/components/Footer';
-import Introduce from '@/components/loginJoin/Introduce';
+import Footer from "@/components/Footer";
+import Introduce from "@/components/loginJoin/Introduce";
 
 export default function LoginPage() {
   return (

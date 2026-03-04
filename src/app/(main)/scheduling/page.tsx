@@ -33,10 +33,10 @@ export default function SchedulingPage() {
                                     <div className="space-y-4">
 
                                         <div className="inline-flex items-center gap-4 bg-muted/10 px-4 py-3 rounded-2xl border border-card-border">
-                                            <span className="text-[10px] font-black text-success uppercase tracking-widest">평균 절감률</span>
+                                            <span className="text-[10px] font-black text-success uppercase tracking-widest">목표 절감률</span>
                                             <div className="h-4 w-px bg-card-border" />
                                             <div className="flex items-baseline gap-0.5 text-success">
-                                                <span className="text-3xl font-black">5~10</span>
+                                                <span className="text-3xl font-black">15</span>
                                                 <span className="text-sm font-bold">%</span>
                                             </div>
                                         </div>

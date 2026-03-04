@@ -63,7 +63,7 @@ export default function PredictionChart({ data, labels, mode = "optimization", s
 
     if (isNoData) {
         return (
-            <div className="w-full h-full flex flex-col items-center justify-center text-muted gap-2 bg-muted/5 rounded-2xl border border-dashed border-card-border min-h-[150px]">
+            <div className="w-full h-full flex flex-col items-center justify-center text-muted gap-2 bg-muted/5 rounded-2xl border border-dashed border-card-border min-h-37.5">
                 <span className="text-sm font-medium">데이터가 없습니다.</span>
             </div>
         );

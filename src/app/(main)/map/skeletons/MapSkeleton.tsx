@@ -1,5 +1,3 @@
-'use client'
-
 export default function MapSkeleton() {
     return (
         <div className="w-full h-full min-h-125 relative glass rounded-2xl overflow-hidden animate-pulse">

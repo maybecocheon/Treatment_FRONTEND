@@ -7,19 +7,21 @@ import ChartBox from "@/components/main/ChartBox";
 import { useHistory } from "@/hooks/useHistory";
 import { StatCard } from "@/components/main/StatCard";
 import { FacilityType } from "@/types/types";
-import PageFallback from "@/components/skeletons/PageFallback";
+import PageFallback from "@/components/fallback/PageFallback";
+import ErrorFallback from "@/components/fallback/ErrorFallback";
 import TailChartSkeleton from "@/components/main/skeletons/TailChartSkeleton";
-import ErrorFallback from "@/components/skeletons/ErrorFallback";
 import HistoryChart from "@/components/main/HistoryChart";
 import FacilitySelect from "@/components/main/FacilitySelect";
 import FetchingSpinner from "@/components/main/FetchingSpinner";
+import StatCardSkeleton from "@/components/main/skeletons/StatCardSkeleton";
 
 export default function History() {
     const [selectedDate, setSelectedDate] = useState<string>("2023-12-31");
     const [selectedFacility, setSelectedFacility] = useState<FacilityType["facilityId"]>(1);
 
     const { stats, dayData, monthData, labels, titles, isInfoLoading, infoError, isInfoFetching,
-        isDayLoading, isMonthLoading, isDayFetching, isMonthFetching, dayError, monthError, loadHistoryData, loadHistoryDayData, loadHistoryMonthData } = useHistory(selectedFacility, selectedDate);
+        isDayLoading, isMonthLoading, isDayFetching, isMonthFetching, dayError, monthError,
+        loadHistoryData, loadHistoryDayData, loadHistoryMonthData } = useHistory(selectedFacility, selectedDate);
 
     return (
         <>
@@ -53,9 +55,9 @@ export default function History() {
                     icon={CalendarDays}
                     textSize="text-[20px]"
                 >
-                    <FetchingSpinner isFetching={isMonthFetching} />
+                    <FetchingSpinner isFetching={isMonthFetching && !isMonthLoading} />
                     {isMonthLoading ? (
-                        <TailChartSkeleton />
+                        <PageFallback skeleton={<TailChartSkeleton />} />
                     ) : monthError ? (
                         <ErrorFallback error={monthError} onClick={() => loadHistoryMonthData()} />
                     ) : (
@@ -70,20 +72,29 @@ export default function History() {
 
                 <div className="flex flex-col gap-3 w-full border-t border-card-border pt-4 xl:border-l xl:border-t-0 xl:pt-0 xl:pl-4">
                     {/* 요약 카드 영역 */}
-                    <div className="grid grid-cols-1 md:grid-cols-4 gap-0 md:gap-3">
-                        {stats.map((stat, idx) => (
-                            <StatCard
-                                key={idx}
-                                icon={stat.icon}
-                                label={stat.label}
-                                value={stat.value}
-                                unit={stat.unit}
-                                colorClass={stat.colorClass}
-                                loading={isInfoLoading}
-                                error={infoError}
-                                onClick={() => loadHistoryData()}
-                            />
-                        ))}
+                    <div className="relative">
+                        <div className="grid grid-cols-1 md:grid-cols-4 gap-0 md:gap-3">
+                            <FetchingSpinner isFetching={isInfoFetching && !isInfoLoading} />
+                            {isInfoLoading
+                                ? Array.from({ length: 4 }).map((_, idx) => (
+                                    <StatCardSkeleton key={idx} />
+                                ))
+                                : infoError ?
+                                    <div className="col-span-4 border border-card-border rounded-2xl"><ErrorFallback error={infoError} onClick={() => loadHistoryData()} /></div>
+                                    :
+                                    stats.map((stat, idx) => (
+                                        <StatCard
+                                            key={idx}
+                                            icon={stat.icon}
+                                            label={stat.label}
+                                            value={stat.value}
+                                            unit={stat.unit}
+                                            colorClass={stat.colorClass}
+                                            onClick={() => loadHistoryData()}
+                                        />
+                                    ))
+                            }
+                        </div>
                     </div>
                     {/* 일 차트 */}
                     <ChartBox
@@ -92,9 +103,9 @@ export default function History() {
                         color="text-green-700"
                         textSize="text-[20px]"
                     >
-                        <FetchingSpinner isFetching={isDayFetching} />
+                        <FetchingSpinner isFetching={isDayFetching && !isDayLoading} />
                         {isDayLoading ? (
-                            <TailChartSkeleton />
+                            <PageFallback skeleton={<TailChartSkeleton />} />
                         ) : dayError ? (
                             <ErrorFallback error={dayError} onClick={() => loadHistoryDayData()} />
                         ) : (

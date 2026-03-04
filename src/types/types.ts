@@ -5,6 +5,7 @@ export interface TeamMemberType {
     name: string;
     role: string;
     description: string;
+    img: string;
 }
 
 // 로그인한 유저 프로필 타입

@@ -1,15 +1,15 @@
 'use client'
 
-import { useEffect, useState } from 'react';
-import { Lock, User, Mail, ArrowRight, Building2 } from 'lucide-react';
-import Input from '@/components/TailInput';
-import { useRouter } from 'next/navigation';
-import TailSelect from '@/components/TailSelect';
-import TailButton from '@/components/TailButton';
-import { usePasswordMatch } from '@/hooks/usePasswordMatch';
-import { useValidationRules } from '@/hooks/useValidationRules';
-import { toast } from 'sonner';
-import { useJoin } from '@/hooks/useJoin';
+import { useState } from "react";
+import { Lock, User, Mail, ArrowRight, Building2 } from "lucide-react";
+import Input from "@/components/TailInput";
+import { useRouter } from "next/navigation";
+import TailSelect from "@/components/TailSelect";
+import TailButton from "@/components/TailButton";
+import { usePasswordMatch } from "@/hooks/usePasswordMatch";
+import { useValidationRules } from "@/hooks/useValidationRules";
+import { toast } from "sonner";
+import { useJoin } from "@/hooks/useJoin";
 
 export default function JoinForm() {
     const router = useRouter();
@@ -116,20 +116,13 @@ export default function JoinForm() {
 
                     <Input icon={Lock} type="password" placeholder="비밀번호 확인" name="passwordChk" value={formData.passwordChk} onChange={handleChange} />
                     {passwordMsg && (
-                        <p className={`text-xs ml-2 mt-1 ${formData.password === formData.passwordChk ? 'text-sky-600' : 'text-red-500'}`}>
+                        <p className={`text-xs ml-2 mt-1 ${formData.password === formData.passwordChk ? "text-sky-600" : "text-red-500"}`}>
                             {passwordMsg}
                         </p>
                     )}
                 </div>
 
                 <TailButton text="회원가입" icon={ArrowRight} style="bg-sky-500 hover:bg-sky-600" />
-
-                {/* <div className="bg-sky-50/50 rounded-xl p-4 border border-sky-100/50">
-                        <p className="text-[11px] leading-relaxed text-center text-slate-500 font-medium">
-                            계정 생성 시 관리자의 승인이 필요합니다.<br />
-                            승인 완료 후 입력하신 아이디로 로그인이 가능합니다.
-                        </p>
-                    </div> */}
             </form>
 
             <div className="mt-8 pt-6 border-t border-slate-100 flex flex-col items-center gap-4">

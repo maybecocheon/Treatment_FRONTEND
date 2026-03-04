@@ -2,8 +2,8 @@
 
 import TailChartSkeleton from "@/components/main/skeletons/TailChartSkeleton";
 import PredictionChart from "@/components/main/PredictionChart";
-import ErrorFallback from "@/components/skeletons/ErrorFallback";
-import PageFallback from "@/components/skeletons/PageFallback";
+import ErrorFallback from "@/components/fallback/ErrorFallback";
+import PageFallback from "@/components/fallback/PageFallback";
 import { Zap } from "lucide-react";
 import useOptimization from "@/hooks/useOptimization";
 

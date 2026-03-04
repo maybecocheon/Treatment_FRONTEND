@@ -1,7 +1,7 @@
 'use client'
 
-import { mapLevelAtom } from '@/atoms/uniAtoms';
-import { useSetAtom } from 'jotai';
+import { mapLevelAtom } from "@/atoms/uniAtoms";
+import { useSetAtom } from "jotai";
 import { Minus, Plus, RotateCcw } from "lucide-react";
 
 export default function MapControl() {

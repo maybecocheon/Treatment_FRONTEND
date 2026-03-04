@@ -2,7 +2,7 @@
 
 import { useUser } from "@/hooks/useUser";
 import { useRouter, usePathname } from "next/navigation";
-import { Loader2, Lock, LogIn } from "lucide-react";
+import { Lock, LogIn } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 

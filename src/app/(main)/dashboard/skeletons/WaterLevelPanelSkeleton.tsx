@@ -1,5 +1,3 @@
-'use client'
-
 interface WaterLevelPanelSkeletonProps {
   isSimulation?: boolean;
 }
@@ -21,7 +19,7 @@ export default function WaterLevelPanelSkeleton({ isSimulation = false }: WaterL
         </div>
       </div>
 
-      <div className="flex-1 flex flex-col items-center justify-between min-h-0">
+      <div className="flex-1 flex flex-col items-center justify-between min-h-0 gap-5">
         {/* 1. 상단 배수지 그리드 스켈레톤 */}
         <div className="grid grid-cols-2 lg:grid-cols-6 gap-y-3 gap-x-20 lg:gap-x-3 z-10">
           {skeletonCards.map((_, i) => (

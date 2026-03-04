@@ -1,5 +1,3 @@
-'use client'
-
 export default function HistorySkeleton() {
   return (
     <div className="flex flex-col gap-4 animate-pulse p-2">

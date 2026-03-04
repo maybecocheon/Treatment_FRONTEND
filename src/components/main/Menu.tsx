@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { History, ChevronRight, Factory, Map, LayoutDashboard, Settings2 } from "lucide-react";
+import { History, ChevronRight, Factory, Map, LayoutDashboard } from "lucide-react";
 
 interface MenuProps {
   isMobileMenuOpen: boolean;

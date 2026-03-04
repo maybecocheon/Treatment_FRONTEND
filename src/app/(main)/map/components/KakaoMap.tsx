@@ -4,14 +4,14 @@ import { useEffect, useRef, useState } from "react";
 import { CustomOverlayMap, Map, Polygon } from "react-kakao-maps-sdk";
 import sidoData from "@/data/sido.json"
 import FacilityOverlay from "./FacilityOverlay";
-import MapSkeleton from "./skeletons/MapSkeleton";
-import { MapUIProvider, useMapUI } from './MapUIContext';
+import { useMapUI } from './MapUIContext';
 import { useAtom, useAtomValue } from "jotai";
 import { mapLevelAtom, selectedFacilityTypeAtom } from "@/atoms/uniAtoms";
 import { useFacilities } from "@/hooks/useFacilities";
 import OpenDetail from "@/components/main/OpenDetail";
-import PageFallback from "@/components/skeletons/PageFallback";
-import ErrorFallback from "@/components/skeletons/ErrorFallback";
+import PageFallback from "@/components/fallback/PageFallback";
+import ErrorFallback from "@/components/fallback/ErrorFallback";
+import MapSkeleton from "../skeletons/MapSkeleton";
 
 
 export default function KakaoMap() {

@@ -24,16 +24,19 @@ export function ThemeToggle() {
     return (
         <button
             onClick={() => setTheme(isDark ? "light" : "dark")}
-            className="relative w-9 h-9 flex items-center justify-center rounded-xl bg-card shadow-sm border border-card-border hover:bg-white/40 dark:hover:bg-slate-800/60 transition-all duration-300 active:scale-90 group overflow-hidden"
+            className="relative w-9 h-9 flex items-center justify-center rounded-xl bg-card shadow-sm
+                        border border-card-border hover:bg-white/40 dark:hover:bg-slate-800/60 transition-all duration-300 active:scale-90 group overflow-hidden"
             aria-label="테마 전환"
         >
             <div className="relative w-5 h-5">
                 <Sun
-                    className={`absolute inset-0 transform transition-all duration-500 rotate-0 scale-100 ${isDark ? "-rotate-90 scale-0 opacity-0" : "text-amber-500"}`}
+                    className={`absolute inset-0 transform transition-all duration-500 rotate-0 scale-100
+                                ${isDark ? "-rotate-90 scale-0 opacity-0" : "text-amber-500"}`}
                     size={20}
                 />
                 <Moon
-                    className={`absolute inset-0 transform transition-all duration-500 rotate-90 scale-0 opacity-0 ${isDark ? "rotate-0 scale-100 opacity-100 text-blue-400" : ""}`}
+                    className={`absolute inset-0 transform transition-all duration-500 rotate-90 scale-0 opacity-0
+                                ${isDark ? "rotate-0 scale-100 opacity-100 text-blue-400" : ""}`}
                     size={20}
                 />
             </div>

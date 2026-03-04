@@ -5,15 +5,16 @@ import { useAtomValue } from "jotai";
 import { mapLevelAtom } from "@/atoms/uniAtoms";
 import { FacilityType } from "@/types/types";
 import { useReservoirLevel } from "@/hooks/useReservoirLevel";
-import WaterLevelCard from "@/components/main/WaterLevelCard";
+import UnifiedWaterCard from "@/components/main/UnifiedWaterCard";
 import { useMapUI } from "./MapUIContext";
+import FetchingSpinner from "@/components/main/FetchingSpinner";
 
 export default function FacilityOverlay({ facility }: { facility: FacilityType }) {
     const mapLevel = useAtomValue(mapLevelAtom);
     const mapUI = useMapUI();
 
     // 수위 레벨 얻기
-    const { reservoirLevels, isLoading } = useReservoirLevel();
+    const { reservoirLevels, isLoading, isFetching } = useReservoirLevel();
 
     // 1. 정수장
     if (facility.type === "정수장") {
@@ -33,7 +34,7 @@ export default function FacilityOverlay({ facility }: { facility: FacilityType }
     }
 
     // 2. 배수지
-    if (!reservoirLevels) return null;
+    if (!reservoirLevels || isLoading || isFetching) return <FetchingSpinner isFetching={isLoading || isFetching} />;
 
     const reservoir = reservoirLevels.find(r => r.facilityId === facility.facilityId);
 
@@ -41,10 +42,9 @@ export default function FacilityOverlay({ facility }: { facility: FacilityType }
 
     if (facility.type === "배수지") {
         return (
-            <WaterLevelCard
+            <UnifiedWaterCard
                 res={reservoir}
                 mapLevel={mapLevel}
-                isLoading={isLoading}
                 status="map"
             />
         );

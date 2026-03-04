@@ -10,7 +10,7 @@ import { useUser } from "@/hooks/useUser";
 import { useLogout } from "@/hooks/useLogout";
 import ProfileSkeleton from "./skeletons/ProfileSkeleton";
 import { ThemeToggle } from "./ThemeToggle";
-
+import dayjs from "dayjs";
 
 export default function Header() {
   const router = useRouter();
@@ -85,7 +85,7 @@ export default function Header() {
             <Clock className="w-4 h-4 text-primary" />
             <div className="flex items-center leading-none gap-4">
               <span className="text-sm text-muted tabular-nums">
-                {mounted && time ? time.split(" ")[0] : "0000-00-00"}
+                {mounted && time ? dayjs(time.split(" ")[0]).subtract(1, "day").format("YYYY-MM-DD") : "0000-00-00"}
               </span>
               <span className="text-sm font-semibold text-foreground tabular-nums tracking-wider">
                 {mounted && time ? time.split(" ")[1] : "00:00:00"}

@@ -1,14 +1,9 @@
-import { Suspense } from "react";
 import Setting from "./Setting";
-import PageFallback from "@/components/skeletons/PageFallback";
-import SettingSkeleton from "./SettingSkeleton";
 
 export default function ProfilePage() {
   return (
-    <div className="flex flex-col h-full gap-8 md:p-6">
-      <Suspense fallback={<PageFallback skeleton={<SettingSkeleton />} />}>
-        <Setting />
-      </Suspense>
+    <div className="flex flex-col h-full gap-8 p-6">
+      <Setting />
     </div>
   );
 };

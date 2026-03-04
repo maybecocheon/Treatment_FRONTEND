@@ -1,5 +1,3 @@
-'use client'
-
 export default function ProfileSkeleton() {
   return (
     <div className="relative">

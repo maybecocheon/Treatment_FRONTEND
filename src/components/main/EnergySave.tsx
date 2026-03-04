@@ -1,14 +1,18 @@
 'use client'
 
 import useOptimization from "@/hooks/useOptimization"
-import ErrorFallback from "../skeletons/ErrorFallback";
+import ErrorFallback from "../fallback/ErrorFallback";
+import PageFallback from "../fallback/PageFallback";
+import FetchingSpinner from "./FetchingSpinner";
+import EnergySaveSkeleton from "./skeletons/EnergySaveSkeleton";
 
 export default function EnergySave() {
-    const { costData, costError, loadOptimization } = useOptimization();
+    const { costData, costError, isLoading, isFetching, loadOptimization } = useOptimization();
 
-    if (costError) return <ErrorFallback error={costError} onClick={() => loadOptimization} />;
+    if (costError || !costData) return <div className="border border-card-border rounded-2xl"><ErrorFallback error={costError} onClick={() => loadOptimization()} /></div>;
+    if (isLoading) return <div className="border border-card-border rounded-2xl"><PageFallback skeleton={<EnergySaveSkeleton />} /></div>;
 
-    // AI 최적 바의 너비
+    // AI 최적 바의 너비    
     const barWidth = costData?.existingCost
         ? (costData.optimizationCost / costData.existingCost) * 100
         : 0;
@@ -16,6 +20,7 @@ export default function EnergySave() {
     return (
         <>
             <div className="bg-success/80 text-white rounded-xl p-3 shadow-sm">
+                <FetchingSpinner isFetching={isFetching} />
                 <div className="flex justify-between items-center mb-0.5">
                     <span className="text-[11px] font-bold opacity-80 uppercase">일일 절감액 및 절감률</span>
                     <span className="text-[11px] font-bold bg-white/20 px-1.5 py-0.5 rounded-full">{costData?.savingRate.toFixed(2)}% SAVING</span>

@@ -10,7 +10,7 @@
   --card-border: #e7eaee;
   /* slate-200 */
   --glass-bg: rgba(255, 255, 255, 0.6);
-  --glass-border: rgba(255, 255, 255, 0.8);
+  --glass-border: #e7eaee;
   --primary: #0ea5e9;
   /* sky-500 */
   --primary-foreground: #ffffff;
@@ -107,7 +107,7 @@
     @apply shadow-lg shadow-indigo-900/5;
   }
 
-  /* 카카오맵 다크모드 필터 - 타일(이미지)만 반전 시켜 오버레이/폴리곤에 영향 없도록 수정 */
+  /* 카카오맵 다크모드 필터 */
   .dark .kakao-map-container img {
     filter: invert(100%) hue-rotate(180deg) brightness(0.85);
   }

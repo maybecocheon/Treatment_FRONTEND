@@ -1,10 +1,10 @@
 'use client'
 
-import KakaoMap from './KakaoMap'
-import MapControl from './MapControl'
-import MapLegend from './MapLegend'
-import ReservoirDetails from '@/components/main/OpenDetail'
-import { MapUIProvider, useMapUI } from './MapUIContext';
+import OpenDetail from "@/components/main/OpenDetail";
+import KakaoMap from "./KakaoMap"
+import MapControl from "./MapControl"
+import MapLegend from "./MapLegend"
+import { MapUIProvider, useMapUI } from "./MapUIContext";
 
 function MapSectionContent() {
     const mapUI = useMapUI();
@@ -25,10 +25,10 @@ function MapSectionContent() {
             </div>
             {mapDetailOpen && (
                 <div className="col-span-4 h-full rounded-4xl">
-                    <ReservoirDetails />
+                    <OpenDetail />
                 </div>
             )}
-            {isModalOpen && <ReservoirDetails />}
+            {isModalOpen && <OpenDetail />}
         </>
     )
 }

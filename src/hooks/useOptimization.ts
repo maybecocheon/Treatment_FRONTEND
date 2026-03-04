@@ -18,7 +18,7 @@ export default function useOptimization() {
     const { data: fullResponse, isLoading, isFetching, error, refetch: loadOptimization } = useQuery({
         queryKey: ["treatmentChartAll", date],
         queryFn: async () => {
-            const data = await myFetch(`${baseUrl}/treatment/chart/miniute?date=${date}`);
+            const data = await myFetch(`${baseUrl}/treatment/chart/minute?date=${date}`);
             if (data.processing) throw new Error("PROCESSING");
             return data;
         },
