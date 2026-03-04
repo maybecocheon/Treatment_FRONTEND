@@ -36,8 +36,8 @@ export default function SchedulingPage() {
                                             <span className="text-[10px] font-black text-success uppercase tracking-widest">목표 절감률</span>
                                             <div className="h-4 w-px bg-card-border" />
                                             <div className="flex items-baseline gap-0.5 text-success">
-                                                <span className="text-3xl font-black">15</span>
-                                                <span className="text-sm font-bold">%</span>
+                                                <span className="text-3xl font-black">5</span>
+                                                <span className="text-sm font-bold">% 이상</span>
                                             </div>
                                         </div>
                                     </div>

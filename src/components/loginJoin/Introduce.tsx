@@ -78,12 +78,12 @@ export default function Introduce() {
                             {/* 통계/기능 카드 */}
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-5 max-w-2xl mx-auto lg:mx-0">
                                 {[
-                                    { icon: <Target className="w-5 h-5 text-sky-500" />, label: "90% 이상의 수요 예측도" },
-                                    { icon: <Zap className="w-5 h-5 text-amber-500" />, label: "에너지 비용 5~10% 절감" },
+                                    { icon: <Target className="w-5 h-5 text-sky-500" />, label: "85% 이상의 수요 예측도" },
+                                    { icon: <Zap className="w-5 h-5 text-amber-500" />, label: "에너지 비용 5% 이상 절감" },
                                     { icon: <ShieldCheck className="w-5 h-5 text-emerald-500" />, label: "실시간 수압 이상 탐지" },
                                     { icon: <Droplets className="w-5 h-5 text-blue-500" />, label: "펌프 가동 최적화 운영" }
                                 ].map((item, i) => (
-                                    <div key={i} className="flex items-center gap-3 md:gap-4 font-bold text-foreground/80 p-3 md:p-4 bg-card/50 rounded-2xl border border-card-border lg:bg-transparent lg:border-none">
+                                    <div key={i} className="flex items-center gap-3 md:gap-4 font-bold text-foreground/80 p-3 bg-card/50 rounded-2xl border border-card-border lg:bg-transparent lg:border-none">
                                         <div className="p-2 md:p-2.5 bg-card rounded-xl shadow-sm border border-card-border shrink-0">{item.icon}</div>
                                         <span className="text-xs sm:text-sm md:text-base text-left">{item.label}</span>
                                     </div>
