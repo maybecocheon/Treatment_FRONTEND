@@ -9,7 +9,7 @@
 ## 🛠 Tech Stacks
 
 ### Frontend
-- **Framework**: Next.js 15 (App Router)
+- **Framework**: Next.js 16 (App Router)
 - **Library**: React 19
 - **State Management**: Jotai (Atomic State)
 - **Data Fetching**: **TanStack Query v5 (React Query)**
