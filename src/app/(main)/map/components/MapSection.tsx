@@ -13,7 +13,7 @@ function MapSectionContent() {
 
     return (
         <>
-            <div className={`h-full w-full ${mapDetailOpen ? "col-span-8" : "col-span-12"} flex-1 min-h-125 glass overflow-hidden relative rounded-4xl`}>
+            <div className={`h-full w-full ${mapDetailOpen ? "col-span-8" : "col-span-12"} flex-1 min-h-100 glass overflow-hidden relative rounded-4xl`}>
                 {/* 메인 지도 영역 */}
                 <KakaoMap />
 
