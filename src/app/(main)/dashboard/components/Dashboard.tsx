@@ -62,7 +62,7 @@ export default function Dashboard() {
     }, [reservoirLevels, treatment, checkLevelRisk]);
 
     return (
-        <div className="h-full flex flex-col xl:grid xl:grid-cols-12 gap-4">
+        <div className="flex-1 flex flex-col xl:grid xl:grid-cols-12 gap-4">
 
             {/* [LEFT SECTION]: 위험 감지 */}
             <div className="h-full xl:col-span-2 flex flex-col">
@@ -157,7 +157,7 @@ export default function Dashboard() {
                 }</div>
 
             {/* [RIGHT SECTION]: 리포트 및 가이드 */}
-            <div className="h-full xl:col-span-3 flex flex-col">
+            <div className="flex-1 xl:col-span-3 flex flex-col">
                 <div className="h-full xl:col-span-3 flex flex-col gap-3 glass border-success/20 p-5 rounded-2xl relative">
                     <h3 className="font-black text-foreground opacity-80 px-1 flex items-center gap-2">
                         <Newspaper size={20} /> 최적화 리포트
