@@ -46,11 +46,8 @@
 
 ---
 
-## 📽️ 구현 영상 🌊 FLOWISE - Smart Water Management System
-
-![FLOWISE Dashboard Preview](./public/flowise.png)
-
-**FLOWISE**는 AI 기반 수자원 관리 시스템으로, 미래 수돗물 수요를 정밀하게 예측하고 펌프 가동을 최적화하여 에너지 효율을 극대화하는 솔루션입니다.
+## 📽️ 구현 영상
+<iframe width="991" height="558" src="https://www.youtube.com/embed/YxdRPamhfK0" title="정수장 프로젝트" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
 
 ---
 
