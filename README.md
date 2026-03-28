@@ -46,7 +46,58 @@
 
 ---
 
-## � History (Update Log)
+## 📽️ 구현 영상 🌊 FLOWISE - Smart Water Management System
+
+![FLOWISE Dashboard Preview](./public/flowise.png)
+
+**FLOWISE**는 AI 기반 수자원 관리 시스템으로, 미래 수돗물 수요를 정밀하게 예측하고 펌프 가동을 최적화하여 에너지 효율을 극대화하는 솔루션입니다.
+
+---
+
+## 🛠 Tech Stacks
+
+### Frontend
+- **Framework**: Next.js 16 (App Router)
+- **Library**: React 19
+- **State Management**: Jotai (Atomic State)
+- **Data Fetching**: **TanStack Query v5 (React Query)**
+- **Styling**: Tailwind CSS 4 (+ Glassmorphism UI)
+- **Visualization**: Recharts
+- **Icons**: Lucide React
+- **Notifications**: Sonner
+
+### Technical Highlights
+- **Custom Fetch Wrapper**: `credentials: "include"`를 통한 세션 관리 및 401 에러(Unauthorized) 발생 시 자동 랜딩 페이지 리다이렉트와 리프레시 토큰 갱신 로직 구현.
+- **Mock Data System**: 백엔드 서버 없이도 모든 기능을 테스트할 수 있는 정교한 시뮬레이션 기반 Mock API 서비스 탑재.
+- **Performance Optimization**: TanStack Query의 `staleTime` 설정을 통한 효율적인 캐싱 관리 및 스켈레톤 UI(Skeleton UI)를 활용한 체감 로딩 속도 향상.
+
+---
+
+## ✨ 핵심 기능 (Features)
+
+1. **AI 수요 예측 (Demand Prediction)**
+   - 85% 이상의 높은 정확도로 시간별 수돗물 수요를 예측합니다.
+   - 실제 수치와 예측 수치를 시각적으로 대조하여 운영 효율을 높입니다.
+
+2. **펌프 가동 최적화 (Optimization)**
+   - 예측된 수요를 기반으로 전력 비용이 최소화되는 펌프 가동 스케줄을 자동으로 수립합니다.
+   - 에너지 비용을 약 5% 이상 절감하는 최적 경로를 제안합니다.
+
+3. **실시간 모니터링 및 히스토리 뷰어 (Monitoring)**
+   - 정수장 및 배수지의 수위, 유량, 압력 데이터를 실시간으로 트래킹합니다.
+   - 과거 데이터를 통한 운영 데이터 분석 기능을 제공합니다.
+
+4. **사용자 친화적 대시보드 (UX/UI)**
+   - **Glassmorphism Design**: 세련된 유리 질감 UI로 가독성과 심미성 확보.
+   - **Dark Mode**: 다크 모드 완벽 지원 및 지도(Kakao Map) 다크 모드 동기화.
+   - **Responsive**: 모바일 환경을 고려한 상단 메뉴 네비게이션 및 반응형 레이아웃.
+
+---
+
+## 📽️ 구현 영상
+<iframe width="991" height="558" src="https://www.youtube.com/embed/YxdRPamhfK0" title="정수장 프로젝트" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+
+## 📖 History (Update Log)
 
 ### 2026/01/28
 - 대시보드 형식 수정 (상단 메뉴 네비게이션 적용)
